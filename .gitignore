@@ -32,3 +32,4 @@ Thumbs.db
 # IDEs and editors
 .vscode/
 .idea/
+*.onnx

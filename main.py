@@ -86,6 +86,7 @@ def main():
             pass
     except KeyboardInterrupt:
         print("\n🛑 MITCH shutdown signal received.")
+        event_bus.emit("SHUTDOWN")
 
         for hook in shutdown_hooks:
             try:

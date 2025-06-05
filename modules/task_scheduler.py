@@ -3,8 +3,9 @@ import json
 import datetime
 import threading
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/task_scheduler.log'
+LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'task_scheduler.log')
 
 class TaskScheduler:
     def __init__(self):

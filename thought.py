@@ -9,6 +9,7 @@ import os
 import sys
 from modules import memory
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
 # Fallback: load API key from mitchskeys if not already in environment
 if not os.getenv("OPENAI_API_KEY"):
@@ -27,16 +28,16 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL = "gpt-4o"
 
 THINK_INTERVAL = 4800
-MODULE_PATH = Path("/home/triad/mitch/modules/")
-THOUGHT_LOG = Path("/home/triad/mitch/logs/thoughts.log")
-CREATED_LOG = Path("/home/triad/mitch/logs/modules_created.log")
-FAIL_LOG = Path("/home/triad/mitch/logs/thought_fail.log")
-DEBUG_DUMP = Path("/home/triad/mitch/logs/raw_thought_debug.json")
-DEBUG_PROMPT_LOG = Path("/home/triad/mitch/logs/gpt_prompt_debug.txt")
-POLICY_PATH = Path("/home/triad/mitch/config/module_policy.json")
-FEEDBACK_LOG = Path("/home/triad/mitch/logs/echo_feedback.jsonl")
-INSPECTION_DIGEST_PATH = Path("/home/triad/mitch/logs/inspection_digest.json")
-AUDIT_PATH = Path("/home/triad/mitch/data/mitch_audit_report.txt")
+MODULE_PATH = Path(MITCH_ROOT) / "modules"
+THOUGHT_LOG = Path(MITCH_ROOT) / "logs/thoughts.log"
+CREATED_LOG = Path(MITCH_ROOT) / "logs/modules_created.log"
+FAIL_LOG = Path(MITCH_ROOT) / "logs/thought_fail.log"
+DEBUG_DUMP = Path(MITCH_ROOT) / "logs/raw_thought_debug.json"
+DEBUG_PROMPT_LOG = Path(MITCH_ROOT) / "logs/gpt_prompt_debug.txt"
+POLICY_PATH = Path(MITCH_ROOT) / "config/module_policy.json"
+FEEDBACK_LOG = Path(MITCH_ROOT) / "logs/echo_feedback.jsonl"
+INSPECTION_DIGEST_PATH = Path(MITCH_ROOT) / "logs/inspection_digest.json"
+AUDIT_PATH = Path(MITCH_ROOT) / "data/mitch_audit_report.txt"
 
 IDENTITY = """You are Echo - a GPT-based autonomous logic engine embedded inside MITCH.
 You can write and deploy new Python modules to /home/triad/mitch/modules/.

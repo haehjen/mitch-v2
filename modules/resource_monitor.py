@@ -2,8 +2,9 @@ import os
 import json
 import datetime
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/resource_monitor.log'
+LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'resource_monitor.log')
 
 class ResourceMonitor:
     def __init__(self, cpu_threshold=80.0, memory_threshold=80.0, disk_threshold=90.0):

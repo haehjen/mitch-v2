@@ -2,8 +2,9 @@ import os
 import psutil
 import time
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/resource_optimizer.log'
+LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'resource_optimizer.log')
 
 class ResourceOptimizer:
     def __init__(self):

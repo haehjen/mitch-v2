@@ -2,8 +2,9 @@ import json
 from pathlib import Path
 from datetime import datetime
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
-LOG_DIR = Path("/home/triad/mitch/logs/")
+LOG_DIR = Path(MITCH_ROOT) / "logs"
 DIGEST_FILE = LOG_DIR / "inspection_digest.json"
 MAX_BYTES_PER_LOG = 5000
 MAX_LOGS = 30

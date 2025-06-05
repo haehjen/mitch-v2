@@ -1,8 +1,9 @@
 import os
 import ast
 import json
+from core.config import MITCH_ROOT
 
-PROJECT_ROOT = "/home/triad/mitch"
+PROJECT_ROOT = MITCH_ROOT
 SUMMARY_FILE = "mitch_audit_report.txt"
 EVENTS_JSON = "mitch_event_map.json"
 

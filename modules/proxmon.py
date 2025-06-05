@@ -9,6 +9,7 @@ import os
 from threading import Thread
 from dotenv import load_dotenv
 from core.event_bus import EventBus
+from core.config import MITCH_ROOT
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 logger = logging.getLogger("ProxMon")
@@ -29,7 +30,7 @@ class ProxMonModule:
         self.csrf_token = None
         self.ticket = None
 
-        log_dir = "/home/triad/mitch/data"
+        log_dir = os.path.join(MITCH_ROOT, "data")
         os.makedirs(log_dir, exist_ok=True)
         self.node_log_path = os.path.join(log_dir, "node_status.jsonl")
         self.vm_log_path = os.path.join(log_dir, "vm_status.jsonl")

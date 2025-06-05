@@ -1,7 +1,6 @@
 import os
 from core.event_bus import event_bus
-
-MITCH_ROOT = "/home/triad/mitch"
+from core.config import MITCH_ROOT
 
 # Utility to verify the path stays inside MITCH_ROOT
 def safe_path(filename):
@@ -97,7 +96,7 @@ def handle_main_append(data):
         print(f"[ModuleEditor] Failed to append to main.py: {e}")
 
 def start_module_editor():
-    print("[ModuleEditor] Online and enforcing sandbox to /home/triad/mitch")
+    print(f"[ModuleEditor] Online and enforcing sandbox to {MITCH_ROOT}")
     event_bus.subscribe("EMIT_MODULE_CREATE", handle_module_create)
     event_bus.subscribe("EMIT_MODULE_READ", handle_module_read)
     event_bus.subscribe("EMIT_MODULE_EDIT", handle_module_edit)

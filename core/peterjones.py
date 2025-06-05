@@ -2,9 +2,10 @@ import logging
 import os
 from datetime import datetime
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
 # === Paths ===
-MAIN_LOG_PATH = "/home/triad/mitch/data/mitch.log"
+MAIN_LOG_PATH = os.path.join(MITCH_ROOT, "data", "mitch.log")
 os.makedirs(os.path.dirname(MAIN_LOG_PATH), exist_ok=True)
 
 # === Primary Logger Setup (mitch.log) ===

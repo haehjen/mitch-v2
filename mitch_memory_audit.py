@@ -1,8 +1,9 @@
 import os
 import ast
 import json
+from core.config import MITCH_ROOT
 
-PROJECT_ROOT = "/home/triad/mitch"
+PROJECT_ROOT = MITCH_ROOT
 MEMORY_AUDIT_FILE = "mitch_memory_audit.txt"
 
 memory_keywords = {

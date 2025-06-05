@@ -3,8 +3,9 @@ import json
 from collections import defaultdict
 from datetime import datetime
 from threading import Lock
+from core.config import MITCH_ROOT
 
-REGISTRY_LOG_PATH = "/home/triad/mitch/logs/event_registry.jsonl"
+REGISTRY_LOG_PATH = os.path.join(MITCH_ROOT, "logs", "event_registry.jsonl")
 
 class EventRegistry:
     _instance = None

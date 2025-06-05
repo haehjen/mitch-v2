@@ -24,6 +24,8 @@ output/
 *.gz
 *.zip
 *.tar
+modules/voice/*.onnx
+
 
 # OS junk
 .DS_Store

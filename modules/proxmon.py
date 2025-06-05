@@ -8,7 +8,7 @@ import json
 import os
 from threading import Thread
 from dotenv import load_dotenv
-from core.event_bus import EventBus
+from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -16,7 +16,6 @@ logger = logging.getLogger("ProxMon")
 
 # Load secrets
 load_dotenv("mitchskeys")
-event_bus = EventBus()
 
 class ProxMonModule:
     def __init__(self, event_bus):

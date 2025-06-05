@@ -4,9 +4,10 @@ from datetime import datetime
 import inspect
 import os
 import requests
+from core.config import MITCH_ROOT
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
-INNERMONO_PATH = "/home/triad/mitch/logs/innermono.log"
+INNERMONO_PATH = os.path.join(MITCH_ROOT, "logs", "innermono.log")
 
 class EventBus:
     _instance = None

@@ -2,8 +2,9 @@ import requests
 import datetime
 import os
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
-LOG_PATH = '/home/triad/mitch/logs/web_search.log'
+LOG_PATH = os.path.join(MITCH_ROOT, 'logs', 'web_search.log')
 SEARCH_API = 'https://api.duckduckgo.com/'
 
 

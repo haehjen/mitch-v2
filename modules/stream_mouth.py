@@ -11,9 +11,10 @@ import pyaudio
 from collections import defaultdict
 from core.event_bus import EventBus
 from piper import PiperVoice
+from core.config import MITCH_ROOT
 
 # === CONFIG ===
-MODEL_PATH = Path("/home/triad/mitch/modules/voice/en_GB-northern_english_male-medium.onnx")
+MODEL_PATH = Path(MITCH_ROOT) / "modules/voice/en_GB-northern_english_male-medium.onnx"
 CONFIG_PATH = MODEL_PATH.with_suffix(".onnx.json")
 CHUNK_TRIGGER_LEN = 40
 CHUNK_BREAK_CHARS = {'.', '?', '!', '\n'}

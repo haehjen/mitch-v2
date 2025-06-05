@@ -11,6 +11,7 @@ class ResourceOptimizer:
         self.cpu_threshold = 80  # in percentage
         self.memory_threshold = 80  # in percentage
         self.disk_threshold = 80  # in percentage
+        self.running = True
 
     def log(self, message):
         with open(LOG_FILE_PATH, 'a') as log_file:
@@ -47,15 +48,23 @@ class ResourceOptimizer:
         event_bus.subscribe('high_cpu_usage', self.handle_high_cpu_usage)
         event_bus.subscribe('high_memory_usage', self.handle_high_memory_usage)
         event_bus.subscribe('high_disk_usage', self.handle_high_disk_usage)
+        self.running = True
 
         # Continuously check resources
-        while True:
+        while self.running:
             self.check_resources()
-            
+
             # Sleep for a predefined interval to avoid excessive resource usage
-            time.sleep(10)
+            for _ in range(10):
+                if not self.running:
+                    break
+                time.sleep(1)
+
+    def shutdown(self, _=None):
+        self.running = False
 
 
 def start_module(event_bus):
     optimizer = ResourceOptimizer()
+    event_bus.subscribe('SHUTDOWN', optimizer.shutdown)
     optimizer.start()

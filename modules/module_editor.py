@@ -1,13 +1,16 @@
 import os
+from pathlib import Path
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 
 # Utility to verify the path stays inside MITCH_ROOT
 def safe_path(filename):
-    abs_path = os.path.abspath(filename)
-    if abs_path.startswith(MITCH_ROOT):
-        return abs_path
-    raise ValueError(f"Access denied: {abs_path} is outside MITCH root")
+    base = Path(MITCH_ROOT).resolve()
+    abs_path = Path(filename).resolve()
+    # Ensure resolved file path is within the MITCH root directory
+    if abs_path.is_relative_to(base):
+        return str(abs_path)
+    raise ValueError(f"Access denied: {abs_path} is outside {base}")
 
 def handle_module_create(data):
     filename = data.get("filename")

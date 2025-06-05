@@ -20,8 +20,8 @@ DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
 
 EXCLUDED_MODULES = {
     "__init__", "ears", "interpreter", "module_editor", "dummy",
-    "transcriber", "memory", "stream_mouth", "gpt_handler", "visual",
-    "proxmon", "folder_access", "vision", "vision_ai"
+    "transcriber", "memory", "stream_mouth", "gpt_handler", "visual", 
+    "folder_access", "vision", "vision_ai"
 }
 
 shutdown_hooks = []

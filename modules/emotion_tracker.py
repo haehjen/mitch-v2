@@ -1,6 +1,6 @@
 import os
 import json
-datetime
+import datetime
 from core.event_bus import event_bus
 
 LOG_FILE_PATH = '/home/triad/mitch/logs/emotion_tracker.log'

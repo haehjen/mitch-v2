@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MITCH Interface</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      font-family: monospace;
+      color: #0ff;
+      overflow: hidden;
+    }
+
+    canvas { display: block; }
+
+    #chat-container {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 720px;
+      height: auto;
+      background-color: rgba(30, 30, 30, 0.95);
+      padding: 0.5rem 1rem;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0, 100, 255, 0.2);
+      border: 1px solid rgba(0, 100, 255, 0.2);
+      z-index: 10;
+    }
+
+    #chat-log {
+      color: #0ff;
+      font-size: 1rem;
+      line-height: 1.4rem;
+      white-space: pre-wrap;
+      margin-bottom: 0.5rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #chat-input {
+      width: 100%;
+      padding: 0.4rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background-color: #111;
+      color: #0ff;
+    }
+
+    .vision-eye {
+      position: absolute;
+      top: 37%;
+      width: 100px;
+      height: 55px;
+      z-index: 10;
+      border: 1px solid #0040ff;
+      box-shadow: 0 0 6px rgba(0, 64, 255, 0.5);
+    }
+
+    #vision-left {
+      left: 48%;
+      transform: translate(-100%, -50%);
+    }
+
+    #vision-right {
+      left: 52%;
+      transform: translate(0, -50%);
+    }
+
+    .vision-eye img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .corner-line {
+      position: absolute;
+      background-color: #0040ff;
+    }
+
+    .top-left, .top-right {
+      width: 20px;
+      height: 1px;
+      top: 0;
+    }
+
+    .bottom-left, .bottom-right {
+      width: 20px;
+      height: 1px;
+      bottom: 0;
+    }
+
+    .top-left, .bottom-left { left: 0; }
+    .top-right, .bottom-right { right: 0; }
+
+    /* Floating iframe panel (Visual Workspace) */
+    #workspace-frame {
+      position: absolute;
+      top: 10%;
+      right: 5%;
+      width: 512px;
+      height: 288px;
+      border: 2px solid #0044ff;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #0044ff44;
+      z-index: 50;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="vision-left" class="vision-eye">
+    <img src="/video_feed" />
+    <div class="corner-line top-left"></div>
+    <div class="corner-line top-right"></div>
+    <div class="corner-line bottom-left"></div>
+    <div class="corner-line bottom-right"></div>
+  </div>
+
+  <div id="vision-right" class="vision-eye">
+    <img src="/video_feed" />
+    <div class="corner-line top-left"></div>
+    <div class="corner-line top-right"></div>
+    <div class="corner-line bottom-left"></div>
+    <div class="corner-line bottom-right"></div>
+  </div>
+
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <input id="chat-input" type="text" placeholder="Say something to MITCH..." />
+  </div>
+
+  <!-- Visual Workspace -->
+  <iframe id="workspace-frame" src="https://andymitchell.online" frameborder="0"></iframe>
+
+  <!-- Three.js + OBJLoader + Socket.IO -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+  <script src="OBJLoader.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const chatLog = document.getElementById('chat-log');
+    const chatInput = document.getElementById('chat-input');
+    const MAX_LINES = 10;
+
+    function appendMessage(sender, message) {
+      const entry = document.createElement('div');
+      entry.textContent = `${sender}: ${message}`;
+      entry.style.color = sender === "YOU" ? '#aaa' : '#0ff';
+      chatLog.appendChild(entry);
+
+      while (chatLog.children.length > MAX_LINES) {
+        chatLog.removeChild(chatLog.firstChild);
+      }
+
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function checkForMitchUpdates() {
+      fetch("/get_response")
+        .then(res => res.json())
+        .then(data => {
+          if (data.text) appendMessage("MITCH", data.text);
+          if (data.audio) {
+            const audio = new Audio(`/audio/${data.audio}`);
+            audio.play();
+          }
+        })
+        .catch(console.error);
+    }
+
+    function sendUserInput(text) {
+      if (!text.trim()) return;
+      appendMessage("YOU", text);
+
+      fetch("/listen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+    }
+
+    chatInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const text = e.target.value;
+        e.target.value = '';
+        sendUserInput(text);
+      }
+    });
+
+    setInterval(checkForMitchUpdates, 2000);
+  </script>
+
+  <script src="main.js"></script>
+</body>
+</html>

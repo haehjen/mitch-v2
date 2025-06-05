@@ -1,0 +1,1159 @@
+=== MITCH AUDIT REPORT ===
+
+[thought.py]
+  Classes: EchoThoughtThread
+  Functions: list_existing_modules, load_policy, load_recent_feedback, build_prompt_template, feedback_collector, __init__, shutdown, clean_response, fetch_thought, log_thought, log_module_created, process_response, run
+  Events Emitted: 
+
+[inputcheck.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[audit_mitch.py]
+  Classes: 
+  Functions: analyze_file, scan_project, write_summary
+  Events Emitted: 
+
+[mitch_memory_audit.py]
+  Classes: 
+  Functions: analyze_file, scan_memory_related_files
+  Events Emitted: 
+
+[main.py]
+  Classes: 
+  Functions: main
+  Events Emitted: 
+
+[core/peterjones.py]
+  Classes: 
+  Functions: log_event, start_logger, wildcard_logger
+  Events Emitted: 
+
+[core/event_bus.py]
+  Classes: EventBus
+  Functions: _log_emit_speak, __init__, get_instance, subscribe, unsubscribe, emit, _infer_emitter_module, get_registry, get_registered_handlers
+  Events Emitted: 
+
+[core/dispatcher.py]
+  Classes: 
+  Functions: handle_user_intent, start_dispatcher
+  Events Emitted: EMIT_SPEAK, EMIT_ACK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_FAILURE, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT
+
+[core/event_registry.py]
+  Classes: EventRegistry
+  Functions: __init__, get_instance, record_emit, record_subscribe, get_all_events, get_emitters_for, get_subscribers_for, save_registry, load_registry
+  Events Emitted: 
+
+[modules/auto_user_personalization_optimizer.py]
+  Classes: UserPersonalizationOptimizer
+  Functions: start_module, __init__, log, load_user_preferences, save_user_preferences, handle_user_interaction, adjust_system_based_on_preferences
+  Events Emitted: 
+
+[modules/auto_task_dependency_checker.py]
+  Classes: AutoTaskDependencyChecker
+  Functions: start_module, __init__, load_task_dependencies, check_dependencies, is_dependency_resolved, handle_task_created, start
+  Events Emitted: 
+
+[modules/auto_adaptive_learning.py]
+  Classes: AutoAdaptiveLearning
+  Functions: start_module, __init__, handle_user_intent, handle_tool_result, adapt_behavior, log
+  Events Emitted: 
+
+[modules/auto_event_anomaly_detector.py]
+  Classes: EventAnomalyDetector
+  Functions: start_module, __init__, log_anomaly, handle_event
+  Events Emitted: 
+
+[modules/auto_data_integrity_checker.py]
+  Classes: AutoDataIntegrityChecker
+  Functions: start_module, __init__, _scan_data_directory, _calculate_hash, check_data_integrity, _verify_hash, _log_issue, start, handle_periodic_check
+  Events Emitted: data_integrity_issue
+
+[modules/auto_data_synchronizer.py]
+  Classes: AutoDataSynchronizer
+  Functions: start_module, __init__, log, synchronize_data, handle_data_change
+  Events Emitted: data_synchronized, data_synchronized
+
+[modules/auto_event_correlation_analyzer.py]
+  Classes: EventCorrelationAnalyzer
+  Functions: handle_event, start_module, __init__, log_event, analyze_correlations, log_correlation_results
+  Events Emitted: 
+
+[modules/auto_event_dependency_resolver.py]
+  Classes: EventDependencyResolver
+  Functions: start_module, resolve_dependencies_on_startup, __init__, add_dependency, resolve_dependencies, check_dependency_satisfied, handle_event
+  Events Emitted: 
+
+[modules/auto_speech_enhancer.py]
+  Classes: AutoSpeechEnhancer
+  Functions: start_module, __init__, adjust_speech_settings
+  Events Emitted: speech_settings_adjusted
+
+[modules/auto_event_priority_manager.py]
+  Classes: AutoEventPriorityManager
+  Functions: start_module, __init__, load_priorities, save_priorities, adjust_priority, on_event, evaluate_importance, log
+  Events Emitted: 
+
+[modules/auto_event_predictor_enhancer.py]
+  Classes: 
+  Functions: log, load_event_history, save_event_history, analyze_event_patterns, enhance_event_prediction, handle_event_occurred, start_module
+  Events Emitted: enhanced_event_prediction
+
+[modules/auto_user_engagement.py]
+  Classes: AutoUserEngagement
+  Functions: start_module, __init__, handle_high_cpu_engagement, handle_task_completion_engagement, log_and_notify, start
+  Events Emitted: speak
+
+[modules/auto_dynamic_feedback_manager.py]
+  Classes: AutoDynamicFeedbackManager
+  Functions: start_module, __init__, log, handle_feedback_collected, analyze_feedback, adjust_feedback_collection_strategy
+  Events Emitted: adjust_feedback_strategy
+
+[modules/auto_event_inspector.py]
+  ERROR: expected an indented block after function definition on line 23 (auto_event_inspector.py, line 27)
+
+[modules/auto_performance_tuner.py]
+  Classes: AutoPerformanceTuner
+  Functions: start_module, __init__, tune_performance, set_cpu_governor, start
+  Events Emitted: 
+
+[modules/transcriber.py]
+  Classes: 
+  Functions: handle_mute, handle_unmute, handle_audio_captured, start_transcriber, shutdown
+  Events Emitted: EMIT_INPUT_RECEIVED
+
+[modules/auto_system_self_test.py]
+  Classes: SystemSelfTest
+  Functions: start_module, __init__, perform_self_test, _test_module
+  Events Emitted: system_self_test_completed
+
+[modules/auto_event_dependency_manager.py]
+  Classes: EventDependencyManager
+  Functions: start_module, __init__, add_dependency, mark_event_completed, check_and_trigger_dependent_events, trigger_event, handle_event_completion
+  Events Emitted: 
+
+[modules/auto_emotion_tracker.py]
+  Classes: EmotionTracker
+  Functions: start_module, __init__, analyze_text_for_emotion, handle_input_received, log_emotion
+  Events Emitted: EMIT_INPUT_RECEIVED
+
+[modules/auto_intent_analyzer.py]
+  Classes: 
+  Functions: log_message, handle_user_intent, analyze_intent, start_module
+  Events Emitted: 
+
+[modules/auto_event_reminder.py]
+  Classes: AutoEventReminder
+  Functions: start_module, __init__, log, add_event_reminder, remove_event_reminder, check_reminders, start
+  Events Emitted: event_reminder
+
+[modules/auto_adaptive_user_interface.py]
+  Classes: AutoAdaptiveUserInterface
+  Functions: start_module, __init__, log, analyze_user_engagement, analyze_system_load, adjust_ui_for_high_engagement, adjust_ui_for_low_engagement, simplify_ui_for_high_load, restore_default_ui, start
+  Events Emitted: 
+
+[modules/auto_data_categorizer.py]
+  Classes: 
+  Functions: log_action, categorize_data, handle_data_event, start_module
+  Events Emitted: data_categorized
+
+[modules/auto_behavior_predictor.py]
+  Classes: AutoBehaviorPredictor
+  Functions: start_module, __init__, load_user_interaction_data, log, handle_user_interaction, save_user_interaction_data, predict_behavior
+  Events Emitted: recommendation_made
+
+[modules/auto_user_contextual_enhancer.py]
+  Classes: 
+  Functions: log_message, handle_user_interaction, generate_suggestion, start_module
+  Events Emitted: contextual_suggestion
+
+[modules/auto_event_dependency_checker.py]
+  Classes: AutoEventDependencyChecker
+  Functions: start_module, __init__, load_event_dependencies, update_event_dependencies, log_event_dependencies, handle_new_event, start
+  Events Emitted: 
+
+[modules/auto_anomaly_detector.py]
+  Classes: AnomalyDetector
+  Functions: start_module, __init__, log, load_logs, detect_anomalies, handle_new_log, start
+  Events Emitted: anomaly_detected
+
+[modules/auto_performance_forecaster.py]
+  Classes: PerformanceForecaster
+  Functions: start_module, __init__, log, handle_performance_data, forecast_performance, start
+  Events Emitted: performance_forecast_ready
+
+[modules/auto_adaptive_reminder.py]
+  Classes: AutoAdaptiveReminder
+  Functions: start_module, __init__, load_interaction_data, log_action, analyze_and_remind, update_interaction_data
+  Events Emitted: send_reminder
+
+[modules/auto_inspection_reporter.py]
+  Classes: 
+  Functions: generate_summary_report, handle_request_inspection_summary, start_module
+  Events Emitted: inspection_summary_ready
+
+[modules/auto_intent_predictor.py]
+  Classes: AutoIntentPredictor
+  Functions: start_module, __init__, load_intent_history, save_intent_history, log, handle_user_intent, analyze_intent_history, start
+  Events Emitted: predicted_intent
+
+[modules/auto_event_efficiency_evaluator.py]
+  Classes: 
+  Functions: log, handle_event, process_event, start_module
+  Events Emitted: high_event_processing_time
+
+[modules/task_completion_monitor.py]
+  Classes: 
+  Functions: setup_logging, handle_task_completion, start_module
+  Events Emitted: task_notification
+
+[modules/auto_event_handler.py]
+  Classes: AutoEventHandler
+  Functions: start_module, __init__, handle_event, handle_critical_event, handle_important_event, handle_normal_event
+  Events Emitted: 
+
+[modules/auto_routine_enhancer.py]
+  Classes: AutoRoutineEnhancer
+  Functions: start_module, __init__, log, analyze_routine, suggest_improvements, emit_improvements
+  Events Emitted: routine_improvements_suggested
+
+[modules/auto_task_dependency_resolver.py]
+  Classes: TaskDependencyResolver
+  Functions: handle_task_update, start_module, __init__, update_task, resolve_dependencies
+  Events Emitted: resolved_task_order
+
+[modules/auto_routine_simplifier.py]
+  Classes: AutoRoutineSimplifier
+  Functions: start_module, __init__, log, analyze_patterns, suggest_simplification, handle_task_completed, start
+  Events Emitted: routine_simplification_suggestion
+
+[modules/inspection_log_digester.py]
+  Classes: 
+  Functions: summarize_log, extract_digest, save_digest, start_module
+  Events Emitted: inspection_digest_ready
+
+[modules/auto_system_health_monitor.py]
+  Classes: AutoSystemHealthMonitor
+  Functions: start_module, __init__, log, check_system_health, get_cpu_usage, get_memory_usage, get_disk_usage, start
+  Events Emitted: high_cpu_usage_alert, high_memory_usage_alert, high_disk_usage_alert
+
+[modules/auto_system_performance_reporter.py]
+  Classes: SystemPerformanceReporter
+  Functions: start_module, __init__, log_performance, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, start_reporting
+  Events Emitted: 
+
+[modules/auto_routine_improver.py]
+  Classes: AutoRoutineImprover
+  Functions: start_module, __init__, log, load_routines, analyze_routines, handle_routine_update, start
+  Events Emitted: routine_improvement_suggested
+
+[modules/auto_time_management_assistant.py]
+  Classes: AutoTimeManagementAssistant
+  Functions: start_module, __init__, load_schedule, analyze_schedule, suggest_time_adjustments, handle_new_schedule
+  Events Emitted: schedule_adjusted
+
+[modules/auto_user_behavior_predictor_enhancer.py]
+  Classes: UserBehaviorPredictorEnhancer
+  Functions: start_module, __init__, log, handle_user_behavior_data, analyze_behavior
+  Events Emitted: user_behavior_prediction
+
+[modules/auto_event_consolidator.py]
+  Classes: AutoEventConsolidator
+  Functions: start_module, __init__, handle_event, consolidate_events, log_consolidated_event
+  Events Emitted: 
+
+[modules/auto_user_energy_tracker.py]
+  Classes: UserEnergyTracker
+  Functions: start_module, __init__, track_interaction, log_energy_level, analyze_energy_patterns, log_energy_analysis
+  Events Emitted: 
+
+[modules/auto_task_scheduler.py]
+  Classes: AutoTaskScheduler
+  Functions: start_module, __init__, load_tasks, save_tasks, log, analyze_and_schedule, schedule_task, on_task_update, on_system_performance_change
+  Events Emitted: 
+
+[modules/auto_user_focus_tracker.py]
+  Classes: UserFocusTracker
+  Functions: start_module, __init__, log_interaction, log_resource_usage, emit_focus_state, log_focus_state, reset_interactions, reset_interactions_periodically
+  Events Emitted: focus_state_change
+
+[modules/auto_emotion_tracker_enhancer.py]
+  Classes: EmotionTrackerEnhancer
+  Functions: start_module, __init__, load_emotion_data, analyze_emotion_trends, detect_anomalies, log_results, process_emotions
+  Events Emitted: 
+
+[modules/auto_conversation_analyzer.py]
+  Classes: AutoConversationAnalyzer
+  Functions: start_module, __init__, log, handle_input_received, analyze_conversation, simple_sentiment_analysis
+  Events Emitted: conversation_analysis_complete
+
+[modules/auto_habit_tracker.py]
+  Classes: HabitTracker
+  Functions: on_user_action, start_module, __init__, load_habits, save_habits, log_event, analyze_habits, provide_feedback
+  Events Emitted: 
+
+[modules/persona.py]
+  Classes: 
+  Functions: hash_persona, verify_bedrock, load_persona, load_emotion_state, build_system_prompt
+  Events Emitted: 
+
+[modules/auto_system_time_optimizer.py]
+  Classes: AutoSystemTimeOptimizer
+  Functions: start_module, __init__, log, check_system_time, get_time_offset, adjust_system_time, start
+  Events Emitted: 
+
+[modules/memory.py]
+  Classes: 
+  Functions: save_memory, recall_recent, clear_memory, load_knowledge, save_knowledge, recall_summary, truncate_tail, clear_temp_context
+  Events Emitted: 
+
+[modules/auto_user_activity_summarizer.py]
+  Classes: AutoUserActivitySummarizer
+  Functions: start_module, __init__, log, record_user_activity, check_and_summarize, summarize_user_activities
+  Events Emitted: user_activity_summary
+
+[modules/auto_user_mood_tracker.py]
+  Classes: UserMoodTracker
+  Functions: start_module, __init__, log_mood_entry, analyze_mood_trends, handle_user_feedback, start
+  Events Emitted: mood_trend_update
+
+[modules/auto_system_maintenance_scheduler.py]
+  Classes: AutoSystemMaintenanceScheduler
+  Functions: start_module, __init__, log, disk_cleanup, memory_optimization, software_updates, schedule_tasks, handle_low_usage_period, start
+  Events Emitted: 
+
+[modules/auto_learning_enhancer.py]
+  Classes: AutoLearningEnhancer
+  Functions: on_inspection_digest_ready, start_module, __init__, analyze_logs, _collect_logs, _identify_patterns, _log_results, _log_error
+  Events Emitted: 
+
+[modules/auto_system_sanity_checker.py]
+  Classes: AutoSystemSanityChecker
+  Functions: start_module, __init__, log, check_system_sanity, start_periodic_check
+  Events Emitted: high_cpu_usage_alert, high_memory_usage_alert, high_disk_usage_alert
+
+[modules/ears.py]
+  Classes: 
+  Functions: on_speak_end, pause_microphone_briefly, continuous_microphone_listener, listen_keyboard, start_keyboard, start_microphone, start_ears, shutdown
+  Events Emitted: EMIT_AUDIO_CAPTURED, EMIT_INPUT_RECEIVED
+
+[modules/auto_log_analyzer.py]
+  Classes: AutoLogAnalyzer
+  Functions: start_module, __init__, analyze_logs, save_report, start
+  Events Emitted: log_analysis_module_started, log_analysis_completed
+
+[modules/auto_user_experience_enhancer.py]
+  Classes: UserExperienceEnhancer
+  Functions: start_module, __init__, handle_user_activity, optimize_user_experience
+  Events Emitted: adjust_task_priority
+
+[modules/auto_system_optimizer.py]
+  Classes: AutoSystemOptimizer
+  Functions: start_module, __init__, log, handle_high_cpu_usage, handle_high_memory_usage, optimize_cpu_usage, optimize_memory_usage, check_system_resources, start
+  Events Emitted: high_cpu_usage, high_memory_usage
+
+[modules/auto_user_time_analyzer.py]
+  Classes: AutoUserTimeAnalyzer
+  Functions: start_module, __init__, handle_input_received, _update_user_time_data, log_event, analyze_time_usage, _generate_suggestions
+  Events Emitted: 
+
+[modules/auto_user_engagement_optimizer.py]
+  Classes: UserEngagementOptimizer
+  Functions: start_module, __init__, load_interaction_history, save_interaction_history, log_interaction, analyze_interactions, emit_strategy_update, log_strategy_update, handle_user_interaction
+  Events Emitted: engagement_strategy_update
+
+[modules/auto_time_tracker.py]
+  Classes: AutoTimeTracker
+  Functions: start_module, __init__, log, on_task_start, on_task_end, on_process_start, on_process_end
+  Events Emitted: 
+
+[modules/auto_event_prioritizer.py]
+  Classes: AutoEventPrioritizer
+  Functions: start_module, __init__, prioritize_event, handle_event
+  Events Emitted: prioritized_event
+
+[modules/auto_cognitive_load_balancer.py]
+  Classes: CognitiveLoadBalancer
+  Functions: start_module, __init__, setup_logger, handle_high_cpu_usage, handle_high_memory_usage, adjust_module_load, start
+  Events Emitted: 
+
+[modules/auto_memory_enhancer.py]
+  Classes: 
+  Functions: log_message, load_memory, save_memory, summarize_memory, optimize_memory, handle_memory_optimization_event, start_module
+  Events Emitted: 
+
+[modules/auto_decision_maker.py]
+  Classes: AutoDecisionMaker
+  Functions: start_module, __init__, log, handle_high_cpu, handle_low_memory, evaluate_event, start
+  Events Emitted: speak, speak
+
+[modules/auto_adaptive_learning_recommender.py]
+  Classes: AdaptiveLearningRecommender
+  Functions: start_module, __init__, load_user_feedback, recommend_resources, handle_feedback_event
+  Events Emitted: recommended_learning_resources
+
+[modules/auto_user_behavior_analyzer.py]
+  Classes: UserBehaviorAnalyzer
+  Functions: start_module, __init__, log_user_interaction, analyze_behavior, save_log, load_log, start
+  Events Emitted: 
+
+[modules/auto_task_time_allocator.py]
+  Classes: TaskTimeAllocator
+  Functions: on_new_task, start_module, __init__, add_task, allocate_time_slots
+  Events Emitted: time_slots_allocated
+
+[modules/auto_adaptive_scheduler.py]
+  Classes: AutoAdaptiveScheduler
+  Functions: start_module, __init__, log, handle_high_cpu_usage, handle_high_memory_usage, handle_user_activity, adjust_task_priorities, recalculate_priorities_based_on_user_activity, start
+  Events Emitted: 
+
+[modules/auto_resource_balancer.py]
+  Classes: AutoResourceBalancer
+  Functions: start_module, __init__, log, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, adjust_resource_allocation, start
+  Events Emitted: 
+
+[modules/auto_scheduler.py]
+  Classes: AutoScheduler
+  Functions: start_module, __init__, load_tasks, save_tasks, add_task, check_schedule, on_add_task, periodic_check
+  Events Emitted: 
+
+[modules/auto_user_mood_detector.py]
+  Classes: AutoUserMoodDetector
+  Functions: start_module, __init__, log, analyze_interaction, provide_mood_insight, handle_user_interaction
+  Events Emitted: mood_insight
+
+[modules/auto_security_auditor.py]
+  Classes: AutoSecurityAuditor
+  Functions: start_module, __init__, scan_logs_for_security_issues, audit_security, log_security_issues, log_error
+  Events Emitted: security_alert
+
+[modules/auto_user_focus_optimizer.py]
+  Classes: 
+  Functions: log, analyze_user_activity, start_focus_session, provide_productivity_feedback, start_module
+  Events Emitted: optimal_focus_times_suggested, focus_session_ended, productivity_feedback
+
+[modules/auto_adaptive_rescheduler.py]
+  Classes: AutoAdaptiveRescheduler
+  Functions: start_module, __init__, load_tasks, reschedule_tasks, handle_task_update
+  Events Emitted: tasks_rescheduled
+
+[modules/auto_task_dependencies_analyzer.py]
+  Classes: TaskDependenciesAnalyzer
+  Functions: start_module, __init__, log, add_task, analyze_dependencies, topological_sort, handle_task_added, handle_analyze_request
+  Events Emitted: task_execution_order
+
+[modules/auto_data_correlation_analyzer.py]
+  Classes: DataCorrelationAnalyzer
+  Functions: start_module, __init__, analyze_data_sources, find_correlations, register_data_source, handle_new_data
+  Events Emitted: correlations_found
+
+[modules/auto_contextual_recommender.py]
+  Classes: ContextualRecommender
+  Functions: start_module, __init__, handle_event, analyze_context, log_recommendation
+  Events Emitted: EMIT_SPEAK, EMIT_SPEAK
+
+[modules/auto_event_aggregator.py]
+  Classes: EventAggregator
+  Functions: start_module, __init__, log, handle_event, clean_old_events, analyze_events, start
+  Events Emitted: high_frequency_event_detected
+
+[modules/auto_idle_task_manager.py]
+  Classes: IdleTaskManager
+  Functions: start_module, __init__, log, update_last_activity, perform_maintenance, cleanup_temp_files, check_idle_state, start
+  Events Emitted: 
+
+[modules/auto_task_time_estimator.py]
+  Classes: TaskTimeEstimator
+  Functions: start_module, __init__, load_task_time_data, save_task_time_data, estimate_time, log_estimation, handle_task_creation
+  Events Emitted: task_time_estimated
+
+[modules/auto_system_diagnoser.py]
+  Classes: 
+  Functions: log, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, handle_system_health_check, start_module
+  Events Emitted: 
+
+[modules/auto_system_health_predictor.py]
+  Classes: SystemHealthPredictor
+  Functions: start_module, __init__, log, handle_resource_usage, analyze_trends, calculate_trend
+  Events Emitted: potential_high_cpu_usage, potential_high_memory_usage
+
+[modules/auto_contextual_explanation.py]
+  Classes: ContextualExplanation
+  Functions: start_module, __init__, load_history, log, explain_event, on_action_taken, start
+  Events Emitted: explanation_generated
+
+[modules/auto_contextual_error_notifier.py]
+  ERROR: unexpected character after line continuation character (auto_contextual_error_notifier.py, line 1)
+
+[modules/auto_system_dependency_checker.py]
+  Classes: DependencyChecker
+  Functions: start_module, __init__, log, extract_dependencies, scan_modules, check_conflicts, report_conflicts, run
+  Events Emitted: dependency_conflicts_detected
+
+[modules/auto_contextual_adaptive_rescheduler.py]
+  Classes: AutoContextualAdaptiveRescheduler
+  Functions: start_module, __init__, handle_high_cpu_usage, handle_high_memory_usage, reschedule_tasks, start
+  Events Emitted: 
+
+[modules/auto_user_interaction_analyzer.py]
+  Classes: UserInteractionAnalyzer
+  Functions: start_module, __init__, log_interaction, analyze_interactions, handle_input_received, handle_speak_end
+  Events Emitted: 
+
+[modules/resource_optimizer.py]
+  Classes: ResourceOptimizer
+  Functions: start_module, __init__, log, check_resources, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, start
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
+
+[modules/import_backstory.py]
+  Classes: 
+  Functions: import_backstory
+  Events Emitted: 
+
+[modules/auto_task_dependency_manager.py]
+  Classes: TaskDependencyManager
+  Functions: handle_new_task, handle_task_completion, start_module, __init__, add_task, mark_task_completed, get_next_tasks, log
+  Events Emitted: task_ready_for_execution
+
+[modules/auto_contextual_reminder.py]
+  Classes: 
+  Functions: log_message, handle_task_completion, handle_user_behavior, handle_environmental_change, set_reminder, start_module
+  Events Emitted: 
+
+[modules/auto_knowledge_enhancer.py]
+  Classes: AutoKnowledgeEnhancer
+  Functions: start_module, __init__, load_knowledge_base, log, analyze_logs_for_gaps, suggest_knowledge_enhancement, handle_logs_analyzed
+  Events Emitted: knowledge_suggestion
+
+[modules/proxmon.py]
+  Classes: ProxMonModule
+  Functions: handle_restart_vm, handle_get_vm_status, __init__, authenticate, get_nodes, fetch_node_status, fetch_vm_list, fetch_vm_status, log_jsonl, run, shutdown, restart_vm, get_vm_status
+  Events Emitted: speak, speak
+
+[modules/auto_task_collaborator.py]
+  Classes: AutoTaskCollaborator
+  Functions: start_module, __init__, load_data, analyze_collaborations, suggest_collaborations, handle_new_task, start
+  Events Emitted: suggest_collaboration
+
+[modules/auto_system_recovery.py]
+  Classes: AutoSystemRecovery
+  Functions: start_module, __init__, log, handle_system_failure, attempt_recovery, restart_services, clear_temp_files, reset_failure_count
+  Events Emitted: 
+
+[modules/auto_user_preference_analyzer.py]
+  Classes: 
+  Functions: log_data, handle_user_feedback, extract_preferences, start_module
+  Events Emitted: 
+
+[modules/auto_user_attention_tracker.py]
+  Classes: UserAttentionTracker
+  Functions: start_module, __init__, log_interaction, analyze_attention_pattern
+  Events Emitted: short_attention_span_detected, normal_attention_span_detected
+
+[modules/auto_user_activity_reporter.py]
+  Classes: UserActivityReporter
+  Functions: start_module, __init__, log_activity, save_log, generate_report, analyze_activities, log_report
+  Events Emitted: activity_report_generated
+
+[modules/auto_user_routine_analyzer.py]
+  Classes: UserRoutineAnalyzer
+  Functions: handle_user_routine_event, start_module, __init__, load_existing_routines, analyze_routine, log_analysis, suggest_improvements, log_suggestion
+  Events Emitted: 
+
+[modules/auto_health_check.py]
+  Classes: 
+  Functions: log, check_system_health, start_monitoring, start_module
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
+
+[modules/auto_resource_allocator.py]
+  Classes: AutoResourceAllocator
+  Functions: start_module, __init__, log, allocate_resources, handle_task_priority, handle_task_completion
+  Events Emitted: resource_allocated
+
+[modules/auto_event_predictor.py]
+  Classes: AutoEventPredictor
+  Functions: start_module, __init__, log, load_event_history, predict_upcoming_events, handle_event, run
+  Events Emitted: 
+
+[modules/auto_event_sequence_optimizer.py]
+  Classes: EventSequenceOptimizer
+  Functions: start_module, __init__, load_event_log, save_event_log, log_event, analyze_and_optimize, handle_event
+  Events Emitted: 
+
+[modules/__init__.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[modules/auto_task_dependency_visualizer.py]
+  Classes: TaskDependencyVisualizer
+  Functions: start_module, __init__, log, handle_task_dependency_update, emit_visualization_update, generate_visualization_data
+  Events Emitted: task_dependency_visualization_update
+
+[modules/auto_backup.py]
+  Classes: 
+  Functions: create_backup, log_event, handle_high_priority_event, start_module
+  Events Emitted: 
+
+[modules/auto_contextual_repair_suggester.py]
+  Classes: ContextualRepairSuggester
+  Functions: start_module, __init__, analyze_logs, log_suggestions, handle_inspection_digest_ready
+  Events Emitted: 
+
+[modules/auto_contextual_insight.py]
+  Classes: AutoContextualInsight
+  Functions: start_module, __init__, log, analyze_event, summarize_logs
+  Events Emitted: contextual_insight
+
+[modules/auto_user_goal_optimizer.py]
+  Classes: AutoUserGoalOptimizer
+  Functions: start_module, __init__, log, handle_user_goal_update, optimize_goal, handle_goal_suggestions_request
+  Events Emitted: goal_suggestions_ready, provide_goal_suggestions, provide_goal_suggestions
+
+[modules/stream_mouth.py]
+  Classes: StreamMouth
+  Functions: start_stream_mouth, __init__, _audio_loop, _play_with_pyaudio, synthesize_and_queue, speak_chunk, speak_full, on_speak_end, _should_emit, shutdown
+  Events Emitted: EMIT_SPEAK_END, UNMUTE_EARS, MUTE_EARS
+
+[modules/auto_emotion_analyzer.py]
+  Classes: EmotionAnalyzer
+  Functions: start_module, __init__, analyze_input, log_emotion_state, handle_emotion_update_request
+  Events Emitted: emotion_updated, emotion_state_report
+
+[modules/auto_silence_detector.py]
+  Classes: 
+  Functions: log, analyze_audio_silence, on_audio_captured, start_module
+  Events Emitted: silence_detected
+
+[modules/auto_user_assistance_recommender.py]
+  Classes: UserAssistanceRecommender
+  Functions: start_module, __init__, load_user_data, analyze_user_behavior, generate_recommendations, log_recommendations, start
+  Events Emitted: user_assistance_recommendation
+
+[modules/auto_behavior_analyzer.py]
+  Classes: BehaviorAnalyzer
+  Functions: handle_user_event, start_module, __init__, load_behavior_data, save_behavior_data, log_behavior, analyze_behavior, log_event, provide_recommendations
+  Events Emitted: behavior_analysis_completed
+
+[modules/auto_feedback_analyzer.py]
+  Classes: 
+  Functions: analyze_feedback, process_feedback_log, start_module
+  Events Emitted: feedback_analysis_complete
+
+[modules/auto_performance_monitor.py]
+  Classes: PerformanceMonitor
+  Functions: start_module, __init__, log, check_performance, start_monitoring
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
+
+[modules/auto_adaptive_brightness.py]
+  Classes: AutoAdaptiveBrightness
+  Functions: start_module, __init__, log, adjust_brightness, calculate_brightness, periodic_adjustment, start
+  Events Emitted: 
+
+[modules/auto_task_efficiency_evaluator.py]
+  Classes: TaskEfficiencyEvaluator
+  Functions: start_module, __init__, on_task_start, on_task_end, on_task_error, log
+  Events Emitted: task_efficiency_report
+
+[modules/vision_ai.py]
+  Classes: VisionAI
+  Functions: __init__
+  Events Emitted: 
+
+[modules/auto_adaptive_intent_resolver.py]
+  Classes: AdaptiveIntentResolver
+  Functions: start_module, __init__, load_intent_history, save_intent_history, log, handle_user_intent, resolve_intent
+  Events Emitted: EMIT_TOOL_RESULT
+
+[modules/auto_user_routine_predictor.py]
+  Classes: 
+  Functions: handle_user_activity, predict_routines, start_module
+  Events Emitted: predicted_user_routines
+
+[modules/auto_task_prioritizer.py]
+  Classes: AutoTaskPrioritizer
+  Functions: log_to_file, start_module, __init__, load_tasks, prioritize_tasks, update_tasks_file, handle_new_task, handle_task_update
+  Events Emitted: 
+
+[modules/auto_contextual_connector.py]
+  Classes: AutoContextualConnector
+  Functions: start_module, __init__, log, handle_inspection_digest_ready, handle_high_cpu_usage, handle_high_memory_usage, analyze_context, start
+  Events Emitted: contextual_recommendation, contextual_recommendation
+
+[modules/auto_task_breakdown.py]
+  Classes: 
+  Functions: handle_new_task, breakdown_task, start_module
+  Events Emitted: subtasks_created
+
+[modules/auto_proactive_inspector.py]
+  Classes: AutoProactiveInspector
+  Functions: start_module, __init__, log, inspect_logs, start_inspection
+  Events Emitted: start_inspection, anomaly_detected, inspection_complete
+
+[modules/auto_user_goal_enhancer.py]
+  Classes: 
+  Functions: handle_user_activity, analyze_user_activity, generate_goal_suggestions, start_module
+  Events Emitted: suggested_goals
+
+[modules/auto_focus_booster.py]
+  Classes: FocusBooster
+  Functions: start_module, __init__, log, handle_user_interaction, provide_focus_tip, start
+  Events Emitted: focus_tip
+
+[modules/auto_user_intent_recorder.py]
+  Classes: AutoUserIntentRecorder
+  Functions: start_module, __init__, log_intent, save_log, analyze_intents
+  Events Emitted: 
+
+[modules/auto_routine_creator.py]
+  Classes: RoutineManager
+  Functions: handle_task_completion, start_module, __init__, load_routines, save_routines, suggest_routine, log
+  Events Emitted: routine_suggested
+
+[modules/auto_event_synthesizer.py]
+  Classes: EventSynthesizer
+  Functions: start_module, __init__, load_event_history, save_event_history, analyze_patterns, emit_predicted_events, log_event_emission, handle_event
+  Events Emitted: 
+
+[modules/auto_daily_summary.py]
+  Classes: DailySummaryModule
+  Functions: start_module, __init__, log_event, process_insight, process_anomaly, generate_summary, on_day_end
+  Events Emitted: 
+
+[modules/auto_user_habit_predictor.py]
+  Classes: HabitPredictor
+  Functions: handle_user_interaction, start_module, __init__, load_data, log_interaction, predict_habits, log_to_file
+  Events Emitted: habit_predicted
+
+[modules/auto_efficiency_analyzer.py]
+  Classes: EfficiencyAnalyzer
+  Functions: start_module, __init__, log, handle_task_started, handle_task_completed, analyze_efficiency
+  Events Emitted: 
+
+[modules/auto_contextual_mood_adapter.py]
+  Classes: MoodAdapter
+  Functions: start_module, __init__, analyze_interaction, adapt_response
+  Events Emitted: EMIT_SPEAK, EMIT_SPEAK, EMIT_SPEAK
+
+[modules/auto_contextual_audit.py]
+  Classes: AutoContextualAudit
+  Functions: start_module, __init__, log_action, audit_modules, analyze_file, handle_inspection_event, start
+  Events Emitted: 
+
+[modules/auto_event_historian.py]
+  Classes: AutoEventHistorian
+  Functions: start_module, __init__, log_event, _write_log, subscribe_to_all_events, _create_event_handler, handler
+  Events Emitted: 
+
+[modules/auto_conversation_summarizer.py]
+  Classes: AutoConversationSummarizer
+  Functions: start_module, __init__, handle_conversation_event, generate_summary, summarize, log_summary
+  Events Emitted: 
+
+[modules/auto_system_state_saver.py]
+  Classes: 
+  Functions: log_event, save_system_state, restore_system_state, start_module
+  Events Emitted: restore_tasks, restore_memory, restore_config
+
+[modules/auto_task_dependency_optimizer.py]
+  Classes: TaskDependencyOptimizer
+  Functions: start_module, __init__, load_tasks, optimize_dependencies, save_optimized_tasks, log, handle_task_dependency_check
+  Events Emitted: 
+
+[modules/module_editor.py]
+  Classes: 
+  Functions: safe_path, handle_module_create, handle_module_read, handle_module_edit, handle_main_append, start_module_editor
+  Events Emitted: EMIT_MODULE_CONTENT
+
+[modules/auto_contextual_task_enhancer.py]
+  Classes: ContextualTaskEnhancer
+  Functions: start_module, __init__, log, handle_task_update, enhance_task, handle_system_event, start
+  Events Emitted: enhanced_task_ready
+
+[modules/auto_data_quality_assessor.py]
+  Classes: 
+  Functions: assess_data_quality, handle_data_quality_check, start_module
+  Events Emitted: data_quality_issue
+
+[modules/auto_task_interruption_manager.py]
+  Classes: AutoTaskInterruptionManager
+  Functions: start_module, __init__, handle_task_started, handle_task_interrupted, handle_task_rescheduled, handle_task_completed, start
+  Events Emitted: task_needs_rescheduling
+
+[modules/auto_priority_adjuster.py]
+  Classes: AutoPriorityAdjuster
+  Functions: start_module, __init__, handle_high_cpu_usage, handle_high_memory_usage, adjust_priorities
+  Events Emitted: adjust_task_priority
+
+[modules/auto_system_resource_balancer.py]
+  Classes: SystemResourceBalancer
+  Functions: start_module, __init__, log, handle_resource_usage, optimize_cpu_usage, optimize_memory_usage, optimize_disk_usage
+  Events Emitted: 
+
+[modules/auto_self_improvement.py]
+  Classes: AutoSelfImprovement
+  Functions: start_module, __init__, analyze_logs, process_log, generate_suggestions, start_analysis
+  Events Emitted: self_improvement_suggestions_ready
+
+[modules/auto_contextual_adviser.py]
+  Classes: AutoContextualAdviser
+  Functions: start_module, __init__, log, handle_task_event, generate_advice, handle_system_event, provide_system_advice
+  Events Emitted: advice_generated
+
+[modules/auto_event_historian_enhancer.py]
+  Classes: EventHistorianEnhancer
+  Functions: start_module, __init__, log_event, analyze_event_patterns, _save_log, _log_analysis, handle_event, predict_future_events
+  Events Emitted: event_prediction_report
+
+[modules/auto_module_updater.py]
+  Classes: AutoModuleUpdater
+  Functions: start_module, __init__, log, check_for_updates, simulate_update_check, apply_updates, backup_module, update_module
+  Events Emitted: 
+
+[modules/auto_adaptive_learning_scheduler.py]
+  Classes: AdaptiveLearningScheduler
+  Functions: start_module, __init__, update_learning_schedule, adjust_schedule
+  Events Emitted: learning_schedule_logged, learning_schedule_adjusted
+
+[modules/gpt_handler.py]
+  Classes: 
+  Functions: generate_token, emit_chunk, emit_end, emit_token_registered, maybe_emit_module_create, handle_chat_request, stream_from_openai, handle_module_request, fallback_or_fail, fallback_to_ollama, update_emotion, on_chat_request, on_module_request, handle_tool_result
+  Events Emitted: EMIT_SPEAK_CHUNK, EMIT_SPEAK_END, EMIT_TOKEN_REGISTERED, EMIT_VISUAL_TOKEN, EMIT_MODULE_CREATE
+
+[modules/auto_priority_manager.py]
+  Classes: AutoPriorityManager
+  Functions: start_module, __init__, load_tasks, save_tasks, adjust_task_priority, log_action, handle_task_update, start
+  Events Emitted: 
+
+[modules/auto_contextual_optimizer.py]
+  Classes: AutoContextualOptimizer
+  Functions: start_module, __init__, optimize_context, optimize_resources, start
+  Events Emitted: context_optimized
+
+[modules/auto_user_environment_adaptor.py]
+  Classes: AutoUserEnvironmentAdaptor
+  Functions: start_module, __init__, log, adjust_environment, handle_mood_update, handle_resource_update
+  Events Emitted: adjust_screen_brightness, adjust_notification_frequency
+
+[modules/auto_collaboration_manager.py]
+  Classes: CollaborationManager
+  Functions: start_module, __init__, log, identify_collaboration_opportunity, initiate_collaboration, handle_task_event, handle_collaboration_request
+  Events Emitted: collaboration_initiated, collaboration_opportunity_identified
+
+[modules/auto_communication_optimizer.py]
+  ERROR: unmatched '}' (auto_communication_optimizer.py, line 56)
+
+[modules/auto_introspection_manager.py]
+  Classes: AutoIntrospectionManager
+  Functions: start_module, __init__, log, analyze_logs, on_module_event, start_analysis
+  Events Emitted: 
+
+[modules/auto_data_anomaly_detector.py]
+  Classes: DataAnomalyDetector
+  Functions: start_module, __init__, log, check_for_anomalies, handle_resource_update, start
+  Events Emitted: anomaly_detected
+
+[modules/auto_event_categorizer.py]
+  Classes: AutoEventCategorizer
+  Functions: start_module, __init__, log, handle_event, summarize_events, start
+  Events Emitted: 
+
+[modules/auto_user_interaction_predictor.py]
+  Classes: UserInteractionPredictor
+  Functions: start_module, __init__, load_interaction_data, predict_future_interactions, log_prediction, handle_new_interaction, save_interaction_data, handle_input_received
+  Events Emitted: 
+
+[modules/auto_user_assistance_manager.py]
+  Classes: AutoUserAssistanceManager
+  Functions: start_module, __init__, load_interaction_history, log_interaction, analyze_interactions, suggest_assistance, handle_user_interaction
+  Events Emitted: EMIT_SUGGEST_ASSISTANCE
+
+[modules/auto_system_dependency_optimizer.py]
+  Classes: SystemDependencyOptimizer
+  Functions: start_module, __init__, log, analyze_dependencies, optimize_dependencies, handle_high_resource_usage
+  Events Emitted: 
+
+[modules/auto_daily_goal_tracker.py]
+  Classes: DailyGoalTracker
+  Functions: start_module, __init__, load_goals, update_progress, log_progress, evaluate_goals, handle_activity_update, handle_end_of_day
+  Events Emitted: EMIT_SPEAK
+
+[modules/auto_routine_optimizer.py]
+  ERROR: invalid syntax (auto_routine_optimizer.py, line 4)
+
+[modules/auto_system_dependency_resolver.py]
+  Classes: 
+  Functions: check_dependencies, handle_dependency_conflict, start_module
+  Events Emitted: 
+
+[modules/auto_user_routine_predictor_enhancer.py]
+  Classes: 
+  Functions: analyze_routine_patterns, handle_user_routine_event, start_module
+  Events Emitted: user_routine_analysis_result
+
+[modules/auto_user_activity_tracker.py]
+  Classes: 
+  Functions: log_activity, track_keyboard_usage, track_mouse_usage, start_module
+  Events Emitted: 
+
+[modules/vision.py]
+  Classes: VisionModule
+  Functions: __init__, force_exposure_v4l2, capture_image
+  Events Emitted: 
+
+[modules/auto_event_sequence_planner.py]
+  Classes: EventSequencePlanner
+  Functions: start_module, __init__, log, plan_event_sequence, emit_sequence, handle_event
+  Events Emitted: 
+
+[modules/auto_contextual_notifier.py]
+  Classes: ContextualNotifier
+  Functions: start_module, __init__, log, handle_task_completion, handle_high_cpu_usage, handle_high_memory_usage, notify_user
+  Events Emitted: EMIT_NOTIFICATION
+
+[modules/auto_user_feedback_improver.py]
+  Classes: AutoUserFeedbackImprover
+  Functions: __init__, log, handle_feedback_collected, analyze_feedback, start_module
+  Events Emitted: feedback_analyzed
+
+[modules/auto_contextual_task_manager.py]
+  Classes: ContextualTaskManager
+  Functions: start_module, __init__, log, analyze_context, adjust_tasks, add_task, handle_task_event, start
+  Events Emitted: 
+
+[modules/auto_system_event_handler.py]
+  Classes: AutoSystemEventHandler
+  Functions: start_module, __init__, log_event, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, handle_event
+  Events Emitted: 
+
+[modules/auto_task_efficiency_optimizer.py]
+  Classes: TaskEfficiencyOptimizer
+  Functions: start_module, __init__, analyze_task_completion, generate_optimization_suggestions, log_optimization_suggestions, handle_task_completion
+  Events Emitted: 
+
+[modules/auto_hardware_monitor.py]
+  Classes: AutoHardwareMonitor
+  Functions: start_module, __init__, log, check_cpu_temperature, check_battery_health, monitor_hardware, start
+  Events Emitted: high_cpu_temperature, low_battery_health
+
+[modules/auto_speech_to_text.py]
+  Classes: 
+  Functions: handle_audio_captured, start_module
+  Events Emitted: speech_to_text_converted
+
+[modules/auto_contextual_recognition.py]
+  Classes: AutoContextualRecognition
+  Functions: start_module, __init__, load_past_interactions, analyze_interaction, handle_event, log_recognition
+  Events Emitted: contextual_pattern_recognized
+
+[modules/auto_user_learning_analyzer.py]
+  Classes: UserLearningAnalyzer
+  Functions: start_module, __init__, log, analyze_user_interaction, generate_learning_report, handle_user_learning_request
+  Events Emitted: user_learning_report
+
+[modules/auto_module_health_monitor.py]
+  Classes: ModuleHealthMonitor
+  Functions: start_module, __init__, log, check_module_health, start
+  Events Emitted: 
+
+[modules/auto_adaptive_notification_manager.py]
+  Classes: AdaptiveNotificationManager
+  Functions: start_module, __init__, load_user_preferences, adjust_notifications, log_adjustment, emit_notification, handle_user_activity, handle_notification_request
+  Events Emitted: notification_event
+
+[modules/auto_event_tracker.py]
+  Classes: 
+  Functions: log_event, event_handler, start_module
+  Events Emitted: 
+
+[modules/auto_user_engagement_analyzer.py]
+  Classes: UserEngagementAnalyzer
+  Functions: start_module, __init__, log_engagement, analyze_engagement, handle_event, log_result
+  Events Emitted: 
+
+[modules/auto_contextual_task_rescheduler.py]
+  Classes: AutoContextualTaskRescheduler
+  Functions: start_module, __init__, _setup_logging, log, schedule_task, reschedule_task, handle_task_delay, handle_priority_change, monitor_changes
+  Events Emitted: task_rescheduled
+
+[modules/auto_user_engagement_predictor.py]
+  Classes: AutoUserEngagementPredictor
+  Functions: start_module, __init__, log, load_engagement_data, predict_engagement, handle_user_interaction, emit_engagement_prediction, start
+  Events Emitted: engagement_prediction
+
+[modules/folder_access.py]
+  Classes: FolderAccessModule
+  Functions: __init__, list_folder, create_folder, read_file
+  Events Emitted: speak, speak, speak, speak, speak, speak, speak
+
+[modules/auto_routine_scheduler.py]
+  Classes: AutoRoutineScheduler
+  Functions: start_module, __init__, load_user_preferences, log, create_daily_routine, handle_user_intent, start
+  Events Emitted: routine_created
+
+[modules/auto_environment_adaptation.py]
+  Classes: 
+  Functions: configure_logging, handle_high_cpu_usage, handle_low_resource_usage, optimize_performance, conserve_energy, start_module
+  Events Emitted: 
+
+[modules/auto_contextual_suggester.py]
+  Classes: 
+  Functions: suggest_based_on_event, start_module
+  Events Emitted: EMIT_SUGGESTION
+
+[modules/auto_habit_analyzer.py]
+  Classes: AutoHabitAnalyzer
+  Functions: start_module, __init__, load_habit_data, save_habit_data, update_habit, log_action, analyze_habits, start_analysis
+  Events Emitted: habit_analysis_complete
+
+[modules/auto_memory_optimizer.py]
+  Classes: AutoMemoryOptimizer
+  Functions: start_module, __init__, check_memory_usage, optimize_memory, log
+  Events Emitted: 
+
+[modules/auto_event_summarizer.py]
+  Classes: AutoEventSummarizer
+  Functions: start_module, __init__, handle_event, log_event_summary, start
+  Events Emitted: 
+
+[modules/auto_system_reboot_manager.py]
+  Classes: AutoSystemRebootManager
+  Functions: start_module, __init__, handle_high_cpu_usage, handle_high_memory_usage, initiate_reboot
+  Events Emitted: system_reboot
+
+[modules/auto_error_resolver.py]
+  Classes: AutoErrorResolver
+  Functions: start_module, __init__, handle_file_not_found, handle_permission_error, resolve_error, on_error_detected
+  Events Emitted: 
+
+[modules/auto_pattern_analyzer.py]
+  Classes: AutoPatternAnalyzer
+  Functions: start_module, __init__, analyze_logs, _extract_patterns, _detect_anomalies, _extract_date
+  Events Emitted: anomaly_detected
+
+[modules/auto_user_profile_manager.py]
+  Classes: UserProfileManager
+  Functions: start_module, __init__, load_profiles, save_profiles, update_profile, handle_user_interaction, log
+  Events Emitted: 
+
+[modules/auto_user_productivity_tracker.py]
+  Classes: AutoUserProductivityTracker
+  Functions: start_module, __init__, log_activity, save_log, handle_user_activity, handle_time_management_feedback, start
+  Events Emitted: 
+
+[modules/auto_user_goal_tracker.py]
+  Classes: AutoUserGoalTracker
+  Functions: start_module, __init__, load_goals, save_goals, log, add_goal, update_progress, evaluate_goal_status, handle_goal_update_event, handle_new_goal_event
+  Events Emitted: goal_status_evaluated
+
+[modules/auto_adaptive_light_manager.py]
+  Classes: AutoAdaptiveLightManager
+  Functions: handle_time_change, handle_user_activity, start_module, __init__, adjust_light_settings, set_brightness_contrast, log_action
+  Events Emitted: 
+
+[modules/interpreter.py]
+  Classes: 
+  Functions: compute_match_score, extract_numbers, match_intent, handle_input, start_interpreter
+  Events Emitted: EMIT_CHAT_REQUEST, EMIT_USER_INTENT, EMIT_USER_INTENT, EMIT_MODULE_REQUEST, EMIT_MODULE_READ, EMIT_MODULE_EDIT, EMIT_SPEAK
+
+[modules/auto_proactive_maintenance.py]
+  Classes: ProactiveMaintenance
+  Functions: start_module, __init__, log, monitor_logs, monitor_resources, apply_fixes, clear_temp_files, perform_maintenance
+  Events Emitted: periodic_maintenance
+
+[modules/auto_troubleshooter.py]
+  Classes: AutoTroubleshooter
+  Functions: start_module, __init__, log_action, analyze_logs, resolve_high_cpu_usage, resolve_high_memory_usage, resolve_high_disk_usage, resolve_module_failure, handle_inspection_digest_ready
+  Events Emitted: 
+
+[modules/auto_module_health_checker.py]
+  Classes: ModuleHealthChecker
+  Functions: start_module, __init__, log, check_module_status, attempt_restart, monitor_modules
+  Events Emitted: module_restart_attempt
+
+[modules/auto_user_feedback_collector.py]
+  Classes: AutoUserFeedbackCollector
+  Functions: start_module, __init__, initialize_feedback_storage, log, handle_feedback, store_feedback, start
+  Events Emitted: 
+
+[modules/auto_event_dependency_optimizer.py]
+  Classes: AutoEventDependencyOptimizer
+  Functions: start_module, __init__, handle_event_registered, handle_event_emitted, optimize_event_dependencies, start
+  Events Emitted: 
+
+[modules/auto_insight_generator.py]
+  Classes: 
+  Functions: log_insight, generate_insights, analyze_logs, on_log_updated, start_module
+  Events Emitted: insight_generated
+
+[modules/auto_command_executor.py]
+  Classes: 
+  Functions: execute_command, start_module
+  Events Emitted: 
+
+[modules/auto_system_load_balancer.py]
+  Classes: 
+  Functions: handle_high_resource_usage, optimize_system_load, start_module
+  Events Emitted: adjust_task_priorities, optimize_memory_usage, optimize_disk_usage
+
+[modules/auto_system_behavior_predictor.py]
+  Classes: SystemBehaviorPredictor
+  Functions: start_module, __init__, load_history, log, analyze_behavior, handle_event, start
+  Events Emitted: system_behavior_predicted
+
+[modules/auto_task_scheduler_enhancer.py]
+  Classes: AutoTaskSchedulerEnhancer
+  Functions: start_module, __init__, log, schedule_task, _check_conflicts_and_resolve, _run_task, handle_schedule_request
+  Events Emitted: 
+
+[modules/auto_response_generator.py]
+  Classes: 
+  Functions: handle_event, start_module
+  Events Emitted: EMIT_SPEAK
+
+[modules/auto_contextual_task_optimizer.py]
+  Classes: ContextualTaskOptimizer
+  Functions: start_module, __init__, handle_high_cpu_usage, handle_low_cpu_usage, optimize_task_priorities, reassess_task_priorities
+  Events Emitted: 
+
+[modules/auto_energy_saver.py]
+  Classes: AutoEnergySaver
+  Functions: start_module, __init__, log, check_system_idle, enter_energy_saving_mode, exit_energy_saving_mode
+  Events Emitted: 
+
+[modules/auto_user_mood_enhancer.py]
+  Classes: AutoUserMoodEnhancer
+  Functions: start_module, __init__, log, analyze_interaction, provide_mood_enhancement, handle_user_interaction
+  Events Emitted: mood_enhancement_suggestion
+
+[modules/auto_contextual_insight_enhancer.py]
+  Classes: 
+  Functions: log_insight, analyze_logs, handle_inspection_digest, start_module
+  Events Emitted: 
+
+[modules/auto_user_behavior_predictor.py]
+  Classes: UserBehaviorPredictor
+  Functions: start_module, __init__, load_user_data, save_user_data, update_user_data, predict_behavior, handle_user_behavior_event, log_predictions
+  Events Emitted: 
+
+[modules/auto_event_forecaster.py]
+  Classes: AutoEventForecaster
+  Functions: start_module, __init__, log_event, analyze_events, forecast_event, handle_event
+  Events Emitted: forecast_event
+
+[modules/auto_resource_monitor.py]
+  Classes: ResourceMonitor
+  Functions: start_module, __init__, log_resource_usage, start_monitoring
+  Events Emitted: resource_monitoring_started, resource_logged
+
+[modules/auto_intent_enhancer.py]
+  Classes: AutoIntentEnhancer
+  Functions: start_module, __init__, _setup_logger, handle_user_intent, handle_user_feedback, _analyze_intent, _refine_intent_model
+  Events Emitted: EMIT_MODULE_STARTED
+
+[modules/visual/visual_web.py]
+  Classes: VisualOrb
+  Functions: run_visual_server, index, send_static, serve_objloader, serve_mainjs, serve_mesh, metrics, latest_image, video_feed, gen_frames, receive_audio, emit_response, get_response, handle_listen, start_visual, __init__, on_visual_token, on_token_registered, on_speak, on_speak_chunk, on_speak_end, on_video_frame, set_speaking_state
+  Events Emitted: audio_chunk, speak_chunk, speak_end, EMIT_INPUT_RECEIVED, video_frame
+

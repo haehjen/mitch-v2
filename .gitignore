@@ -1,0 +1,34 @@
+# Virtual environments
+venv/
+.env
+.env.*
+mitchskeys
+mitchskeys.env
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and runtime data
+*.log
+*.db
+*.sqlite
+*.pid
+*.sock
+
+# Local data/cache/output
+data/
+output/
+*.gz
+*.zip
+*.tar
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/

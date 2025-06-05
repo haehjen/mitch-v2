@@ -19,6 +19,10 @@ def compute_match_score(text, keywords, objects):
 def extract_numbers(text):
     return list(map(int, re.findall(r"\b\d+\b", text)))
 
+def extract_search_query(text):
+    match = re.search(r"(?:search|google|look(?:\s*up)?|find)(?:\s+for)?\s+(.*)", text)
+    return match.group(1).strip() if match else text.strip()
+
 # === INTENT REGISTRY ===
 registered_intents = {
     "launch_drone": {
@@ -62,6 +66,11 @@ registered_intents = {
                 event_bus.emit("EMIT_MODULE_READ", {"filename": f"core/{match.group(1)}.py" if match.group(1) in {"event_bus", "dispatcher", "peterjones"} else f"modules/{match.group(1)}.py"})
             ) if (match := re.match(r"read module (\w+)", text)) else None
         )(text)
+    },
+    "web_search": {
+        "keywords": ["search", "google", "look", "find"],
+        "objects": ["web", "internet"],
+        "handler": lambda text: event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
     },
 }
 

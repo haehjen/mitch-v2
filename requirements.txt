@@ -1,0 +1,15 @@
+openai
+flask
+flask_socketio
+sounddevice
+soundfile
+pyaudio
+psutil
+requests
+python-dotenv
+speechrecognition
+numpy
+opencv-python
+piper
+# Optional packages
+# ollama

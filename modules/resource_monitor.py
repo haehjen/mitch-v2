@@ -3,8 +3,9 @@ import json
 import datetime
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
 
-LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'resource_monitor.log')
+logger = get_logger("resource_monitor")
 
 class ResourceMonitor:
     def __init__(self, cpu_threshold=80.0, memory_threshold=80.0, disk_threshold=90.0):
@@ -14,7 +15,6 @@ class ResourceMonitor:
 
     def check_resources(self, event_data=None):
         """Check current system resource usage and log the status."""
-        # Simulating resource usage check
         cpu_usage = self._get_cpu_usage()
         memory_usage = self._get_memory_usage()
         disk_usage = self._get_disk_usage()
@@ -26,42 +26,35 @@ class ResourceMonitor:
             'disk_usage': disk_usage
         }
 
-        self._write_log(resource_data)
+        logger.info(f"Resource usage: CPU={cpu_usage}%, Memory={memory_usage}%, Disk={disk_usage}%")
         self._emit_alerts(cpu_usage, memory_usage, disk_usage)
 
     def _get_cpu_usage(self):
-        """Simulate retrieving CPU usage."""
-        # This is a placeholder for actual CPU usage retrieval logic.
-        return 50.0
+        return 50.0  # Placeholder for actual CPU usage
 
     def _get_memory_usage(self):
-        """Simulate retrieving Memory usage."""
-        # This is a placeholder for actual Memory usage retrieval logic.
-        return 70.0
+        return 70.0  # Placeholder for actual memory usage
 
     def _get_disk_usage(self):
-        """Simulate retrieving Disk usage."""
-        # This is a placeholder for actual Disk usage retrieval logic.
-        return 85.0
-
-    def _write_log(self, data):
-        """Write the resource data to the log file."""
-        with open(LOG_FILE_PATH, 'a') as log_file:
-            log_file.write(json.dumps(data) + '\n')
+        return 85.0  # Placeholder for actual disk usage
 
     def _emit_alerts(self, cpu_usage, memory_usage, disk_usage):
         """Emit alerts if resource usage exceeds thresholds."""
         if cpu_usage > self.cpu_threshold:
-            event_bus.emit('high_cpu_usage', {'cpu_usage': cpu_usage})
-        if memory_usage > self.memory_threshold:
-            event_bus.emit('high_memory_usage', {'memory_usage': memory_usage})
-        if disk_usage > self.disk_threshold:
-            event_bus.emit('high_disk_usage', {'disk_usage': disk_usage})
+            logger.warning(f"High CPU usage detected: {cpu_usage}%")
+            event_bus.emit('high_cpu_usage', {'cpu': cpu_usage, 'memory': memory_usage, 'disk': disk_usage})
 
+        if memory_usage > self.memory_threshold:
+            logger.warning(f"High Memory usage detected: {memory_usage}%")
+            event_bus.emit('high_memory_usage', {'cpu': cpu_usage, 'memory': memory_usage, 'disk': disk_usage})
+
+        if disk_usage > self.disk_threshold:
+            logger.warning(f"High Disk usage detected: {disk_usage}%")
+            event_bus.emit('high_disk_usage', {'cpu': cpu_usage, 'memory': memory_usage, 'disk': disk_usage})
 
 def start_module(event_bus):
     resource_monitor = ResourceMonitor()
     event_bus.subscribe('check_resources', resource_monitor.check_resources)
-    
-    print('Resource Monitor module started and listening for resource check events.')
+
+    logger.info("Resource Monitor module started and listening for resource check events.")
     resource_monitor.check_resources()

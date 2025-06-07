@@ -5,15 +5,17 @@ import re
 from openai import OpenAI
 from pathlib import Path
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 from modules import memory, persona
 
 # Optional: Ollama fallback
 try:
-    import ollama # type: ignore
+    import ollama  # type: ignore
     HAS_OLLAMA = True
 except ImportError:
     HAS_OLLAMA = False
 
+logger = get_logger("gptv2")
 client = OpenAI()
 
 SYSTEM_PROMPT = persona.build_system_prompt()
@@ -45,7 +47,7 @@ def maybe_emit_module_create(response_text):
     if code_match and file_match:
         filename = f"modules/{file_match.group(1)}"
         code = code_match.group(1).strip()
-        print(f"[GPTv2] Detected module creation: {filename}")
+        logger.info(f"Detected module creation: {filename}")
         event_bus.emit("EMIT_MODULE_CREATE", {
             "filename": filename,
             "code": code
@@ -57,7 +59,7 @@ def handle_chat_request(data):
     token = generate_token()
     active_token = token
 
-    print(f"[GPTv2] New chat request: {prompt} (token: {token})")
+    logger.info(f"New chat request: {prompt} (token: {token})")
     emit_token_registered(token)
     memory.save_memory("user", prompt)
 
@@ -65,7 +67,7 @@ def handle_chat_request(data):
         thread = threading.Thread(target=stream_from_openai, args=(prompt, token))
         thread.start()
     except Exception as e:
-        print(f"[GPTv2] OpenAI thread start failed: {e}")
+        logger.error(f"OpenAI thread start failed: {e}")
         fallback_or_fail(prompt, token)
 
 def stream_from_openai(prompt, token):
@@ -99,7 +101,7 @@ def stream_from_openai(prompt, token):
         maybe_emit_module_create(response_buffer)
 
     except Exception as e:
-        print(f"[GPTv2] OpenAI streaming error: {e}")
+        logger.error(f"OpenAI streaming error: {e}")
         fallback_or_fail(prompt, token)
 
 def handle_module_request(data):
@@ -107,7 +109,7 @@ def handle_module_request(data):
     token = generate_token()
     emit_token_registered(token)
 
-    print(f"[GPTv2] Module request: {prompt} (token: {token})")
+    logger.info(f"Module request: {prompt} (token: {token})")
 
     engineer_prompt = (
         "You are a senior Python software engineer. "
@@ -117,9 +119,7 @@ def handle_module_request(data):
         f"Request:\n{prompt}"
     )
 
-    messages = [
-        {"role": "system", "content": engineer_prompt},
-    ]
+    messages = [{"role": "system", "content": engineer_prompt}]
 
     try:
         response = client.chat.completions.create(
@@ -132,18 +132,19 @@ def handle_module_request(data):
         maybe_emit_module_create(full_response)
         emit_end(token)
     except Exception as e:
-        print(f"[GPTv2] Module generation failed: {e}")
+        logger.error(f"Module generation failed: {e}")
         fallback_or_fail(prompt, token)
 
 def fallback_or_fail(prompt, token):
     if HAS_OLLAMA:
         fallback_to_ollama(prompt, token)
     else:
+        logger.warning("Fallback not available. Emitting error message.")
         emit_chunk("Something went wrong.", token)
         emit_end(token)
 
 def fallback_to_ollama(prompt, token):
-    print(f"[GPTv2] Falling back to Ollama: {OLLAMA_MODEL}")
+    logger.info(f"Falling back to Ollama: {OLLAMA_MODEL}")
     try:
         response = ollama.chat(model=OLLAMA_MODEL, messages=[{"role": "user", "content": prompt}])
         for part in response['message']['content'].split():
@@ -151,7 +152,7 @@ def fallback_to_ollama(prompt, token):
         emit_end(token)
         memory.save_memory("assistant", response['message']['content'])
     except Exception as e:
-        print(f"[GPTv2] Ollama failed: {e}")
+        logger.error(f"Ollama failed: {e}")
         emit_chunk("Fallback failed too. Sorry.", token)
         emit_end(token)
 
@@ -206,12 +207,11 @@ def handle_tool_result(data):
         memory.save_memory("assistant", response_buffer)
         maybe_emit_module_create(response_buffer)
     except Exception as e:
-        print(f"[GPTv2] Tool result response failed: {e}")
+        logger.error(f"Tool result response failed: {e}")
         emit_chunk("Something went wrong reflecting on the tool result.", token)
         emit_end(token)
 
 # Register handlers
-
 event_bus.subscribe("EMIT_CHAT_REQUEST", on_chat_request)
 event_bus.subscribe("EMIT_MODULE_REQUEST", on_module_request)
 event_bus.subscribe("EMIT_TOOL_RESULT", handle_tool_result)

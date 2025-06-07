@@ -1,18 +1,16 @@
-# modules/proxmon.py
-
 import time
-import logging
-import requests
-import urllib3
 import json
 import os
+import requests
+import urllib3
 from threading import Thread
 from dotenv import load_dotenv
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-logger = logging.getLogger("ProxMon")
+logger = get_logger("proxmon")
 
 # Load secrets
 load_dotenv("mitchskeys")
@@ -43,13 +41,16 @@ class ProxMonModule:
             self.csrf_token = data['data']['CSRFPreventionToken']
             self.session.cookies.set('PVEAuthCookie', self.ticket)
             self.session.headers.update({'CSRFPreventionToken': self.csrf_token})
+            logger.debug("Authenticated with Proxmox.")
         else:
+            logger.error(f"Proxmox authentication failed: {response.text}")
             raise Exception("Proxmox authentication failed.")
 
     def get_nodes(self):
         response = self.session.get(f"{self.proxmox_url}/nodes")
         if response.status_code == 200:
             nodes = [node['node'] for node in response.json().get('data', [])]
+            logger.debug(f"Retrieved node list: {nodes}")
             return nodes
         else:
             logger.error(f"Failed to fetch node list: {response.text}")
@@ -84,6 +85,7 @@ class ProxMonModule:
             f.write(json.dumps(record) + "\n")
 
     def run(self):
+        logger.info("ProxMon module starting polling loop.")
         while self.running:
             try:
                 self.authenticate()
@@ -96,6 +98,7 @@ class ProxMonModule:
                     if node_status:
                         node_record = {"timestamp": timestamp, "node": node, "status": node_status}
                         self.log_jsonl(self.node_log_path, node_record)
+                        logger.debug(f"Logged node status for {node}")
 
                     vms = self.fetch_vm_list(node)
                     for vm in vms:
@@ -111,6 +114,7 @@ class ProxMonModule:
                                     "status": vm_status
                                 }
                                 self.log_jsonl(self.vm_log_path, vm_record)
+                                logger.debug(f"Logged VM {vmid} status on {node}")
 
             except Exception as e:
                 logger.error(f"Error during ProxMon polling cycle: {e}")
@@ -127,8 +131,10 @@ class ProxMonModule:
             logger.info(f"Sending restart command for VM {vmid}")
             response = self.session.post(f"{self.proxmox_url}/nodes/mcgregor/qemu/{vmid}/status/reset")
             if response.status_code == 200:
+                logger.info(f"VM {vmid} restart initiated.")
                 return f"VM {vmid} restart initiated successfully."
             else:
+                logger.error(f"Failed to restart VM {vmid}: {response.text}")
                 return f"Failed to restart VM {vmid}: {response.text}"
         except Exception as e:
             logger.error(f"Error restarting VM {vmid}: {e}")
@@ -145,8 +151,8 @@ class ProxMonModule:
                     if vm.get('vmid') == vmid:
                         return self.fetch_vm_status(node, vmid)
 
+            logger.warning(f"VM {vmid} not found.")
             return f"VM {vmid} not found."
-
         except Exception as e:
             logger.error(f"Error fetching VM status: {e}")
             return str(e)

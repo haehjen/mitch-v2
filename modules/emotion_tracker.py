@@ -3,8 +3,9 @@ import json
 import datetime
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
 
-LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'emotion_tracker.log')
+logger = get_logger("emotion_tracker")
 
 class EmotionTracker:
     def __init__(self):
@@ -13,17 +14,14 @@ class EmotionTracker:
     def log_emotion_state(self, event_data):
         """Log the emotional state from event_data."""
         timestamp = datetime.datetime.now().isoformat()
+        emotion_state = event_data.get('emotion_state')
         emotion_data = {
             'timestamp': timestamp,
-            'emotion_state': event_data.get('emotion_state')
+            'emotion_state': emotion_state
         }
         self.emotion_states.append(emotion_data)
-        self._write_log(emotion_data)
 
-    def _write_log(self, data):
-        """Write the emotion data to the log file."""
-        with open(LOG_FILE_PATH, 'a') as log_file:
-            log_file.write(json.dumps(data) + '\n')
+        logger.info(json.dumps(emotion_data))  # Store full emotion entry
 
     def summarize_emotions(self):
         """Summarize the logged emotions."""
@@ -44,4 +42,4 @@ def start_module(event_bus):
     emotion_tracker = EmotionTracker()
     event_bus.subscribe('EMIT_EMOTION_STATE', emotion_tracker.handle_emotion_event)
     
-    print('Emotion Tracker module started and listening for emotion state events.')
+    logger.info("Emotion Tracker module started and listening for emotion state events.")

@@ -1,6 +1,8 @@
 import logging
 import os
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
+
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 
@@ -8,15 +10,31 @@ from core.config import MITCH_ROOT
 MAIN_LOG_PATH = os.path.join(MITCH_ROOT, "data", "mitch.log")
 os.makedirs(os.path.dirname(MAIN_LOG_PATH), exist_ok=True)
 
-# === Primary Logger Setup (mitch.log) ===
-logger = logging.getLogger("MITCH")
-logger.setLevel(logging.DEBUG)
+# === Formatter ===
+LOG_FORMAT = '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
+LOG_LEVEL = logging.DEBUG
 
-handler = logging.FileHandler(MAIN_LOG_PATH)
-formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-handler.setFormatter(formatter)
-if not logger.hasHandlers():
-    logger.addHandler(handler)
+# === Shared Logger Setup ===
+_loggers = {}
+
+def get_logger(name="MITCH"):
+    if name in _loggers:
+        return _loggers[name]
+
+    logger = logging.getLogger(name)
+    logger.setLevel(LOG_LEVEL)
+
+    if not logger.hasHandlers():
+        handler = RotatingFileHandler(MAIN_LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=3)
+        formatter = logging.Formatter(LOG_FORMAT)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    _loggers[name] = logger
+    return logger
+
+# === Default Core Logger ===
+logger = get_logger("MITCH")
 
 # === Core Event Logger ===
 NOISY_EVENTS = {"EMIT_AUDIO_CAPTURED"}

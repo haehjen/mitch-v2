@@ -4,12 +4,15 @@ import openai
 import os
 from dotenv import load_dotenv
 from modules.vision import VisionModule
+from core.peterjones import get_logger
 
 # Load secrets
 load_dotenv(dotenv_path="mitchskeys")
 
 # Initialize OpenAI client
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+logger = get_logger("vision_ai")
 
 # Public image URL served by Flask + NGINX
 CAMERA_URL = "https://mitch.andymitchell.online/latest.jpg"
@@ -22,6 +25,7 @@ class VisionAI:
         try:
             self.vision_module.capture_image()
         except Exception as e:
+            logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"
 
         response = client.chat.completions.create(
@@ -45,6 +49,7 @@ class VisionAI:
         try:
             self.vision_module.capture_image()
         except Exception as e:
+            logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"
 
         response = client.chat.completions.create(

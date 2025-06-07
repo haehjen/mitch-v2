@@ -3,16 +3,16 @@ import datetime
 import os
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
+
+logger = get_logger("web_search")
 
 LOG_PATH = os.path.join(MITCH_ROOT, 'logs', 'web_search.log')
 SEARCH_API = 'https://api.duckduckgo.com/'
 
 
 def log(message: str) -> None:
-    ts = datetime.datetime.utcnow().isoformat()
-    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-    with open(LOG_PATH, 'a', encoding='utf-8') as f:
-        f.write(f"{ts} {message}\n")
+    logger.info(message)
 
 
 def fetch_results(query: str) -> str:

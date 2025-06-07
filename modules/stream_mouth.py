@@ -12,6 +12,9 @@ from collections import defaultdict
 from core.event_bus import EventBus
 from piper import PiperVoice
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
+
+logger = get_logger("stream_mouth")
 
 # === CONFIG ===
 MODEL_PATH = Path(MITCH_ROOT) / "modules/voice/en_GB-northern_english_male-medium.onnx"
@@ -47,7 +50,7 @@ class StreamMouth:
 
             if not os.path.exists(wav_path):
                 if DEBUG_SPEAKER:
-                    print(f"[StreamMouth] File not found: {wav_path}")
+                    logger.debug(f"File not found: {wav_path}")
                 continue
 
             try:
@@ -57,7 +60,7 @@ class StreamMouth:
                     self._play_with_pyaudio(wav_path)
             except Exception as e:
                 if DEBUG_SPEAKER:
-                    print(f"[StreamMouth] Playback error: {e}")
+                    logger.debug(f"Playback error: {e}")
             finally:
                 self.is_playing.clear()
                 EventBus.get_instance().emit("UNMUTE_EARS", {})
@@ -65,7 +68,7 @@ class StreamMouth:
                     os.unlink(wav_path)
                 except Exception as cleanup_error:
                     if DEBUG_SPEAKER:
-                        print(f"[StreamMouth] Failed to delete temp file: {cleanup_error}")
+                        logger.debug(f"Failed to delete temp file: {cleanup_error}")
 
     def _play_with_pyaudio(self, wav_path):
         try:
@@ -75,7 +78,7 @@ class StreamMouth:
 
             if samplerate != 44100:
                 if DEBUG_SPEAKER:
-                    print(f"[StreamMouth] Resampling from {samplerate} Hz to 44100 Hz")
+                    logger.debug(f"Resampling from {samplerate} Hz to 44100 Hz")
                 resampled = np.interp(
                     np.linspace(0, len(audio_array), int(len(audio_array) * 44100 / samplerate), endpoint=False),
                     np.arange(len(audio_array)),
@@ -93,11 +96,11 @@ class StreamMouth:
             p.terminate()
 
             if DEBUG_SPEAKER:
-                print(f"[StreamMouth] Finished playing: {wav_path}")
+                logger.debug(f"Finished playing: {wav_path}")
 
         except Exception as e:
             if DEBUG_SPEAKER:
-                print(f"[StreamMouth] PyAudio error: {e}")
+                logger.debug(f"PyAudio error: {e}")
 
     def synthesize_and_queue(self, text):
         try:
@@ -111,11 +114,11 @@ class StreamMouth:
                 self.voice.synthesize(text, wav_file)
 
             if DEBUG_SPEAKER:
-                print(f"[StreamMouth] Synthesized and queued audio: {wav_path}")
+                logger.debug(f"Synthesized and queued audio: {wav_path}")
             self.audio_queue.put(wav_path)
         except Exception as e:
             if DEBUG_SPEAKER:
-                print(f"[StreamMouth] Synthesis error: {e}")
+                logger.debug(f"Synthesis error: {e}")
 
     def speak_chunk(self, data):
         text = data.get("chunk", "")
@@ -128,7 +131,7 @@ class StreamMouth:
             current = self.buffered_texts[token]
             if self._should_emit(current):
                 if DEBUG_SPEAKER:
-                    print(f"[StreamMouth] Speaking buffered chunk (token={token}): {current.strip()}")
+                    logger.debug(f"Speaking buffered chunk (token={token}): {current.strip()}")
                 self.synthesize_and_queue(current.strip())
                 self.buffered_texts[token] = ""
 
@@ -137,18 +140,18 @@ class StreamMouth:
         token = data.get("token")
         if not text or not token:
             if DEBUG_SPEAKER:
-                print("[StreamMouth] Missing text or token; ignoring EMIT_SPEAK")
+                logger.debug("Missing text or token; ignoring EMIT_SPEAK")
             return
 
         with self.lock:
             if token == self.last_token_spoken:
                 if DEBUG_SPEAKER:
-                    print(f"[StreamMouth] Duplicate token {token} - ignoring.")
+                    logger.debug(f"Duplicate token {token} - ignoring.")
                 return
             self.last_token_spoken = token
 
         if DEBUG_SPEAKER:
-            print(f"[StreamMouth] Speaking full (token={token}): {text}")
+            logger.debug(f"Speaking full (token={token}): {text}")
         self.synthesize_and_queue(text)
         EventBus.get_instance().emit("EMIT_SPEAK_END", {"token": token, "full_text": text})
 
@@ -169,7 +172,7 @@ speaker = StreamMouth()
 
 def start_stream_mouth():
     if DEBUG_SPEAKER:
-        print("[StreamMouth] Unified streaming TTS module online.")
+        logger.debug("Unified streaming TTS module online.")
     bus = EventBus.get_instance()
     bus.subscribe("EMIT_SPEAK", speaker.speak_full)
     bus.subscribe("EMIT_SPEAK_CHUNK", speaker.speak_chunk)

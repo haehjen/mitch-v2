@@ -4,6 +4,9 @@ import datetime
 import threading
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
+
+logger = get_logger("task_scheduler")
 
 LOG_FILE_PATH = os.path.join(MITCH_ROOT, 'logs', 'task_scheduler.log')
 
@@ -36,10 +39,7 @@ class TaskScheduler:
         self._start_task(task)
 
     def _log(self, message):
-        timestamp = datetime.datetime.now().isoformat()
-        log_entry = f"{timestamp} - {message}\n"
-        with open(LOG_FILE_PATH, 'a') as log_file:
-            log_file.write(log_entry)
+        logger.info(message)
 
     def _start_task(self, task):
         def execute_task():
@@ -66,4 +66,4 @@ class TaskScheduler:
 def start_module(event_bus):
     task_scheduler = TaskScheduler()
     event_bus.subscribe('SCHEDULE_TASK', task_scheduler.handle_schedule_event)
-    print('Task Scheduler module started and listening for task scheduling events.')
+    logger.info('Task Scheduler module started and listening for task scheduling events.')

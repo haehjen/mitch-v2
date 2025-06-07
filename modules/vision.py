@@ -3,6 +3,9 @@ import cv2
 import os
 import subprocess
 import time
+from core.peterjones import get_logger
+
+logger = get_logger("vision")
 
 class VisionModule:
     def __init__(self, camera_index=0):
@@ -49,9 +52,9 @@ class VisionModule:
                 "--set-ctrl=backlight_compensation=200"
             ], check=True)
 
-            print("[Vision] Exposure and image parameters tuned via v4l2-ctl.")
+            logger.info("Exposure and image parameters tuned via v4l2-ctl.")
         except Exception as e:
-            print(f"[Vision] Failed to set manual exposure: {e}")
+            logger.error(f"Failed to set manual exposure: {e}")
 
     def capture_image(self, save_path=None):
         if save_path is None:
@@ -77,5 +80,5 @@ class VisionModule:
         if not cv2.imwrite(save_path, frame):
             raise RuntimeError("Failed to save image.")
 
-        print(f"[Vision] Image captured and saved to {save_path}")
+        logger.info(f"Image captured and saved to {save_path}")
         return save_path

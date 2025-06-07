@@ -1,9 +1,11 @@
 import re
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 from difflib import SequenceMatcher
 
-_last_input_text = None  # Prevent repeated GPT calls
+logger = get_logger("interpreter")
 
+_last_input_text = None  # Prevent repeated GPT calls
 THRESHOLD = 0.65  # Match confidence threshold
 
 def compute_match_score(text, keywords, objects):
@@ -89,11 +91,11 @@ def handle_input(data):
     text = data.get("text", "").lower().strip()
 
     if data.get("source") == "assistant":
-        print("[Interpreter] Ignoring assistant-originated input")
+        logger.debug("Ignoring assistant-originated input")
         return
 
     if text == _last_input_text:
-        print(f"[Interpreter] Ignoring duplicate prompt: '{text}'")
+        logger.debug(f"Ignoring duplicate prompt: '{text}'")
         return
 
     _last_input_text = text
@@ -101,21 +103,22 @@ def handle_input(data):
     # === INTENT MATCHING ===
     intent = match_intent(text)
     if intent:
+        logger.info(f"Matched intent '{intent}' for input: '{text}'")
         handler = registered_intents[intent]["handler"]
         handler(text)
         return
 
     # === FALLBACK: detect code/module generation manually ===
     if re.search(r"\b(create|make|write|generate)\b.*\b(module|script|file|tool)\b", text):
-        print("[Interpreter] Fallback matched: triggering create_module intent")
+        logger.info("Fallback matched: triggering create_module intent")
         registered_intents["create_module"]["handler"](text)
         return
 
     # === ESCALATE TO GPT ===
     if "?" in text or len(text.split()) < 4:
-        print(f"[Interpreter] Escalating to GPT for ambiguous input: '{text}'")
+        logger.debug(f"Escalating to GPT for ambiguous input: '{text}'")
     event_bus.emit("EMIT_CHAT_REQUEST", {"prompt": text})
 
 def start_interpreter():
-    print("[Interpreter] Online and listening for input events...")
+    logger.info("Interpreter online and listening for input events...")
     event_bus.subscribe("EMIT_INPUT_RECEIVED", handle_input)

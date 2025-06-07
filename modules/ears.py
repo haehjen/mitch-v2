@@ -5,8 +5,10 @@ import time
 import tempfile
 import os
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
+logger = get_logger("ears")
 
 is_speaking = False  # Flag to pause listening while speaking
 WEBCAM_MIC_INDEX = 1  # Based on sounddevice index scan
@@ -20,7 +22,7 @@ def pause_microphone_briefly(_):
     global is_speaking
     is_speaking = True
     if DEBUG:
-        print("[Ears] Detected EMIT_INPUT_RECEIVED, pausing mic for 3s to test TTS contention...")
+        logger.debug("Detected EMIT_INPUT_RECEIVED, pausing mic for 3s to test TTS contention...")
     time.sleep(3)
     is_speaking = False
 
@@ -36,7 +38,7 @@ def continuous_microphone_listener():
 
         try:
             if DEBUG:
-                print("🎙️ [Ears] Listening continuously from webcam mic...")
+                logger.debug("Listening continuously from webcam mic...")
 
             audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype='int16', device=WEBCAM_MIC_INDEX)
             sd.wait()
@@ -48,13 +50,12 @@ def continuous_microphone_listener():
                 os.fsync(temp_file.fileno())  # Ensure file is fully written to disk
 
             if DEBUG:
-                print(f"[Ears] Captured loop sample to {wav_path}")
+                logger.debug(f"Captured loop sample to {wav_path}")
 
             event_bus.emit("EMIT_AUDIO_CAPTURED", {"path": wav_path})
 
         except Exception as e:
-            if DEBUG:
-                print(f"[Ears] Loop mic capture failed: {e}")
+            logger.error(f"Loop mic capture failed: {e}")
             time.sleep(1)
 
 def listen_keyboard():
@@ -74,7 +75,7 @@ def start_microphone():
 
 def start_ears():
     if DEBUG:
-        print("[Ears] start_ears() initializing listener threads...")
+        logger.debug("start_ears() initializing listener threads...")
     event_bus.subscribe("EMIT_SPEAK_END", on_speak_end)
     event_bus.subscribe("EMIT_INPUT_RECEIVED", pause_microphone_briefly)
     start_microphone()
@@ -82,5 +83,4 @@ def start_ears():
 
 def shutdown():
     stop_event.set()
-    if DEBUG:
-        print("[Ears] Shutdown signal received. Terminating listener loops.")
+    logger.info("Shutdown signal received. Terminating listener loops.")

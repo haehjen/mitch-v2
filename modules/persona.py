@@ -2,6 +2,9 @@ import json
 import hashlib
 from pathlib import Path
 from modules import memory
+from core.peterjones import get_logger
+
+logger = get_logger("persona")
 
 PERSONA_FILE = Path("data/persona.json")
 EMOTION_FILE = Path("data/emotion_state.json")
@@ -9,30 +12,39 @@ EMOTION_FILE = Path("data/emotion_state.json")
 # === Bedrock Hash (LOCKED) ===
 BEDROCK_HASH = "9744e1c7add3a63e7b95391ca00914b645e81314bd3b59f0ea970f2a7a10d0d0"
 
-
 def hash_persona():
     with open(PERSONA_FILE, "r", encoding="utf-8") as f:
         return hashlib.sha256(f.read().encode()).hexdigest()
 
-
 def verify_bedrock():
     current = hash_persona()
     if current != BEDROCK_HASH:
+        logger.error("Persona integrity check failed - persona.json has been modified.")
         raise ValueError("[Echo] Persona integrity check failed - persona.json has been modified.")
-
+    logger.debug("Persona integrity verified.")
 
 def load_persona():
     verify_bedrock()
-    with open(PERSONA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
+    try:
+        with open(PERSONA_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            logger.debug(f"Loaded persona: {data.get('name', '[unknown]')}")
+            return data
+    except Exception as e:
+        logger.error(f"Failed to load persona.json: {e}")
+        raise
 
 def load_emotion_state():
     if EMOTION_FILE.exists():
-        with open(EMOTION_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(EMOTION_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                logger.debug(f"Loaded emotion state: {data}")
+                return data
+        except Exception as e:
+            logger.warning(f"Failed to load emotion_state.json: {e}")
+            return {}
     return {}
-
 
 def build_system_prompt():
     persona = load_persona()
@@ -60,6 +72,8 @@ def build_system_prompt():
 
     memory_text = "\n".join(f"{entry['role']}: {entry['content']}" for entry in memory_log)
     knowledge_text = "\n".join(f"- {fact}" for fact in knowledge)
+
+    logger.debug(f"Built system prompt for persona '{persona.get('name')}' with traits [{traits}]")
 
     return (
         f"You are {persona['name']}, a memory-enabled, system-embedded intelligence.\n"

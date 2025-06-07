@@ -3,6 +3,9 @@ from pathlib import Path
 from datetime import datetime
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
+from core.peterjones import get_logger
+
+logger = get_logger("log_digester")
 
 LOG_DIR = Path(MITCH_ROOT) / "logs"
 DIGEST_FILE = LOG_DIR / "inspection_digest.json"
@@ -26,6 +29,7 @@ def extract_digest():
                 "summary": summarize_log(content)
             }
         except Exception as e:
+            logger.warning(f"Failed to read {log.name}: {e}")
             digest[log.name] = {
                 "timestamp": datetime.now().isoformat(),
                 "summary": f"[Error reading log: {e}]"
@@ -38,8 +42,8 @@ def save_digest(digest):
     DIGEST_FILE.write_text(json.dumps(digest, indent=2), encoding="utf-8")
 
 def start_module(event_bus):
-    print("[LogDigester] Running inspection digest pass...")
+    logger.info("Running inspection digest pass...")
     digest = extract_digest()
     save_digest(digest)
-    print(f"[LogDigester] Saved digest to {DIGEST_FILE}")
+    logger.info(f"Saved digest to {DIGEST_FILE}")
     event_bus.emit("inspection_digest_ready", {"path": str(DIGEST_FILE)})

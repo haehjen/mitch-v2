@@ -2,8 +2,9 @@ import speech_recognition as sr
 import time
 import os
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 
-DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
+logger = get_logger("transcriber")
 
 recognizer = sr.Recognizer()
 recognizer.energy_threshold = 300
@@ -12,19 +13,28 @@ recognizer.dynamic_energy_threshold = True
 recent_files = set()
 recent_phrases = {}
 mute = False
-running = True  # ✅ Used for clean shutdown
+running = True
+
+MAX_RECENT = 100  # Maximum tracked recent files/phrases
 
 def handle_mute(_):
     global mute
     mute = True
-    if DEBUG:
-        print("[Transcriber] Muted.")
+    logger.debug("Muted.")
 
 def handle_unmute(_):
     global mute
     mute = False
-    if DEBUG:
-        print("[Transcriber] Unmuted.")
+    logger.debug("Unmuted.")
+
+def _trim_recent():
+    global recent_phrases, recent_files
+    now = time.time()
+    for phrase in list(recent_phrases.keys()):
+        if now - recent_phrases[phrase] > 60:
+            del recent_phrases[phrase]
+    while len(recent_files) > MAX_RECENT:
+        recent_files.pop()
 
 def handle_audio_captured(data):
     global recent_files, recent_phrases, mute, running
@@ -33,34 +43,30 @@ def handle_audio_captured(data):
 
     path = data.get("path")
     if not path:
-        if DEBUG:
-            print("[Transcriber] No audio path provided")
+        logger.warning("No audio path provided")
         return
 
     if mute:
-        if DEBUG:
-            print("[Transcriber] Ignored due to mute state.")
+        logger.debug("Ignored due to mute state.")
         return
 
     if path in recent_files:
-        if DEBUG:
-            print("[Transcriber] Ignoring duplicate file:", path)
+        logger.debug(f"Ignoring duplicate file: {path}")
         return
 
     if not os.path.exists(path):
-        if DEBUG:
-            print(f"[Transcriber] File missing: {path}")
+        logger.warning(f"File missing: {path}")
         return
+
     if os.path.getsize(path) < 1024:
-        if DEBUG:
-            print(f"[Transcriber] File too small to process: {path}")
+        logger.debug(f"File too small to process: {path}")
         return
 
     time.sleep(0.1)
     recent_files.add(path)
+    _trim_recent()
 
-    if DEBUG:
-        print(f"[Transcriber] Processing audio from {path}")
+    logger.debug(f"Processing audio from {path}")
 
     try:
         with sr.AudioFile(path) as source:
@@ -72,29 +78,25 @@ def handle_audio_captured(data):
             last_time = recent_phrases.get(text_lower, 0)
 
             if now - last_time < 2:
-                if DEBUG:
-                    print(f"[Transcriber] Ignoring duplicate phrase: {text}")
+                logger.debug(f"Ignoring duplicate phrase: {text}")
                 return
 
             recent_phrases[text_lower] = now
-            if DEBUG:
-                print(f"[Transcriber] Recognized: {text}")
+            logger.info(f"Recognized: {text}")
             event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
 
     except sr.UnknownValueError:
-        if DEBUG:
-            print("[Transcriber] Could not understand the audio")
+        logger.debug("Could not understand the audio")
+        event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": "unintelligible"})
     except sr.RequestError as e:
-        if DEBUG:
-            print(f"[Transcriber] Speech recognition service error: {e}")
+        logger.warning(f"Speech recognition service error: {e}")
+        event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
     except Exception as e:
-        if DEBUG:
-            print(f"[Transcriber] Failed to process audio: {e}")
+        logger.error(f"Failed to process audio: {e}")
+        event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
 
 def start_transcriber():
-    if DEBUG:
-        print("[Transcriber] Online and listening for EMIT_AUDIO_CAPTURED...")
-
+    logger.info("Transcriber online and listening for EMIT_AUDIO_CAPTURED...")
     event_bus.subscribe("EMIT_AUDIO_CAPTURED", handle_audio_captured)
     event_bus.subscribe("MUTE_EARS", handle_mute)
     event_bus.subscribe("UNMUTE_EARS", handle_unmute)
@@ -102,5 +104,4 @@ def start_transcriber():
 def shutdown():
     global running
     running = False
-    if DEBUG:
-        print("[Transcriber] Shutdown initiated.")
+    logger.info("Shutdown initiated.")

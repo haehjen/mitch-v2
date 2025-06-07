@@ -1,8 +1,8 @@
 # modules/folder_access.py
 import os
-import logging
+from core.peterjones import get_logger
 
-logger = logging.getLogger("FolderAccess")
+logger = get_logger("folder_access")
 
 class FolderAccessModule:
     def __init__(self, event_bus=None):

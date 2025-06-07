@@ -5,6 +5,9 @@ import threading
 import os
 import cv2
 import psutil
+from core.peterjones import get_logger
+
+logger = get_logger("visual_web")
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
 
@@ -36,7 +39,7 @@ class VisualOrb:
     def on_visual_token(self, data):
         self.active_token = data.get("token")
         if DEBUG:
-            print(f"[VisualOrb] Token set to: {self.active_token}")
+            logger.debug(f"Token set to: {self.active_token}")
 
     def on_token_registered(self, data):
         global last_token, pending_end_token
@@ -44,10 +47,10 @@ class VisualOrb:
         last_token = token
         self.active_token = token
         if DEBUG:
-            print(f"[VisualOrb] Token registered: {token}")
+            logger.debug(f"Token registered: {token}")
         if pending_end_token and pending_end_token == last_token:
             if DEBUG:
-                print("[VisualOrb] Re-processing previously stale EMIT_SPEAK_END")
+                logger.debug("Re-processing previously stale EMIT_SPEAK_END")
             self.set_speaking_state(False)
             pending_end_token = None
 
@@ -56,11 +59,11 @@ class VisualOrb:
         token = data.get("token") if data else None
         source = data.get("source") if data else None
         if DEBUG:
-            print(f"[VisualOrb] EMIT_SPEAK received (source: {source or 'default'}, token: {token})")
+            logger.debug(f"EMIT_SPEAK received (source: {source or 'default'}, token: {token})")
 
         if source in ("status", "internal"):
             if DEBUG:
-                print(f"[VisualOrb] Ignoring EMIT_SPEAK from source: {source}")
+                logger.debug(f"Ignoring EMIT_SPEAK from source: {source}")
             return
 
         if speak_end_timer:
@@ -77,7 +80,7 @@ class VisualOrb:
         token = data.get("token")
         if token != self.active_token:
             if DEBUG:
-                print(f"[VisualOrb] Ignoring EMIT_SPEAK_CHUNK - stale token {token} != {self.active_token}")
+                logger.debug(f"Ignoring EMIT_SPEAK_CHUNK - stale token {token} != {self.active_token}")
             return
 
         if token not in self.chunk_buffer:
@@ -90,11 +93,11 @@ class VisualOrb:
         global speak_timer, speak_end_timer, last_token, pending_end_token
         token = data.get("token")
         if DEBUG:
-            print(f"[VisualOrb] EMIT_SPEAK_END received (token: {token})")
+            logger.debug(f"EMIT_SPEAK_END received (token: {token})")
 
         if token != last_token:
             if DEBUG:
-                print(f"[VisualOrb] Ignoring EMIT_SPEAK_END - stale token {token} != {last_token}")
+                logger.debug(f"Ignoring EMIT_SPEAK_END - stale token {token} != {last_token}")
             pending_end_token = token
             return
 
@@ -112,7 +115,7 @@ class VisualOrb:
         if token in self.chunk_buffer:
             full_reply = "".join(self.chunk_buffer.pop(token)).strip()
             if full_reply and DEBUG:
-                print(f"[VisualOrb] Final reply to chat: {full_reply}")
+                logger.debug(f"Final reply to chat: {full_reply}")
             live_log.append(full_reply)
 
         self.active_token = None
@@ -127,13 +130,13 @@ class VisualOrb:
         speaking_state = value
         if DEBUG:
             state = "activating orb" if value else "deactivating orb"
-            print(f"[VisualOrb] Finalized state update - {state}.")
+            logger.debug(f"Finalized state update - {state}.")
 
 visual_orb = VisualOrb()
 
 def run_visual_server():
     if DEBUG:
-        print("[VisualOrb] Starting visual server...")
+        logger.debug("Starting visual server...")
 
     # Suppress Flask/Werkzeug output unless debugging
     if not DEBUG:
@@ -223,7 +226,7 @@ def handle_listen():
     text = request.json.get("text", "")
     if text:
         if DEBUG:
-            print(f"[VisualOrb] Received chat text: {text}")
+            logger.debug(f"Received chat text: {text}")
         event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
     return jsonify({"status": "ok"})
 

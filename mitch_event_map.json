@@ -1,4 +1,7 @@
 {
+  "SHUTDOWN": [
+    "/home/triad/mitch/main.py"
+  ],
   "EMIT_SPEAK": [
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
@@ -6,14 +9,7 @@
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
-    "/home/triad/mitch/modules/auto_contextual_recommender.py",
-    "/home/triad/mitch/modules/auto_contextual_recommender.py",
-    "/home/triad/mitch/modules/auto_contextual_mood_adapter.py",
-    "/home/triad/mitch/modules/auto_contextual_mood_adapter.py",
-    "/home/triad/mitch/modules/auto_contextual_mood_adapter.py",
-    "/home/triad/mitch/modules/auto_daily_goal_tracker.py",
-    "/home/triad/mitch/modules/interpreter.py",
-    "/home/triad/mitch/modules/auto_response_generator.py"
+    "/home/triad/mitch/modules/interpreter.py"
   ],
   "EMIT_ACK": [
     "/home/triad/mitch/core/dispatcher.py"
@@ -24,29 +20,43 @@
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
-    "/home/triad/mitch/core/dispatcher.py",
-    "/home/triad/mitch/modules/auto_adaptive_intent_resolver.py"
+    "/home/triad/mitch/core/dispatcher.py"
   ],
   "EMIT_FAILURE": [
     "/home/triad/mitch/core/dispatcher.py"
   ],
-  "data_integrity_issue": [
-    "/home/triad/mitch/modules/auto_data_integrity_checker.py"
+  "OPTIMIZE_SYSTEM": [
+    "/home/triad/mitch/modules/proactive_health_monitor.py"
   ],
-  "data_synchronized": [
-    "/home/triad/mitch/modules/auto_data_synchronizer.py",
-    "/home/triad/mitch/modules/auto_data_synchronizer.py"
+  "EMIT_INPUT_RECEIVED": [
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/ears.py",
+    "/home/triad/mitch/modules/visual/visual_web.py"
   ],
-  "speech_settings_adjusted": [
-    "/home/triad/mitch/modules/auto_speech_enhancer.py"
+  "EMIT_TRANSCRIBE_FAILED": [
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/transcriber.py"
   ],
-  "enhanced_event_prediction": [
-    "/home/triad/mitch/modules/auto_event_predictor_enhancer.py"
+  "inspection_digest_ready": [
+    "/home/triad/mitch/modules/inspection_log_digester.py"
+  ],
+  "EMIT_AUDIO_CAPTURED": [
+    "/home/triad/mitch/modules/ears.py"
+  ],
+  "high_cpu_usage": [
+    "/home/triad/mitch/modules/resource_optimizer.py",
+    "/home/triad/mitch/modules/resource_monitor.py"
+  ],
+  "high_memory_usage": [
+    "/home/triad/mitch/modules/resource_optimizer.py",
+    "/home/triad/mitch/modules/resource_monitor.py"
+  ],
+  "high_disk_usage": [
+    "/home/triad/mitch/modules/resource_optimizer.py",
+    "/home/triad/mitch/modules/resource_monitor.py"
   ],
   "speak": [
-    "/home/triad/mitch/modules/auto_user_engagement.py",
-    "/home/triad/mitch/modules/auto_decision_maker.py",
-    "/home/triad/mitch/modules/auto_decision_maker.py",
     "/home/triad/mitch/modules/proxmon.py",
     "/home/triad/mitch/modules/proxmon.py",
     "/home/triad/mitch/modules/folder_access.py",
@@ -57,216 +67,8 @@
     "/home/triad/mitch/modules/folder_access.py",
     "/home/triad/mitch/modules/folder_access.py"
   ],
-  "adjust_feedback_strategy": [
-    "/home/triad/mitch/modules/auto_dynamic_feedback_manager.py"
-  ],
-  "EMIT_INPUT_RECEIVED": [
-    "/home/triad/mitch/modules/transcriber.py",
-    "/home/triad/mitch/modules/auto_emotion_tracker.py",
-    "/home/triad/mitch/modules/ears.py",
-    "/home/triad/mitch/modules/visual/visual_web.py"
-  ],
-  "system_self_test_completed": [
-    "/home/triad/mitch/modules/auto_system_self_test.py"
-  ],
-  "event_reminder": [
-    "/home/triad/mitch/modules/auto_event_reminder.py"
-  ],
-  "data_categorized": [
-    "/home/triad/mitch/modules/auto_data_categorizer.py"
-  ],
-  "recommendation_made": [
-    "/home/triad/mitch/modules/auto_behavior_predictor.py"
-  ],
-  "contextual_suggestion": [
-    "/home/triad/mitch/modules/auto_user_contextual_enhancer.py"
-  ],
-  "anomaly_detected": [
-    "/home/triad/mitch/modules/auto_anomaly_detector.py",
-    "/home/triad/mitch/modules/auto_proactive_inspector.py",
-    "/home/triad/mitch/modules/auto_data_anomaly_detector.py",
-    "/home/triad/mitch/modules/auto_pattern_analyzer.py"
-  ],
-  "performance_forecast_ready": [
-    "/home/triad/mitch/modules/auto_performance_forecaster.py"
-  ],
-  "send_reminder": [
-    "/home/triad/mitch/modules/auto_adaptive_reminder.py"
-  ],
-  "inspection_summary_ready": [
-    "/home/triad/mitch/modules/auto_inspection_reporter.py"
-  ],
-  "predicted_intent": [
-    "/home/triad/mitch/modules/auto_intent_predictor.py"
-  ],
-  "high_event_processing_time": [
-    "/home/triad/mitch/modules/auto_event_efficiency_evaluator.py"
-  ],
-  "task_notification": [
-    "/home/triad/mitch/modules/task_completion_monitor.py"
-  ],
-  "routine_improvements_suggested": [
-    "/home/triad/mitch/modules/auto_routine_enhancer.py"
-  ],
-  "resolved_task_order": [
-    "/home/triad/mitch/modules/auto_task_dependency_resolver.py"
-  ],
-  "routine_simplification_suggestion": [
-    "/home/triad/mitch/modules/auto_routine_simplifier.py"
-  ],
-  "inspection_digest_ready": [
-    "/home/triad/mitch/modules/inspection_log_digester.py"
-  ],
-  "high_cpu_usage_alert": [
-    "/home/triad/mitch/modules/auto_system_health_monitor.py",
-    "/home/triad/mitch/modules/auto_system_sanity_checker.py"
-  ],
-  "high_memory_usage_alert": [
-    "/home/triad/mitch/modules/auto_system_health_monitor.py",
-    "/home/triad/mitch/modules/auto_system_sanity_checker.py"
-  ],
-  "high_disk_usage_alert": [
-    "/home/triad/mitch/modules/auto_system_health_monitor.py",
-    "/home/triad/mitch/modules/auto_system_sanity_checker.py"
-  ],
-  "routine_improvement_suggested": [
-    "/home/triad/mitch/modules/auto_routine_improver.py"
-  ],
-  "schedule_adjusted": [
-    "/home/triad/mitch/modules/auto_time_management_assistant.py"
-  ],
-  "user_behavior_prediction": [
-    "/home/triad/mitch/modules/auto_user_behavior_predictor_enhancer.py"
-  ],
-  "focus_state_change": [
-    "/home/triad/mitch/modules/auto_user_focus_tracker.py"
-  ],
-  "conversation_analysis_complete": [
-    "/home/triad/mitch/modules/auto_conversation_analyzer.py"
-  ],
-  "user_activity_summary": [
-    "/home/triad/mitch/modules/auto_user_activity_summarizer.py"
-  ],
-  "mood_trend_update": [
-    "/home/triad/mitch/modules/auto_user_mood_tracker.py"
-  ],
-  "EMIT_AUDIO_CAPTURED": [
-    "/home/triad/mitch/modules/ears.py"
-  ],
-  "log_analysis_module_started": [
-    "/home/triad/mitch/modules/auto_log_analyzer.py"
-  ],
-  "log_analysis_completed": [
-    "/home/triad/mitch/modules/auto_log_analyzer.py"
-  ],
-  "adjust_task_priority": [
-    "/home/triad/mitch/modules/auto_user_experience_enhancer.py",
-    "/home/triad/mitch/modules/auto_priority_adjuster.py"
-  ],
-  "high_cpu_usage": [
-    "/home/triad/mitch/modules/auto_system_optimizer.py",
-    "/home/triad/mitch/modules/resource_optimizer.py",
-    "/home/triad/mitch/modules/auto_health_check.py",
-    "/home/triad/mitch/modules/auto_performance_monitor.py"
-  ],
-  "high_memory_usage": [
-    "/home/triad/mitch/modules/auto_system_optimizer.py",
-    "/home/triad/mitch/modules/resource_optimizer.py",
-    "/home/triad/mitch/modules/auto_health_check.py",
-    "/home/triad/mitch/modules/auto_performance_monitor.py"
-  ],
-  "engagement_strategy_update": [
-    "/home/triad/mitch/modules/auto_user_engagement_optimizer.py"
-  ],
-  "prioritized_event": [
-    "/home/triad/mitch/modules/auto_event_prioritizer.py"
-  ],
-  "recommended_learning_resources": [
-    "/home/triad/mitch/modules/auto_adaptive_learning_recommender.py"
-  ],
-  "time_slots_allocated": [
-    "/home/triad/mitch/modules/auto_task_time_allocator.py"
-  ],
-  "mood_insight": [
-    "/home/triad/mitch/modules/auto_user_mood_detector.py"
-  ],
-  "security_alert": [
-    "/home/triad/mitch/modules/auto_security_auditor.py"
-  ],
-  "optimal_focus_times_suggested": [
-    "/home/triad/mitch/modules/auto_user_focus_optimizer.py"
-  ],
-  "focus_session_ended": [
-    "/home/triad/mitch/modules/auto_user_focus_optimizer.py"
-  ],
-  "productivity_feedback": [
-    "/home/triad/mitch/modules/auto_user_focus_optimizer.py"
-  ],
-  "tasks_rescheduled": [
-    "/home/triad/mitch/modules/auto_adaptive_rescheduler.py"
-  ],
-  "task_execution_order": [
-    "/home/triad/mitch/modules/auto_task_dependencies_analyzer.py"
-  ],
-  "correlations_found": [
-    "/home/triad/mitch/modules/auto_data_correlation_analyzer.py"
-  ],
-  "high_frequency_event_detected": [
-    "/home/triad/mitch/modules/auto_event_aggregator.py"
-  ],
-  "task_time_estimated": [
-    "/home/triad/mitch/modules/auto_task_time_estimator.py"
-  ],
-  "potential_high_cpu_usage": [
-    "/home/triad/mitch/modules/auto_system_health_predictor.py"
-  ],
-  "potential_high_memory_usage": [
-    "/home/triad/mitch/modules/auto_system_health_predictor.py"
-  ],
-  "explanation_generated": [
-    "/home/triad/mitch/modules/auto_contextual_explanation.py"
-  ],
-  "dependency_conflicts_detected": [
-    "/home/triad/mitch/modules/auto_system_dependency_checker.py"
-  ],
-  "high_disk_usage": [
-    "/home/triad/mitch/modules/resource_optimizer.py",
-    "/home/triad/mitch/modules/auto_health_check.py",
-    "/home/triad/mitch/modules/auto_performance_monitor.py"
-  ],
-  "task_ready_for_execution": [
-    "/home/triad/mitch/modules/auto_task_dependency_manager.py"
-  ],
-  "knowledge_suggestion": [
-    "/home/triad/mitch/modules/auto_knowledge_enhancer.py"
-  ],
-  "suggest_collaboration": [
-    "/home/triad/mitch/modules/auto_task_collaborator.py"
-  ],
-  "short_attention_span_detected": [
-    "/home/triad/mitch/modules/auto_user_attention_tracker.py"
-  ],
-  "normal_attention_span_detected": [
-    "/home/triad/mitch/modules/auto_user_attention_tracker.py"
-  ],
-  "activity_report_generated": [
-    "/home/triad/mitch/modules/auto_user_activity_reporter.py"
-  ],
-  "resource_allocated": [
-    "/home/triad/mitch/modules/auto_resource_allocator.py"
-  ],
-  "task_dependency_visualization_update": [
-    "/home/triad/mitch/modules/auto_task_dependency_visualizer.py"
-  ],
-  "contextual_insight": [
-    "/home/triad/mitch/modules/auto_contextual_insight.py"
-  ],
-  "goal_suggestions_ready": [
-    "/home/triad/mitch/modules/auto_user_goal_optimizer.py"
-  ],
-  "provide_goal_suggestions": [
-    "/home/triad/mitch/modules/auto_user_goal_optimizer.py",
-    "/home/triad/mitch/modules/auto_user_goal_optimizer.py"
+  "EMIT_WEB_SEARCH_RESULT": [
+    "/home/triad/mitch/modules/web_search.py"
   ],
   "EMIT_SPEAK_END": [
     "/home/triad/mitch/modules/stream_mouth.py",
@@ -278,90 +80,8 @@
   "MUTE_EARS": [
     "/home/triad/mitch/modules/stream_mouth.py"
   ],
-  "emotion_updated": [
-    "/home/triad/mitch/modules/auto_emotion_analyzer.py"
-  ],
-  "emotion_state_report": [
-    "/home/triad/mitch/modules/auto_emotion_analyzer.py"
-  ],
-  "silence_detected": [
-    "/home/triad/mitch/modules/auto_silence_detector.py"
-  ],
-  "user_assistance_recommendation": [
-    "/home/triad/mitch/modules/auto_user_assistance_recommender.py"
-  ],
-  "behavior_analysis_completed": [
-    "/home/triad/mitch/modules/auto_behavior_analyzer.py"
-  ],
-  "feedback_analysis_complete": [
-    "/home/triad/mitch/modules/auto_feedback_analyzer.py"
-  ],
-  "task_efficiency_report": [
-    "/home/triad/mitch/modules/auto_task_efficiency_evaluator.py"
-  ],
-  "predicted_user_routines": [
-    "/home/triad/mitch/modules/auto_user_routine_predictor.py"
-  ],
-  "contextual_recommendation": [
-    "/home/triad/mitch/modules/auto_contextual_connector.py",
-    "/home/triad/mitch/modules/auto_contextual_connector.py"
-  ],
-  "subtasks_created": [
-    "/home/triad/mitch/modules/auto_task_breakdown.py"
-  ],
-  "start_inspection": [
-    "/home/triad/mitch/modules/auto_proactive_inspector.py"
-  ],
-  "inspection_complete": [
-    "/home/triad/mitch/modules/auto_proactive_inspector.py"
-  ],
-  "suggested_goals": [
-    "/home/triad/mitch/modules/auto_user_goal_enhancer.py"
-  ],
-  "focus_tip": [
-    "/home/triad/mitch/modules/auto_focus_booster.py"
-  ],
-  "routine_suggested": [
-    "/home/triad/mitch/modules/auto_routine_creator.py"
-  ],
-  "habit_predicted": [
-    "/home/triad/mitch/modules/auto_user_habit_predictor.py"
-  ],
-  "restore_tasks": [
-    "/home/triad/mitch/modules/auto_system_state_saver.py"
-  ],
-  "restore_memory": [
-    "/home/triad/mitch/modules/auto_system_state_saver.py"
-  ],
-  "restore_config": [
-    "/home/triad/mitch/modules/auto_system_state_saver.py"
-  ],
   "EMIT_MODULE_CONTENT": [
     "/home/triad/mitch/modules/module_editor.py"
-  ],
-  "enhanced_task_ready": [
-    "/home/triad/mitch/modules/auto_contextual_task_enhancer.py"
-  ],
-  "data_quality_issue": [
-    "/home/triad/mitch/modules/auto_data_quality_assessor.py"
-  ],
-  "task_needs_rescheduling": [
-    "/home/triad/mitch/modules/auto_task_interruption_manager.py"
-  ],
-  "self_improvement_suggestions_ready": [
-    "/home/triad/mitch/modules/auto_self_improvement.py"
-  ],
-  "advice_generated": [
-    "/home/triad/mitch/modules/auto_contextual_adviser.py"
-  ],
-  "event_prediction_report": [
-    "/home/triad/mitch/modules/auto_event_historian_enhancer.py"
-  ],
-  "learning_schedule_logged": [
-    "/home/triad/mitch/modules/auto_adaptive_learning_scheduler.py"
-  ],
-  "learning_schedule_adjusted": [
-    "/home/triad/mitch/modules/auto_adaptive_learning_scheduler.py"
   ],
   "EMIT_SPEAK_CHUNK": [
     "/home/triad/mitch/modules/gpt_handler.py"
@@ -375,72 +95,6 @@
   "EMIT_MODULE_CREATE": [
     "/home/triad/mitch/modules/gpt_handler.py"
   ],
-  "context_optimized": [
-    "/home/triad/mitch/modules/auto_contextual_optimizer.py"
-  ],
-  "adjust_screen_brightness": [
-    "/home/triad/mitch/modules/auto_user_environment_adaptor.py"
-  ],
-  "adjust_notification_frequency": [
-    "/home/triad/mitch/modules/auto_user_environment_adaptor.py"
-  ],
-  "collaboration_initiated": [
-    "/home/triad/mitch/modules/auto_collaboration_manager.py"
-  ],
-  "collaboration_opportunity_identified": [
-    "/home/triad/mitch/modules/auto_collaboration_manager.py"
-  ],
-  "EMIT_SUGGEST_ASSISTANCE": [
-    "/home/triad/mitch/modules/auto_user_assistance_manager.py"
-  ],
-  "user_routine_analysis_result": [
-    "/home/triad/mitch/modules/auto_user_routine_predictor_enhancer.py"
-  ],
-  "EMIT_NOTIFICATION": [
-    "/home/triad/mitch/modules/auto_contextual_notifier.py"
-  ],
-  "feedback_analyzed": [
-    "/home/triad/mitch/modules/auto_user_feedback_improver.py"
-  ],
-  "high_cpu_temperature": [
-    "/home/triad/mitch/modules/auto_hardware_monitor.py"
-  ],
-  "low_battery_health": [
-    "/home/triad/mitch/modules/auto_hardware_monitor.py"
-  ],
-  "speech_to_text_converted": [
-    "/home/triad/mitch/modules/auto_speech_to_text.py"
-  ],
-  "contextual_pattern_recognized": [
-    "/home/triad/mitch/modules/auto_contextual_recognition.py"
-  ],
-  "user_learning_report": [
-    "/home/triad/mitch/modules/auto_user_learning_analyzer.py"
-  ],
-  "notification_event": [
-    "/home/triad/mitch/modules/auto_adaptive_notification_manager.py"
-  ],
-  "task_rescheduled": [
-    "/home/triad/mitch/modules/auto_contextual_task_rescheduler.py"
-  ],
-  "engagement_prediction": [
-    "/home/triad/mitch/modules/auto_user_engagement_predictor.py"
-  ],
-  "routine_created": [
-    "/home/triad/mitch/modules/auto_routine_scheduler.py"
-  ],
-  "EMIT_SUGGESTION": [
-    "/home/triad/mitch/modules/auto_contextual_suggester.py"
-  ],
-  "habit_analysis_complete": [
-    "/home/triad/mitch/modules/auto_habit_analyzer.py"
-  ],
-  "system_reboot": [
-    "/home/triad/mitch/modules/auto_system_reboot_manager.py"
-  ],
-  "goal_status_evaluated": [
-    "/home/triad/mitch/modules/auto_user_goal_tracker.py"
-  ],
   "EMIT_CHAT_REQUEST": [
     "/home/triad/mitch/modules/interpreter.py"
   ],
@@ -451,47 +105,14 @@
   "EMIT_MODULE_REQUEST": [
     "/home/triad/mitch/modules/interpreter.py"
   ],
+  "EMIT_WEB_SEARCH": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
   "EMIT_MODULE_READ": [
     "/home/triad/mitch/modules/interpreter.py"
   ],
   "EMIT_MODULE_EDIT": [
     "/home/triad/mitch/modules/interpreter.py"
-  ],
-  "periodic_maintenance": [
-    "/home/triad/mitch/modules/auto_proactive_maintenance.py"
-  ],
-  "module_restart_attempt": [
-    "/home/triad/mitch/modules/auto_module_health_checker.py"
-  ],
-  "insight_generated": [
-    "/home/triad/mitch/modules/auto_insight_generator.py"
-  ],
-  "adjust_task_priorities": [
-    "/home/triad/mitch/modules/auto_system_load_balancer.py"
-  ],
-  "optimize_memory_usage": [
-    "/home/triad/mitch/modules/auto_system_load_balancer.py"
-  ],
-  "optimize_disk_usage": [
-    "/home/triad/mitch/modules/auto_system_load_balancer.py"
-  ],
-  "system_behavior_predicted": [
-    "/home/triad/mitch/modules/auto_system_behavior_predictor.py"
-  ],
-  "mood_enhancement_suggestion": [
-    "/home/triad/mitch/modules/auto_user_mood_enhancer.py"
-  ],
-  "forecast_event": [
-    "/home/triad/mitch/modules/auto_event_forecaster.py"
-  ],
-  "resource_monitoring_started": [
-    "/home/triad/mitch/modules/auto_resource_monitor.py"
-  ],
-  "resource_logged": [
-    "/home/triad/mitch/modules/auto_resource_monitor.py"
-  ],
-  "EMIT_MODULE_STARTED": [
-    "/home/triad/mitch/modules/auto_intent_enhancer.py"
   ],
   "audio_chunk": [
     "/home/triad/mitch/modules/visual/visual_web.py"

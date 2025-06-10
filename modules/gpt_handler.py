@@ -72,6 +72,7 @@ def handle_chat_request(data):
 
 def stream_from_openai(prompt, token):
     try:
+        SYSTEM_PROMPT = persona.build_system_prompt()
         recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
         facts = memory.recall_summary()
         fact_string = "\n".join(f"- {fact}" for fact in facts[:5])

@@ -74,6 +74,13 @@ registered_intents = {
         "objects": ["web", "internet"],
         "handler": lambda text: event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
     },
+    "read_log": {
+    "keywords": ["read", "show", "check", "display"],
+    "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
+    "handler": lambda text: event_bus.emit("EMIT_READ_LOG", {
+        "path": "/home/triad/mitch/logs/modules_created.log"
+    })
+    },
 }
 
 def match_intent(text):

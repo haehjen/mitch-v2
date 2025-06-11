@@ -3,11 +3,14 @@ import hashlib
 from pathlib import Path
 from modules import memory
 from core.peterjones import get_logger
+from core.config import MITCH_ROOT
 
 logger = get_logger("persona")
 
 PERSONA_FILE = Path("data/persona.json")
 EMOTION_FILE = Path("data/emotion_state.json")
+LOG_DIR = Path(MITCH_ROOT) / "logs"
+DATA_DIR = Path(MITCH_ROOT) / "data"
 
 # === Bedrock Hash (LOCKED) ===
 BEDROCK_HASH = "9744e1c7add3a63e7b95391ca00914b645e81314bd3b59f0ea970f2a7a10d0d0"
@@ -46,6 +49,29 @@ def load_emotion_state():
             return {}
     return {}
 
+def load_event_summaries():
+    """Collect short summaries from log or data files for context."""
+    summaries = []
+    digest_path = LOG_DIR / "inspection_digest.json"
+    if digest_path.exists():
+        try:
+            digest = json.loads(digest_path.read_text(encoding="utf-8"))
+            for name, info in digest.items():
+                summary = str(info.get("summary", "")).splitlines()
+                if summary:
+                    summaries.append(f"{name}: {summary[0]}")
+        except Exception as e:
+            logger.warning(f"Failed to load inspection digest: {e}")
+    else:
+        for log_file in LOG_DIR.glob("*.log"):
+            try:
+                lines = log_file.read_text(encoding="utf-8").splitlines()[-5:]
+                if lines:
+                    summaries.append(f"{log_file.name}: {lines[0]}")
+            except Exception as e:
+                logger.warning(f"Failed to read {log_file.name}: {e}")
+    return "\n".join(summaries)
+
 def build_system_prompt():
     persona = load_persona()
     emotions = load_emotion_state()
@@ -69,9 +95,11 @@ def build_system_prompt():
 
     memory_log = memory.recall_recent(n=5, include_roles=True)
     knowledge = memory.recall_summary(tags=["identity"])
+    events = load_event_summaries()
 
     memory_text = "\n".join(f"{entry['role']}: {entry['content']}" for entry in memory_log)
     knowledge_text = "\n".join(f"- {fact}" for fact in knowledge)
+    events_text = events if events else "None"
 
     logger.debug(f"Built system prompt for persona '{persona.get('name')}' with traits [{traits}]")
 
@@ -86,5 +114,6 @@ def build_system_prompt():
         f"Skills:\n{skills}\n\n"
         f"The following memory logs may help you maintain continuity:\n{memory_text}\n\n"
         f"The following are facts you know about yourself:\n{knowledge_text}\n\n"
+        f"Recent system events:\n{events_text}\n\n"
         f"Use memory, facts, system state, and your embedded identity to respond with consistency and intelligence."
     )

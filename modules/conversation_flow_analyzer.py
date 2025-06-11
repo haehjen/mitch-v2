@@ -1,9 +1,9 @@
 import os
 import json
 import datetime
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/conversation_flow_analyzer.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class ConversationFlowAnalyzer:
     def __init__(self):

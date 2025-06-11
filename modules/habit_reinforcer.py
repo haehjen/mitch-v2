@@ -1,9 +1,9 @@
 import os
 import json
 from datetime import datetime, timedelta
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/habit_reinforcer.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class HabitReinforcer:
     def __init__(self):

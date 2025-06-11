@@ -3,11 +3,11 @@ import os
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 from core.config import MITCH_ROOT
 
 # === Paths ===
-MAIN_LOG_PATH = os.path.join(MITCH_ROOT, "data", "mitch.log")
+MAIN_LOG_PATH = INNERMONO_PATH
 os.makedirs(os.path.dirname(MAIN_LOG_PATH), exist_ok=True)
 
 # === Formatter ===

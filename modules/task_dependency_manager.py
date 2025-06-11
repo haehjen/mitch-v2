@@ -1,8 +1,8 @@
 import os
 import json
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/task_dependency_manager.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class TaskDependencyManager:
     def __init__(self):

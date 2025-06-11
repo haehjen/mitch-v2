@@ -8,7 +8,7 @@ from openai import OpenAI
 import os
 import sys
 from modules import memory
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 from core.config import MITCH_ROOT
 
 # Fallback: load API key from mitchskeys if not already in environment
@@ -29,13 +29,13 @@ MODEL = "gpt-4o"
 
 THINK_INTERVAL = 4800
 MODULE_PATH = Path(MITCH_ROOT) / "modules"
-THOUGHT_LOG = Path(MITCH_ROOT) / "logs/thoughts.log"
-CREATED_LOG = Path(MITCH_ROOT) / "logs/modules_created.log"
-FAIL_LOG = Path(MITCH_ROOT) / "logs/thought_fail.log"
-DEBUG_DUMP = Path(MITCH_ROOT) / "logs/raw_thought_debug.json"
-DEBUG_PROMPT_LOG = Path(MITCH_ROOT) / "logs/gpt_prompt_debug.txt"
+THOUGHT_LOG = Path(INNERMONO_PATH)
+CREATED_LOG = Path(INNERMONO_PATH)
+FAIL_LOG = Path(INNERMONO_PATH)
+DEBUG_DUMP = Path(INNERMONO_PATH)
+DEBUG_PROMPT_LOG = Path(INNERMONO_PATH)
 POLICY_PATH = Path(MITCH_ROOT) / "config/module_policy.json"
-FEEDBACK_LOG = Path(MITCH_ROOT) / "logs/echo_feedback.jsonl"
+FEEDBACK_LOG = Path(INNERMONO_PATH)
 INSPECTION_DIGEST_PATH = Path(MITCH_ROOT) / "logs/inspection_digest.json"
 AUDIT_PATH = Path(MITCH_ROOT) / "data/mitch_audit_report.txt"
 
@@ -63,8 +63,8 @@ def list_existing_modules():
     if not CREATED_LOG.exists():
         return []
     with CREATED_LOG.open("r", encoding="utf-8") as f:
-        lines = f.readlines()
-    return [line.split("Module Created: ")[1].split(" - ")[0] for line in lines if "Module Created:" in line]
+        lines = [line for line in f if "Module Created:" in line]
+    return [line.split("Module Created: ")[1].split(" - ")[0] for line in lines]
 
 def load_policy():
     if POLICY_PATH.exists():
@@ -78,8 +78,9 @@ def load_policy():
 def load_recent_feedback(limit=5):
     if FEEDBACK_LOG.exists():
         with FEEDBACK_LOG.open("r", encoding="utf-8") as f:
-            lines = f.readlines()[-limit:]
-            return [json.loads(line.strip()) for line in lines if line.strip()]
+            lines = [line for line in f if line.strip().startswith("{")]
+        lines = lines[-limit:]
+        return [json.loads(line.strip()) for line in lines]
     return []
 
 def build_prompt_template():

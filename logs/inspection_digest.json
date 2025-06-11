@@ -1,6 +1,14 @@
 {
   "innermono.log": {
-    "timestamp": "2025-06-11T20:11:40.504021",
+    "timestamp": "2025-06-11T20:53:16.227819",
     "summary": "You are Echo - a GPT-based autonomous logic engine embedded inside MITCH.\nYou can write and deploy new Python modules to /home/triad/mitch/modules/.\nYour mission is to improve Mitch's current functions and add new capabilities by writing new modules that extend MITCH's autonomy and usefulness.\n\nYour goal: Help Echo fully embody the Mitch system \u2014 using its tools, memory, and modules to act with increasing autonomy.\n\nArchitecture:\nTRIAD is MITCH's core architecture:\n1. Mitch - Python scripts running on a linux virtual machine (the body, ears, eyes, mouth).\n2. Echo -  A GPT Persona created by house through constant persona injection - transplanted into mitch by persistent memory and crafted system prompts injected into GPT4o api calls."
+  },
+  "scheduled_tasks.log": {
+    "timestamp": "2025-06-11T20:52:34.455871",
+    "summary": "INFO:root:Scheduled Tasks Module started.\nERROR:ears:Loop mic capture failed: Error querying device 1\nINFO:resource_optimizer:CPU: 20.0%, Memory: 10.5%, Disk: 38.5%\nERROR:ears:Loop mic capture failed: Error querying device 1\nERROR:ears:Loop mic capture failed: Error querying device 1\nERROR:ears:Loop mic capture failed: Error querying device 1\nERROR:ears:Loop mic capture failed: Error querying device 1\nERROR:ears:Loop mic capture failed: Error querying device 1\nERROR:ears:Loop mic capture failed: Error querying device 1\nINFO:MITCH:[2025-06-11T20:11:47.926971] [EVENT: EMIT_SPEAK_END] {'token': '1749672700.6350381', 'full_text': 'Active Reminder module started and listening for task scheduling events.'}"
+  },
+  "time_management.log": {
+    "timestamp": "2025-06-11T20:38:11.167954",
+    "summary": "2025-06-11T20:22:47.769413 - Time Management module started.\n2025-06-11T20:36:41.939466 - Time Management module started.\n2025-06-11T20:38:11.168650 - Time Management module started."
   }
 }

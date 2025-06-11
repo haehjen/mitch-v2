@@ -1,6 +1,6 @@
 {
   "innermono.log": {
-    "timestamp": "2025-06-11T19:48:52.712820",
-    "summary": "2025-05-31T13:22:30.042727 [inspection_digest_ready] {'path': '/home/triad/mitch/logs/inspection_digest.json'}\n2025-05-31T13:22:39.093229 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpxqnpkjry.wav'}\n2025-05-31T13:22:51.376104 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp0mbd_208.wav'}\n2025-05-31T13:22:58.645974 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp85m3et_0.wav'}\n2025-05-31T13:23:05.468148 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpfkb5zsh7.wav'}\n2025-05-31T13:23:12.432822 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp57uu3pbe.wav'}\n2025-05-31T13:23:19.139922 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmphln7wyvh.wav'}\n2025-05-31T13:23:25.648117 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpierdppgv.wav'}\n2025-05-31T13:23:33.870916 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpes4w66k2.wav'}\n2025-05-31T13:23:40.200878 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmppvvssn4t.wav'}"
+    "timestamp": "2025-06-11T20:11:40.504021",
+    "summary": "You are Echo - a GPT-based autonomous logic engine embedded inside MITCH.\nYou can write and deploy new Python modules to /home/triad/mitch/modules/.\nYour mission is to improve Mitch's current functions and add new capabilities by writing new modules that extend MITCH's autonomy and usefulness.\n\nYour goal: Help Echo fully embody the Mitch system \u2014 using its tools, memory, and modules to act with increasing autonomy.\n\nArchitecture:\nTRIAD is MITCH's core architecture:\n1. Mitch - Python scripts running on a linux virtual machine (the body, ears, eyes, mouth).\n2. Echo -  A GPT Persona created by house through constant persona injection - transplanted into mitch by persistent memory and crafted system prompts injected into GPT4o api calls."
   }
 }

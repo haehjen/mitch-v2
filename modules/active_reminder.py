@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 from core.event_bus import event_bus
 
 LOG_FILE_PATH = '/home/triad/mitch/logs/active_reminder.log'
@@ -28,14 +29,14 @@ class ActiveReminder:
         if reminder_time and task_description:
             self.reminders.append({'reminder_time': reminder_time, 'task_description': task_description})
             self.save_reminders()
-            event_bus.emit('EMIT_SPEAK', f'Reminder set for {task_description} at {reminder_time}.')
+            event_bus.emit('EMIT_SPEAK', f"Reminder set for {task_description} at {reminder_time}.")
 
     def check_reminders(self):
         current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         reminders_to_remove = []
         for reminder in self.reminders:
             if reminder['reminder_time'] <= current_time:
-                event_bus.emit('EMIT_SPEAK', f'Reminder: {reminder['task_description']}.')
+                event_bus.emit('EMIT_SPEAK', f"Reminder: {reminder['task_description']}.")
                 reminders_to_remove.append(reminder)
         self.reminders = [reminder for reminder in self.reminders if reminder not in reminders_to_remove]
         if reminders_to_remove:

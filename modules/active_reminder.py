@@ -29,14 +29,20 @@ class ActiveReminder:
         if reminder_time and task_description:
             self.reminders.append({'reminder_time': reminder_time, 'task_description': task_description})
             self.save_reminders()
-            event_bus.emit('EMIT_SPEAK', f"Reminder set for {task_description} at {reminder_time}.")
+            event_bus.emit('EMIT_SPEAK', {
+                'text': f"Reminder set for {task_description} at {reminder_time}.",
+                'token': str(time.time())
+            })
 
     def check_reminders(self):
         current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         reminders_to_remove = []
         for reminder in self.reminders:
             if reminder['reminder_time'] <= current_time:
-                event_bus.emit('EMIT_SPEAK', f"Reminder: {reminder['task_description']}.")
+                event_bus.emit('EMIT_SPEAK', {
+                    'text': f"Reminder: {reminder['task_description']}.",
+                    'token': str(time.time())
+                })
                 reminders_to_remove.append(reminder)
         self.reminders = [reminder for reminder in self.reminders if reminder not in reminders_to_remove]
         if reminders_to_remove:
@@ -54,5 +60,8 @@ class ActiveReminder:
 def start_module(event_bus):
     active_reminder = ActiveReminder()
     event_bus.subscribe('TASK_SCHEDULED', active_reminder.handle_task_event)
-    event_bus.emit('EMIT_SPEAK', 'Active Reminder module started and listening for task scheduling events.')
+    event_bus.emit('EMIT_SPEAK', {
+        'text': 'Active Reminder module started and listening for task scheduling events.',
+        'token': str(time.time())
+    })
     active_reminder.run()

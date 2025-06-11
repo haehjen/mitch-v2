@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 from core.event_bus import event_bus, INNERMONO_PATH
 
 LOG_FILE_PATH = INNERMONO_PATH
@@ -24,7 +25,10 @@ class TimeManagementAssistant:
 
     def _notify_user(self, task):
         """Notify the user about a task."""
-        event_bus.emit('EMIT_SPEAK', {'message': f'Reminder: {task}'})
+        event_bus.emit('EMIT_SPEAK', {
+            'text': f'Reminder: {task}',
+            'token': str(time.time())
+        })
         self._log(f"Notified user about task: {task}")
 
     def analyze_time_usage(self, event_data):
@@ -32,7 +36,10 @@ class TimeManagementAssistant:
         # Assume event_data contains time usage patterns
         time_usage = event_data.get('time_usage')
         suggestions = self._generate_suggestions(time_usage)
-        event_bus.emit('EMIT_SPEAK', {'message': f'Time Management Tips: {suggestions}'})
+        event_bus.emit('EMIT_SPEAK', {
+            'text': f'Time Management Tips: {suggestions}',
+            'token': str(time.time())
+        })
         self._log(f"Time usage analyzed. Suggestions: {suggestions}")
 
     def _generate_suggestions(self, time_usage):

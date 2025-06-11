@@ -1,4 +1,5 @@
 import re
+import time
 from core.event_bus import event_bus, INNERMONO_PATH
 from core.peterjones import get_logger
 from difflib import SequenceMatcher
@@ -56,7 +57,10 @@ registered_intents = {
         "handler": lambda text: (
             lambda match: (
                 event_bus.emit("EMIT_MODULE_EDIT", {"filename": f"modules/{match.group(1)}.py", "content": match.group(2)}),
-                event_bus.emit("EMIT_SPEAK", {"text": f"Module {match.group(1)} has been updated."})
+                event_bus.emit("EMIT_SPEAK", {
+                    "text": f"Module {match.group(1)} has been updated.",
+                    "token": str(time.time())
+                })
             ) if (match := re.match(r"edit module (\w+)\s+(.*)", text)) else None
         )(text)
     },

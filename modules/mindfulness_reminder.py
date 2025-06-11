@@ -1,7 +1,7 @@
 import datetime
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/mindfulness_reminder.log'
+LOG_FILE_PATH = INNERMONO_PATH
 REMINDER_INTERVAL = 3600  # seconds (1 hour)
 
 class MindfulnessReminder:

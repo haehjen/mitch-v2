@@ -1,9 +1,9 @@
 import time
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 import os
 import json
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/system_health_checker.log'
+LOG_FILE_PATH = INNERMONO_PATH
 CHECK_INTERVAL = 300  # Check every 5 minutes
 
 class SystemHealthChecker:

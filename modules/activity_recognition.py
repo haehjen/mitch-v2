@@ -1,9 +1,9 @@
 import os
 import json
 from datetime import datetime
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/activity_recognition.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class ActivityRecognition:
     def __init__(self):

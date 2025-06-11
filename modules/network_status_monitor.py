@@ -2,9 +2,9 @@ import os
 import json
 import time
 import psutil
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/network_status.log'
+LOG_FILE_PATH = INNERMONO_PATH
 ALERT_THRESHOLD = 80.0  # Percentage of bandwidth usage that triggers an alert
 CHECK_INTERVAL = 60  # Time in seconds between checks
 

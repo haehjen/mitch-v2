@@ -1,5 +1,5 @@
 import re
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 from core.peterjones import get_logger
 from difflib import SequenceMatcher
 
@@ -78,7 +78,7 @@ registered_intents = {
     "keywords": ["read", "show", "check", "display"],
     "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
     "handler": lambda text: event_bus.emit("EMIT_READ_LOG", {
-        "path": "/home/triad/mitch/logs/modules_created.log"
+        "path": INNERMONO_PATH
     })
     },
 }

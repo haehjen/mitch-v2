@@ -1,8 +1,8 @@
 import datetime
 import json
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/time_management_assistant.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class TimeManagementAssistant:
     def __init__(self):

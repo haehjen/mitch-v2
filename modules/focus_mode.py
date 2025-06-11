@@ -1,9 +1,9 @@
 import os
 import json
 import datetime
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/focus_mode.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class FocusMode:
     def __init__(self):

@@ -1,9 +1,9 @@
 import os
 import json
 from collections import defaultdict
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/pattern_recognition.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class PatternRecognition:
     def __init__(self):

@@ -25,13 +25,13 @@ class VisionModule:
             # Set absolute exposure time (valid range: 3–2047)
             subprocess.run([
                 "v4l2-ctl", "-d", f"/dev/video{self.camera_index}",
-                "--set-ctrl=exposure_time_absolute=500"
+                "--set-ctrl=exposure_time_absolute=250"
             ], check=True)
 
             # Set brightness (0–127)
             subprocess.run([
                 "v4l2-ctl", "-d", f"/dev/video{self.camera_index}",
-                "--set-ctrl=brightness=50"
+                "--set-ctrl=brightness=25"
             ], check=True)
 
             # Set contrast (0–95)

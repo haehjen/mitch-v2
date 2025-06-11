@@ -1,4 +1,5 @@
 import datetime
+import time
 from core.event_bus import event_bus, INNERMONO_PATH
 
 LOG_FILE_PATH = INNERMONO_PATH
@@ -21,7 +22,10 @@ class MindfulnessReminder:
 
     def emit_mindfulness_reminder(self):
         reminder_message = "It's time to take a short break and practice mindfulness!"
-        event_bus.emit('EMIT_SPEAK', {'message': reminder_message})
+        event_bus.emit('EMIT_SPEAK', {
+            'text': reminder_message,
+            'token': str(time.time())
+        })
         self.log(f"Mindfulness reminder emitted: {reminder_message}")
 
 

@@ -133,7 +133,7 @@
 
   <div id="chat-container">
     <div id="chat-log"></div>
-    <input id="chat-input" type="text" placeholder="Say something to MITCH..." />
+    <input id="chat-input" type="text" placeholder="Say something to Echo..." />
   </div>
 
   <!-- Visual Workspace -->
@@ -165,7 +165,7 @@
       fetch("/get_response")
         .then(res => res.json())
         .then(data => {
-          if (data.text) appendMessage("MITCH", data.text);
+          if (data.text) appendMessage("Echo", data.text);
           if (data.audio) {
             const audio = new Audio(`/audio/${data.audio}`);
             audio.play();

@@ -7,7 +7,7 @@ from difflib import SequenceMatcher
 logger = get_logger("interpreter")
 
 _last_input_text = None  # Prevent repeated GPT calls
-THRESHOLD = 0.65  # Match confidence threshold
+THRESHOLD = 0.5  # Match confidence threshold
 
 def compute_match_score(text, keywords, objects):
     score = 0

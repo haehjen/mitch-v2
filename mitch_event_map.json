@@ -136,6 +136,9 @@
   "TASK_EXECUTION_VALIDATION": [
     "/home/triad/mitch/modules/task_dependency_manager.py"
   ],
+  "task_due": [
+    "/home/triad/mitch/modules/module_time_management.py"
+  ],
   "EMIT_CHAT_REQUEST": [
     "/home/triad/mitch/modules/interpreter.py"
   ],

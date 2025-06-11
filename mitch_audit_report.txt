@@ -1,0 +1,312 @@
+=== MITCH AUDIT REPORT ===
+
+[thought.py]
+  Classes: EchoThoughtThread
+  Functions: list_existing_modules, load_policy, load_recent_feedback, build_prompt_template, feedback_collector, __init__, shutdown, clean_response, fetch_thought, log_thought, log_module_created, process_response, run
+  Events Emitted: 
+
+[inputcheck.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[audit_mitch.py]
+  Classes: 
+  Functions: analyze_file, scan_project, write_summary
+  Events Emitted: 
+
+[mitch_memory_audit.py]
+  Classes: 
+  Functions: analyze_file, scan_memory_related_files
+  Events Emitted: 
+
+[main.py]
+  Classes: 
+  Functions: main
+  Events Emitted: SHUTDOWN
+
+[core/peterjones.py]
+  Classes: 
+  Functions: get_logger, log_event, start_logger, wildcard_logger
+  Events Emitted: 
+
+[core/config.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[core/event_bus.py]
+  Classes: EventBus
+  Functions: _log_emit_speak, __init__, get_instance, subscribe, unsubscribe, emit, _infer_emitter_module, get_registry, get_registered_handlers
+  Events Emitted: 
+
+[core/dispatcher.py]
+  Classes: 
+  Functions: handle_user_intent, start_dispatcher
+  Events Emitted: EMIT_SPEAK, EMIT_ACK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_FAILURE, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT
+
+[core/event_registry.py]
+  Classes: EventRegistry
+  Functions: __init__, get_instance, record_emit, record_subscribe, get_all_events, get_emitters_for, get_subscribers_for, save_registry, load_registry
+  Events Emitted: 
+
+[modules/proactive_health_monitor.py]
+  Classes: ProactiveHealthMonitor
+  Functions: start_module, __init__, log_resource_usage, analyze_and_optimize, handle_high_cpu_usage, handle_high_memory_usage
+  Events Emitted: OPTIMIZE_SYSTEM
+
+[modules/network_status_monitor.py]
+  Classes: NetworkStatusMonitor
+  Functions: start_module, __init__, log_network_status, check_network_status, start_monitoring
+  Events Emitted: network_monitor_started, high_network_usage, high_network_usage
+
+[modules/goal_planner.py]
+  Classes: GoalPlanner
+  Functions: start_module, __init__, load_goals, save_goals, add_goal, complete_goal, remove_goal, list_goals, log_action
+  Events Emitted: EMIT_GOAL_LIST
+
+[modules/transcriber.py]
+  Classes: 
+  Functions: handle_mute, handle_unmute, _trim_recent, handle_audio_captured, start_transcriber, shutdown
+  Events Emitted: EMIT_INPUT_RECEIVED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED
+
+[modules/active_learning.py]
+  Classes: ActiveLearning
+  Functions: start_module, __init__, load_knowledge, save_knowledge, log_action, handle_feedback_event, handle_interaction_event
+  Events Emitted: 
+
+[modules/user_behavior_predictor.py]
+  Classes: UserBehaviorPredictor
+  Functions: start_module, __init__, log_behavior, _write_log, predict_behavior, handle_behavior_event
+  Events Emitted: PREDICTED_BEHAVIOR
+
+[modules/habit_reinforcer.py]
+  Classes: HabitReinforcer
+  Functions: start_module, __init__, load_habit_data, reinforce_habit, _write_log, _emit_feedback
+  Events Emitted: EMIT_SPEAK
+
+[modules/user_engagement_tracker.py]
+  Classes: UserEngagementTracker
+  Functions: start_module, __init__, handle_interaction_start, handle_interaction_end, _write_log, summarize_engagement
+  Events Emitted: 
+
+[modules/daily_summary_generator.py]
+  Classes: DailySummaryGenerator
+  Functions: start_module, __init__, log_interaction, log_emotion_trend, log_resource_usage, log_anomaly, generate_summary, _write_log, handle_end_of_day
+  Events Emitted: 
+
+[modules/inspection_log_digester.py]
+  Classes: 
+  Functions: summarize_log, extract_digest, save_digest, start_module
+  Events Emitted: inspection_digest_ready
+
+[modules/activity_recognition.py]
+  Classes: ActivityRecognition
+  Functions: start_module, __init__, log_activity, _write_log, analyze_interaction, handle_environment_change
+  Events Emitted: 
+
+[modules/persona.py]
+  Classes: 
+  Functions: hash_persona, verify_bedrock, load_persona, load_emotion_state, load_event_summaries, build_system_prompt
+  Events Emitted: 
+
+[modules/memory.py]
+  Classes: 
+  Functions: save_memory, recall_recent, clear_memory, load_knowledge, save_knowledge, recall_summary, truncate_tail, clear_temp_context
+  Events Emitted: 
+
+[modules/ears.py]
+  Classes: 
+  Functions: on_speak_end, pause_microphone_briefly, continuous_microphone_listener, listen_keyboard, start_keyboard, start_microphone, start_ears, shutdown
+  Events Emitted: EMIT_AUDIO_CAPTURED, EMIT_INPUT_RECEIVED
+
+[modules/decision_audit.py]
+  Classes: DecisionAudit
+  Functions: start_module, __init__, log_decision, _write_log, analyze_decisions, handle_decision_event
+  Events Emitted: 
+
+[modules/task_scheduler.py]
+  Classes: TaskScheduler
+  Functions: start_module, __init__, _load_tasks, _save_tasks, schedule_task, _log, _start_task, handle_schedule_event, execute_task
+  Events Emitted: 
+
+[modules/user_preference_analyzer.py]
+  Classes: UserPreferenceAnalyzer
+  Functions: start_module, __init__, log_user_interaction, _write_log, summarize_preferences, handle_interaction_event
+  Events Emitted: 
+
+[modules/resource_optimizer.py]
+  Classes: ResourceOptimizer
+  Functions: start_module, __init__, check_resources, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, start, shutdown
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
+
+[modules/import_backstory.py]
+  Classes: 
+  Functions: import_backstory
+  Events Emitted: 
+
+[modules/proxmon.py]
+  Classes: ProxMonModule
+  Functions: handle_restart_vm, handle_get_vm_status, __init__, authenticate, get_nodes, fetch_node_status, fetch_vm_list, fetch_vm_status, log_jsonl, run, shutdown, restart_vm, get_vm_status
+  Events Emitted: speak, speak
+
+[modules/habit_suggester.py]
+  Classes: HabitSuggester
+  Functions: start_module, __init__, analyze_habits, _write_log, handle_interaction_event
+  Events Emitted: 
+
+[modules/__init__.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[modules/focus_mode.py]
+  Classes: FocusMode
+  Functions: start_module, __init__, toggle_focus_mode, suppress_non_essential_events, restore_normal_operations, log_focus_mode_change
+  Events Emitted: FOCUS_MODE_ACTIVATED, FOCUS_MODE_DEACTIVATED
+
+[modules/web_search.py]
+  Classes: 
+  Functions: log, fetch_results, handle_web_search, start_module
+  Events Emitted: EMIT_WEB_SEARCH_RESULT
+
+[modules/stream_mouth.py]
+  Classes: StreamMouth
+  Functions: start_stream_mouth, __init__, _audio_loop, _play_with_pyaudio, synthesize_and_queue, speak_chunk, speak_full, on_speak_end, _should_emit, shutdown
+  Events Emitted: EMIT_SPEAK_END, UNMUTE_EARS, MUTE_EARS
+
+[modules/vision_ai.py]
+  Classes: VisionAI
+  Functions: __init__
+  Events Emitted: 
+
+[modules/time_zone_adjuster.py]
+  Classes: TimeZoneAdjuster
+  Functions: start_module, __init__, log, adjust_task_times, update_time_zone, add_task
+  Events Emitted: 
+
+[modules/user_interaction_analyzer.py]
+  Classes: UserInteractionAnalyzer
+  Functions: start_module, __init__, log_interaction, _write_log, analyze_interactions, handle_interaction_event
+  Events Emitted: INTERACTION_SUMMARY
+
+[modules/energy_efficiency_optimizer.py]
+  Classes: EnergyEfficiencyOptimizer
+  Functions: start_module, __init__, log_resource_usage, _write_log, analyze_usage_patterns, suggest_optimizations, handle_resource_event
+  Events Emitted: 
+
+[modules/habit_analyzer.py]
+  Classes: HabitAnalyzer
+  Functions: start_module, __init__, log_habit_analysis, analyze_habits, handle_habit_event
+  Events Emitted: 
+
+[modules/module_editor.py]
+  Classes: 
+  Functions: safe_path, handle_module_create, handle_module_read, handle_module_edit, handle_main_append, start_module_editor
+  Events Emitted: EMIT_MODULE_CONTENT
+
+[modules/dynamic_task_optimizer.py]
+  Classes: DynamicTaskOptimizer
+  Functions: start_module, __init__, log_action, handle_task_event, handle_resource_event, optimize_task_priority, calculate_priority, handle_execution_request
+  Events Emitted: EXECUTE_TASK
+
+[modules/resource_monitor.py]
+  Classes: ResourceMonitor
+  Functions: start_module, __init__, check_resources, _get_cpu_usage, _get_memory_usage, _get_disk_usage, _emit_alerts
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
+
+[modules/stress_level_analyzer.py]
+  Classes: StressLevelAnalyzer
+  Functions: start_module, __init__, analyze_resources, _write_log
+  Events Emitted: high_stress_detected
+
+[modules/gpt_handler.py]
+  Classes: 
+  Functions: generate_token, emit_chunk, emit_end, emit_token_registered, maybe_emit_module_create, handle_chat_request, stream_from_openai, handle_module_request, fallback_or_fail, fallback_to_ollama, update_emotion, on_chat_request, on_module_request, handle_tool_result
+  Events Emitted: EMIT_SPEAK_CHUNK, EMIT_SPEAK_END, EMIT_TOKEN_REGISTERED, EMIT_VISUAL_TOKEN, EMIT_MODULE_CREATE
+
+[modules/pattern_recognition.py]
+  Classes: PatternRecognition
+  Functions: start_module, __init__, log_event, _write_log, analyze_patterns, handle_event
+  Events Emitted: PATTERN_RECOGNIZED
+
+[modules/time_management_assistant.py]
+  Classes: TimeManagementAssistant
+  Functions: start_module, __init__, set_reminder, check_reminders, _notify_user, analyze_time_usage, _generate_suggestions, _log
+  Events Emitted: EMIT_SPEAK, EMIT_SPEAK
+
+[modules/mindfulness_reminder.py]
+  Classes: MindfulnessReminder
+  Functions: start_module, __init__, log, handle_user_engagement, emit_mindfulness_reminder
+  Events Emitted: EMIT_SPEAK
+
+[modules/system_health_checker.py]
+  Classes: SystemHealthChecker
+  Functions: start_module, __init__, log_health_status, check_system_resources, check_module_status, evaluate_system_health, start_monitoring
+  Events Emitted: 
+
+[modules/task_dependency_manager.py]
+  Classes: TaskDependencyManager
+  Functions: start_module, __init__, log, add_task_dependency, complete_task, can_execute_task, handle_task_event
+  Events Emitted: TASK_EXECUTION_VALIDATION
+
+[modules/vision.py]
+  Classes: VisionModule
+  Functions: __init__, force_exposure_v4l2, capture_image
+  Events Emitted: 
+
+[modules/habit_tracker.py]
+  Classes: HabitTracker
+  Functions: start_module, __init__, log_habit, _write_log, summarize_habits, handle_habit_event
+  Events Emitted: 
+
+[modules/adaptive_energy_saver.py]
+  Classes: AdaptiveEnergySaver
+  Functions: start_module, __init__, log_action, handle_system_activity, check_inactivity, activate_power_saving_mode, start_monitoring
+  Events Emitted: 
+
+[modules/conversation_flow_analyzer.py]
+  Classes: ConversationFlowAnalyzer
+  Functions: start_module, __init__, log_interaction, _write_log, analyze_conversation_flow, handle_interaction_event
+  Events Emitted: 
+
+[modules/folder_access.py]
+  Classes: FolderAccessModule
+  Functions: __init__, list_folder, create_folder, read_file
+  Events Emitted: speak, speak, speak, speak, speak, speak, speak
+
+[modules/module_time_management.py]
+  Classes: TimeManagement
+  Functions: start_module, __init__, load_tasks, save_tasks, handle_schedule_task, check_tasks, log, periodic_task_check
+  Events Emitted: task_due
+
+[modules/interpreter.py]
+  Classes: 
+  Functions: compute_match_score, extract_numbers, extract_search_query, match_intent, handle_input, start_interpreter
+  Events Emitted: EMIT_CHAT_REQUEST, EMIT_USER_INTENT, EMIT_USER_INTENT, EMIT_MODULE_REQUEST, EMIT_WEB_SEARCH, EMIT_READ_LOG, EMIT_MODULE_READ, EMIT_MODULE_EDIT, EMIT_SPEAK
+
+[modules/active_reminder.py]
+  Classes: ActiveReminder
+  Functions: start_module, __init__, load_reminders, save_reminders, add_reminder, check_reminders, handle_task_event, run
+  Events Emitted: EMIT_SPEAK, EMIT_SPEAK, EMIT_SPEAK
+
+[modules/collaborative_task_manager.py]
+  Classes: CollaborativeTaskManager
+  Functions: start_module, __init__, log_task, _write_log, handle_task_event, get_task_summary, handle_task_completion
+  Events Emitted: 
+
+[modules/emotion_tracker.py]
+  Classes: EmotionTracker
+  Functions: start_module, __init__, log_emotion_state, summarize_emotions, handle_emotion_event
+  Events Emitted: 
+
+[modules/module_scheduled_tasks.py]
+  Classes: ScheduledTasks
+  Functions: handle_time_tick, start_module, __init__, add_task, remove_task, check_tasks
+  Events Emitted: 
+
+[modules/visual/visual_web.py]
+  Classes: VisualOrb
+  Functions: run_visual_server, index, send_static, serve_objloader, serve_mainjs, serve_mesh, metrics, latest_image, video_feed, gen_frames, receive_audio, emit_response, get_response, handle_listen, start_visual, __init__, on_visual_token, on_token_registered, on_speak, on_speak_chunk, on_speak_end, on_video_frame, set_speaking_state
+  Events Emitted: audio_chunk, speak_chunk, speak_end, EMIT_INPUT_RECEIVED, video_frame
+

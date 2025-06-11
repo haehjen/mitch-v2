@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime, timedelta
 from core.event_bus import event_bus, INNERMONO_PATH
 
@@ -46,7 +47,10 @@ class HabitReinforcer:
     def _emit_feedback(self, habit_name):
         """Emit positive feedback for habit completion."""
         feedback_message = f"Great job on completing your habit: {habit_name} today! Keep it up!"
-        event_bus.emit('EMIT_SPEAK', {'message': feedback_message})
+        event_bus.emit('EMIT_SPEAK', {
+            'text': feedback_message,
+            'token': str(time.time())
+        })
 
 
 def start_module(event_bus):

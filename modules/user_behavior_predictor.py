@@ -1,8 +1,8 @@
 import json
 import datetime
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/user_behavior_predictor.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class UserBehaviorPredictor:
     def __init__(self):

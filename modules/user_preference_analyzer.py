@@ -1,8 +1,8 @@
 import os
 import json
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/user_preference_analyzer.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class UserPreferenceAnalyzer:
     def __init__(self):

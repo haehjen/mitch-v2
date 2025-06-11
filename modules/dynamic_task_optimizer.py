@@ -1,9 +1,9 @@
 import os
 import json
-from core.event_bus import event_bus
+from core.event_bus import event_bus, INNERMONO_PATH
 from datetime import datetime
 
-LOG_FILE_PATH = '/home/triad/mitch/logs/dynamic_task_optimizer.log'
+LOG_FILE_PATH = INNERMONO_PATH
 
 class DynamicTaskOptimizer:
     def __init__(self):

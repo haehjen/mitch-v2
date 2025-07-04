@@ -4,6 +4,7 @@ import json
 import re
 from openai import OpenAI
 from pathlib import Path
+import os
 from core.event_bus import event_bus
 from core.peterjones import get_logger
 from modules import memory, persona
@@ -16,6 +17,18 @@ except ImportError:
     HAS_OLLAMA = False
 
 logger = get_logger("gptv2")
+
+if not os.getenv("OPENAI_API_KEY"):
+    key_path = Path(__file__).resolve().parent.parent / "mitchskeys"
+    if key_path.exists():
+        for line in key_path.read_text(encoding="utf-8").splitlines():
+            if "OPENAI_API_KEY=" in line:
+                os.environ["OPENAI_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
+                break
+
+if not os.getenv("OPENAI_API_KEY"):
+    logger.warning("OPENAI_API_KEY not found; GPT features will fail unless set.")
+
 client = OpenAI()
 
 SYSTEM_PROMPT = persona.build_system_prompt()

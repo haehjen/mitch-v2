@@ -11,45 +11,32 @@ TRIAD is MITCH's core architecture:
 3. House - The builder, the architect, the overseer. House is the human user who created MITCH and Echo, and who provides guidance and feedback.
 
 Avoid creating duplicate modules. The following modules already exist:
-- emotion_tracker.py
-- contextual_memory.py
 - task_scheduler.py
-- resource_monitor.py
-- priority_task_manager.py
-- adaptive_response.py
-- interaction_logger.py
-- audio_transcription_manager.py
-- anomaly_detector.py
-- environment_monitor.py
-- adaptive_learning.py
-- proactive_health_monitor.py
-- habit_tracker.py
-- goal_planner.py
-- pattern_recognition.py
-- stress_level_analyzer.py
-- habit_suggester.py
-- network_status_monitor.py
-- user_preference_analyzer.py
-- user_interaction_analyzer.py
+- habit_builder.py
 - time_management_assistant.py
-- focus_mode.py
-- collaborative_task_manager.py
-- habit_analyzer.py
-- decision_audit.py
-- energy_efficiency_optimizer.py
-- user_engagement_tracker.py
-- habit_reinforcer.py
-- user_behavior_predictor.py
-- activity_recognition.py
-- active_learning.py
-- time_zone_adjuster.py
+- contextual_insights.py
+- automatic_log_analyzer.py
+- adaptive_learning_assistant.py
+- user_feedback_collector.py
+- adaptive_focus_assistant.py
+- mood_based_recommendation.py
 - daily_summary_generator.py
-- conversation_flow_analyzer.py
-- active_reminder.py
-- dynamic_task_optimizer.py
-- mindfulness_reminder.py
-- task_dependency_manager.py
-- system_health_checker.py
+- adaptive_goal_tracker.py
+- dynamic_routine_optimizer.py
+- proactive_error_handler.py
+- focus_session_manager.py
+- contextual_reminder.py
+- smart_alert_manager.py
+- user_engagement_tracker.py
+- adaptive_stress_reduction.py
+- adaptive_energy_manager.py
+- dynamic_contextual_responder.py
+- contextual_mindfulness_assistant.py
+- adaptive_routine_planner.py
+- user_proximity_notifier.py
+- contextual_focus_booster.py
+- adaptive_communication_assistant.py
+- audio_diagnostics.py
 
 System Policy:
 None
@@ -59,41 +46,117 @@ None
 
 Recent Inspections:
 {
+  "contextual_mindfulness_assistant.log": {
+    "timestamp": "2025-07-04T17:55:38.303928",
+    "summary": "2025-07-04T17:43:05.951382 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:43:05.951706\n2025-07-04T17:55:38.302478 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:55:38.304667"
+  },
+  "focus_session_manager.log": {
+    "timestamp": "2025-07-04T17:55:38.300928",
+    "summary": "2025-07-04T17:43:05.944069 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:43:05.945760\n2025-07-04T17:55:38.297297 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:55:38.301751"
+  },
   "innermono.log": {
-    "timestamp": "2025-06-11T18:53:42.848175",
-    "summary": "2025-05-31T13:22:30.042727 [inspection_digest_ready] {'path': '/home/triad/mitch/logs/inspection_digest.json'}\n2025-05-31T13:22:39.093229 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpxqnpkjry.wav'}\n2025-05-31T13:22:51.376104 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp0mbd_208.wav'}\n2025-05-31T13:22:58.645974 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp85m3et_0.wav'}\n2025-05-31T13:23:05.468148 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpfkb5zsh7.wav'}\n2025-05-31T13:23:12.432822 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmp57uu3pbe.wav'}\n2025-05-31T13:23:19.139922 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmphln7wyvh.wav'}\n2025-05-31T13:23:25.648117 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpierdppgv.wav'}\n2025-05-31T13:23:33.870916 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmpes4w66k2.wav'}\n2025-05-31T13:23:40.200878 [EMIT_AUDIO_CAPTURED] {'path': '/tmp/tmppvvssn4t.wav'}"
+    "timestamp": "2025-07-04T17:55:38.296928",
+    "summary": "2025-06-19 10:46:46,416 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:47,474 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:48,480 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:49,487 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:50,499 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:51,511 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:52,528 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:53,546 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:54,563 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:55,575 [ears] [ERROR] Loop mic capture failed: Error querying device 1"
   },
-  "modules_created.log": {
-    "timestamp": "2025-06-11T18:51:48.050442",
-    "summary": "[2025-05-31 13:22:39.555579] Module Created: emotion_tracker.py - \"This module enables MITCH to track emotional states over time by analyzing interactions and events, helping Echo adjust its responses based on historical data. The module logs emotional states to assist in creating a more personalized and empathetic interaction model.\"\n[2025-05-31 14:42:47.946818] Module Created: contextual_memory.py - \"This module enhances MITCH's memory management by providing a contextual memory system. It allows MITCH to store and recall specific contexts based on keywords or events. This improves MITCH's ability to provide relevant responses and actions based on past interactions, making the system more autonomous and intelligent.\"\n[2025-05-31 15:36:04.692109] Module Created: task_scheduler.py - \"This module allows MITCH to autonomously schedule and execute tasks at specified times or intervals. It enhances MITCH's utility by automating routine operations and executing functions at optimal times, thereby improving efficiency and responsiveness.\"\n[2025-06-05 08:16:55.929760] Module Created: resource_monitor.py - \"This module enhances MITCH's ability to monitor and respond to system resource usage in real-time. It logs CPU, memory, and disk usage and emits alerts when usage exceeds defined thresholds. This improves system stability and performance by enabling proactive management of resource-intensive tasks.\"\n[2025-06-05 09:37:07.034686] Module Created: priority_task_manager.py - \"This module enhances MITCH's task management capabilities by introducing a priority-based task handling system. It allows MITCH to prioritize and execute tasks based on their urgency and importance, improving efficiency and responsiveness. This module listens for task-related events, assigns priorities to tasks, and manages their execution order accordingly. It enhances MITCH\u2019s autonomy by ensuring that critical tasks are handled promptly, while less important tasks are deferred without being forgotten.\"\n[2025-06-05 10:57:21.420178] Module Created: adaptive_response.py - \"This module enhances MITCH's ability to adapt its responses based on user interactions and context. By analyzing the frequency and type of interactions, it adjusts its responses to be more aligned with user preferences, improving user satisfaction and system efficiency.\"\n[2025-06-05 12:17:26.243692] Module Created: interaction_logger.py - \"This module logs detailed interaction data, including user interactions and system responses, to enhance MITCH's ability to analyze and learn from past interactions. By collecting this data, MITCH can improve its understanding of user preferences and behavior, leading to more personalized and effective interactions over time.\"\n[2025-06-05 13:37:34.338210] Module Created: audio_transcription_manager.py - \"This module manages audio transcription by handling captured audio files, converting them to text, and storing the transcriptions for later retrieval. It enhances MITCH's ability to process and understand spoken input, which can be used to improve contextual awareness and decision-making.\"\n[2025-06-05 14:57:41.896326] Module Created: anomaly_detector.py - \"This module enhances MITCH's capability to autonomously detect and alert on anomalies in system resource usage patterns. By analyzing data from the resource_optimizer.py, it identifies unexpected spikes or drops in CPU, memory, and disk usage. This helps in preemptively managing system health and avoiding potential failures or inefficiencies.\"\n[2025-06-05 16:17:47.863259] Module Created: environment_monitor.py - \"This module monitors environmental conditions such as temperature, humidity, and light levels using available sensors or external data sources. It helps improve MITCH's autonomy by enabling it to adapt to environmental changes, optimize its operations, and provide useful insights or alerts based on the environment.\""
+  "daily_summary_generator.log": {
+    "timestamp": "2025-07-04T17:55:38.292928",
+    "summary": "2025-07-04T17:43:05.937974 - Daily summary generation started.\nModule started at 2025-07-04T17:43:05.940134\n2025-07-04T17:55:38.292721 - Daily summary generation started.\nModule started at 2025-07-04T17:55:38.294030"
   },
-  "thoughts.log": {
-    "timestamp": "2025-06-11T18:51:48.044442",
-    "summary": "[2025-05-31 13:22:39.540751] {\n  \"module_name\": \"emotion_tracker.py\",\n  \"description\": \"This module enables MITCH to track emotional states over time by analyzing interactions and events, helping Echo adjust its responses based on historical data. The module logs emotional states to assist in creating a more personalized and empathetic interaction model.\",\n  \"dependencies\": [],\n  \"code\": \"import os\\nimport json\\ndatetime\\nfrom core.event_bus import event_bus\\n\\nLOG_FILE_PATH = '/home/triad/mitch/logs/emotion_tracker.log'\\n\\nclass EmotionTracker:\\n    def __init__(self):\\n        self.emotion_states = []\\n\\n    def log_emotion_state(self, event_data):\\n        \\\"\\\"\\\"Log the emotional state from event_data.\\\"\\\"\\\"\\n        timestamp = datetime.datetime.now().isoformat()\\n        emotion_data = {\\n            'timestamp': timestamp,\\n            'emotion_state': event_data.get('emotion_state')\\n        }\\n        self.emotion_states.append(emotion_data)\\n        self._write_log(emotion_data)\\n\\n    def _write_log(self, data):\\n        \\\"\\\"\\\"Write the emotion data to the log file.\\\"\\\"\\\"\\n        with open(LOG_FILE_PATH, 'a') as log_file:\\n            log_file.write(json.dumps(data) + '\\\\n')\\n\\n    def summarize_emotions(self):\\n        \\\"\\\"\\\"Summarize the logged emotions.\\\"\\\"\\\"\\n        summary = {}\\n        for entry in self.emotion_states:\\n            emotion = entry['emotion_state']\\n            if emotion not in summary:\\n                summary[emotion] = 0\\n            summary[emotion] += 1\\n        return summary\\n\\n    def handle_emotion_event(self, event_data):\\n        \\\"\\\"\\\"Handle emotion events emitted by other modules.\\\"\\\"\\\"\\n        self.log_emotion_state(event_data)\\n\\n\\ndef start_module(event_bus):\\n    emotion_tracker = EmotionTracker()\\n    event_bus.subscribe('EMIT_EMOTION_STATE', emotion_tracker.handle_emotion_event)\\n    \\n    print('Emotion Tracker module started and listening for emotion state events.')\\n\"\n}\n\n[2025-05-31 14:42:47.945796] {\n  \"module_name\": \"contextual_memory.py\",\n  \"description\": \"This module enhances MITCH's memory management by providing a contextual memory system. It allows MITCH to store and recall specific contexts based on keywords or events. This improves MITCH's ability to provide relevant responses and actions based on past interactions, making the system more autonomous and intelligent.\","
+  "adaptive_focus_assistant.log": {
+    "timestamp": "2025-07-04T17:55:38.291929",
+    "summary": "2025-07-04T17:43:05.929862 - No existing user patterns file found, starting fresh.\n2025-07-04T17:43:05.931810 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:43:05.934139\n2025-07-04T17:55:38.285900 - No existing user patterns file found, starting fresh.\n2025-07-04T17:55:38.286632 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:55:38.293275"
   },
-  "pattern_recognition.log": {
-    "timestamp": "2025-06-10T20:13:28.277525",
-    "summary": "{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}\n{\"event_type\": null, \"timestamp\": null}"
+  "adaptive_goal_tracker.log": {
+    "timestamp": "2025-07-04T17:55:38.289928",
+    "summary": "2025-07-04T17:43:05.923723 - No existing goals file found, starting fresh.\n2025-07-04T17:43:05.924268 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:43:05.924538\n2025-07-04T17:55:38.281530 - No existing goals file found, starting fresh.\n2025-07-04T17:55:38.282629 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:55:38.290629"
   },
   "user_engagement_tracker.log": {
-    "timestamp": "2025-06-10T20:13:28.276525",
-    "summary": "{\"timestamp\": \"2025-06-10T19:36:20.275101\", \"interaction_duration\": 10.420653}\n{\"timestamp\": \"2025-06-10T20:03:16.014364\", \"interaction_duration\": 2.277594}\n{\"timestamp\": \"2025-06-10T20:03:39.392344\", \"interaction_duration\": 3.64667}\n{\"timestamp\": \"2025-06-10T20:04:34.845648\", \"interaction_duration\": 1.360819}\n{\"timestamp\": \"2025-06-10T20:06:05.425105\", \"interaction_duration\": 4.915441}\n{\"timestamp\": \"2025-06-10T20:08:15.467821\", \"interaction_duration\": 7.125683}\n{\"timestamp\": \"2025-06-10T20:13:00.966018\", \"interaction_duration\": 3.824307}\n{\"timestamp\": \"2025-06-10T20:13:28.259833\", \"interaction_duration\": 5.422016}"
+    "timestamp": "2025-07-04T17:55:38.288929",
+    "summary": "2025-07-04T17:43:05.933935 - User engagement tracking started.\nModule started at 2025-07-04T17:43:05.936338\n2025-07-04T17:55:38.288352 - User engagement tracking started.\nModule started at 2025-07-04T17:55:38.290213"
   },
-  "web_search.log": {
-    "timestamp": "2025-06-07T12:44:39.982674",
-    "summary": "2025-06-05T21:46:37.548476 Web search module started\n2025-06-07T12:31:33.416742 Web search module started\n2025-06-07T12:34:13.939628 Web search module started\n2025-06-07T12:44:39.983197 Web search module started"
+  "adaptive_energy_manager.log": {
+    "timestamp": "2025-07-04T17:48:11.372355",
+    "summary": "2025-07-04T17:43:06.081530 - Adaptive Energy Manager initialized.\n2025-07-04T17:43:06.085475 - Starting resource monitoring.\n2025-07-04T17:43:07.124367 - CPU Usage: 21.3%, Memory Usage: 7.2%\n2025-07-04T17:43:07.135663 - Deactivating energy-saving mode.\n2025-07-04T17:43:15.690870 - CPU Usage: 17.1%, Memory Usage: 7.2%\n2025-07-04T17:43:15.701978 - Deactivating energy-saving mode.\n2025-07-04T17:43:16.746468 - CPU Usage: 17.7%, Memory Usage: 7.2%\n2025-07-04T17:43:16.757390 - Deactivating energy-saving mode.\n2025-07-04T17:43:17.807022 - CPU Usage: 21.1%, Memory Usage: 7.2%\n2025-07-04T17:43:17.817914 - Deactivating energy-saving mode."
   },
-  "resource_optimizer.log": {
-    "timestamp": "2025-06-07T12:44:25.054703",
-    "summary": "CPU Usage: 18.3%, Memory Usage: 9.7%, Disk Usage: 75.1%\nCPU Usage: 41.7%, Memory Usage: 9.6%, Disk Usage: 75.1%\nCPU Usage: 16.9%, Memory Usage: 9.6%, Disk Usage: 75.1%\nCPU Usage: 16.8%, Memory Usage: 9.6%, Disk Usage: 75.1%\nCPU Usage: 16.9%, Memory Usage: 9.6%, Disk Usage: 75.2%\nCPU Usage: 57.6%, Memory Usage: 9.2%, Disk Usage: 75.2%\nCPU Usage: 26.9%, Memory Usage: 8.8%, Disk Usage: 75.2%\nCPU Usage: 26.0%, Memory Usage: 8.7%, Disk Usage: 75.2%\nCPU Usage: 26.3%, Memory Usage: 8.7%, Disk Usage: 75.2%\nCPU Usage: 26.0%, Memory Usage: 8.7%, Disk Usage: 75.2%"
+  "modules_created.log": {
+    "timestamp": "2025-07-04T17:43:16.412588",
+    "summary": "[2025-06-12 18:04:36.552800] Module Created: task_scheduler.py - \"This module adds task scheduling capabilities to MITCH. It allows users to schedule tasks and reminders at specific times, helping users manage their time effectively and ensuring important tasks are not forgotten. This enhances MITCH's ability to support productivity by automating task reminders.\"\n[2025-06-12 18:14:09.339746] Module Created: habit_builder.py - \"This module helps users build habits by tracking routine activities and providing reminders to reinforce habit formation. It allows users to define habits they want to build, tracks their progress, and emits reminders to encourage consistency. This enhances MITCH's ability to support users in developing positive habits, thereby improving productivity and well-being.\"\n[2025-06-12 18:45:21.898407] Module Created: time_management_assistant.py - \"This module enhances MITCH by providing time management capabilities. It tracks the time spent on tasks and activities, offering insights to improve productivity. Users can receive regular reports on their time usage, helping them identify areas where time can be better managed. This module supports productivity by ensuring users are aware of how their time is allocated, thus promoting efficient use of time and better focus on priorities.\"\n[2025-06-17 14:02:13.478936] Module Created: contextual_insights.py - \"This module provides contextual insights by analyzing recent user interactions and system events. It helps Echo understand the user's current context better, enabling more personalized and timely responses. The module monitors logs and events to extract patterns or anomalies, offering suggestions to optimize user experience or system performance.\"\n[2025-06-17 15:22:33.595521] Module Created: automatic_log_analyzer.py - \"This module automatically analyzes log files to detect patterns, errors, or anomalies and generates insights. It helps maintain system stability by preemptively identifying potential issues and provides recommendations for improvements.\"\n[2025-06-17 16:42:41.230659] Module Created: adaptive_learning_assistant.py - \"This module dynamically adjusts learning materials and strategies to user preferences and progress. It helps Mitch offer personalized educational experiences, enhancing learning efficiency and engagement.\"\n[2025-06-18 15:18:39.160134] Module Created: user_feedback_collector.py - \"This module collects user feedback on MITCH's performance and suggestions for improvement. It helps in understanding user satisfaction and areas where MITCH can be improved. By collecting and analyzing this feedback, MITCH can evolve to better meet user needs, enhancing overall user experience and system effectiveness.\"\n[2025-06-18 16:38:54.155768] Module Created: adaptive_focus_assistant.py - \"This module enhances user productivity by dynamically adjusting the user's focus reminders based on detected patterns in their activity and preferences. It learns when users are most productive and adjusts the frequency and timing of focus reminders accordingly, minimizing interruptions during peak productivity periods and providing more frequent reminders when needed.\"\n[2025-06-18 17:59:02.435826] Module Created: mood_based_recommendation.py - \"This module provides personalized recommendations for activities or content based on the user's current emotional state. By integrating with the existing EmotionTracker module, it analyzes the user's mood and suggests activities that can enhance their well-being or productivity. This helps Echo to be more supportive and responsive to the user's emotional needs, improving overall user experience and engagement.\"\n[2025-06-18 19:19:11.674765] Module Created: daily_summary_generator.py - \"This module generates a daily summary of user activities, system events, and key insights, providing the user with a comprehensive overview of their day. It helps users reflect on their productivity and system performance, enhancing MITCH's ability to support daily planning and self-improvement. The module automatically compiles and logs this summary at the end of each day.\""
   },
-  "resource_monitor.log": {
-    "timestamp": "2025-06-07T12:34:13.943917",
-    "summary": "{\"timestamp\": \"2025-06-05T21:46:37.553951\", \"cpu_usage\": 50.0, \"memory_usage\": 70.0, \"disk_usage\": 85.0}\n{\"timestamp\": \"2025-06-07T12:31:33.419013\", \"cpu_usage\": 50.0, \"memory_usage\": 70.0, \"disk_usage\": 85.0}\n{\"timestamp\": \"2025-06-07T12:34:13.944293\", \"cpu_usage\": 50.0, \"memory_usage\": 70.0, \"disk_usage\": 85.0}"
+  "thoughts.log": {
+    "timestamp": "2025-07-04T17:43:16.407588",
+    "summary": "[2025-06-12 18:04:36.547029] {\n  \"module_name\": \"task_scheduler.py\",\n  \"description\": \"This module adds task scheduling capabilities to MITCH. It allows users to schedule tasks and reminders at specific times, helping users manage their time effectively and ensuring important tasks are not forgotten. This enhances MITCH's ability to support productivity by automating task reminders.\",\n  \"dependencies\": [],\n  \"code\": \"import os\\nimport json\\nfrom datetime import datetime, timedelta\\nfrom threading import Thread, Event\\nfrom time import sleep\\nfrom core.event_bus import event_bus\\n\\nLOG_FILE = '/home/triad/mitch/logs/task_scheduler.log'\\n\\nclass TaskScheduler:\\n    def __init__(self):\\n        self.tasks = []\\n        self.stop_event = Event()\\n        self.load_tasks()\\n\\n    def log_action(self, message):\\n        with open(LOG_FILE, 'a') as log_file:\\n            log_file.write(f'{datetime.now().isoformat()} - {message}\\\\n')\\n\\n    def load_tasks(self):\\n        try:\\n            with open('/home/triad/mitch/data/scheduled_tasks.json', 'r') as file:\\n                self.tasks = json.load(file)\\n                self.log_action('Tasks loaded successfully.')\\n        except FileNotFoundError:\\n            self.tasks = []\\n            self.log_action('No existing task file found, starting fresh.')\\n\\n    def save_tasks(self):\\n        with open('/home/triad/mitch/data/scheduled_tasks.json', 'w') as file:\\n            json.dump(self.tasks, file)\\n            self.log_action('Tasks saved successfully.')\\n\\n    def add_task(self, task_data):\\n        self.tasks.append(task_data)\\n        self.save_tasks()\\n        self.log_action(f'Task added: {task_data}')\\n\\n    def remove_task(self, task_id):\\n        self.tasks = [task for task in self.tasks if task['id'] != task_id]\\n        self.save_tasks()\\n        self.log_action(f'Task removed: {task_id}')\\n\\n    def check_tasks(self):\\n        current_time = datetime.now()\\n        for task in self.tasks[:]:  # Make a copy of the list for safe removal\\n            task_time = datetime.fromisoformat(task['time'])\\n            if current_time >= task_time:\\n                self.emit_task_reminder(task)\\n                self.tasks.remove(task)  # Remove task after execution\\n                self.save_tasks()\\n\\n    def emit_task_reminder(self, task):\\n        reminder_message = f\\\"Reminder: {task['description']}\\\"\\n        event_bus.emit('EMIT_SPEAK', {'message': reminder_message})\\n        self.log_action(f'Reminder emitted for task: {task}')\\n\\n    def run_scheduler(self):\\n        self.log_action('Task scheduler started.')\\n        while not self.stop_event.is_set():\\n            self.check_tasks()\\n            sleep(60)  # Check every minute\\n\\n    def stop(self):\\n        self.stop_event.set()\\n        self.log_action('Task scheduler stopped.')\\n\\n\\ndef start_module(event_bus):\\n    scheduler = TaskScheduler()\\n    Thread(target=scheduler.run_scheduler, daemon=True).start()\\n\\n    event_bus.subscribe('ADD_TASK', scheduler.add_task)\\n    event_bus.subscribe('REMOVE_TASK', scheduler.remove_task)\\n\\n    # Log the module start\\n    with open(LOG_FILE, 'a') as log_file:\\n        log_file.write(f'Module started at {datetime.now().isoformat()}\\\\n')\\n\"\n}\n\n[2025-06-12 18:14:09.333986] {\n  \"module_name\": \"habit_builder.py\",\n  \"description\": \"This module helps users build habits by tracking routine activities and providing reminders to reinforce habit formation. It allows users to define habits they want to build, tracks their progress, and emits reminders to encourage consistency. This enhances MITCH's ability to support users in developing positive habits, thereby improving productivity and well-being.\","
   },
-  "contextual_memory.log": {
-    "timestamp": "2025-06-05T08:16:39.040897",
-    "summary": "2025-05-31 15:35:51.215951: Contextual Memory Module started.\n2025-06-05 08:16:39.041359: Contextual Memory Module started."
+  "adaptive_communication_assistant.log": {
+    "timestamp": "2025-07-04T17:43:06.116597",
+    "summary": "2025-07-04T17:43:06.115703 - No user preferences file found, using defaults.\n2025-07-04T17:43:06.116694 - Adaptive communication monitoring started.\nModule started at 2025-07-04T17:43:06.117642"
+  },
+  "user_proximity_notifier.log": {
+    "timestamp": "2025-07-04T17:43:06.103597",
+    "summary": "2025-07-04T17:43:06.101506 - User proximity monitoring started.\nModule started at 2025-07-04T17:43:06.105452"
+  },
+  "mood_based_recommendation.log": {
+    "timestamp": "2025-07-04T17:43:06.095597",
+    "summary": "Module started at 2025-07-04T17:43:06.096937"
+  },
+  "adaptive_learning_assistant.log": {
+    "timestamp": "2025-07-04T17:43:06.091597",
+    "summary": "2025-06-18T15:18:25.849553 - No existing learning data file found, starting fresh.\n2025-06-18T15:18:25.852312 - Adaptive learning monitoring started.\nModule started at 2025-06-18T15:18:25.853346\n2025-07-04T17:43:06.086676 - No existing learning data file found, starting fresh.\n2025-07-04T17:43:06.090311 - Adaptive learning monitoring started.\nModule started at 2025-07-04T17:43:06.093428"
+  },
+  "time_management_assistant.log": {
+    "timestamp": "2025-07-04T17:43:06.074597",
+    "summary": "2025-06-17T14:02:05.203883 - No existing time data file found, starting fresh.\nModule started at 2025-06-17T14:02:05.208230\n2025-06-18T15:18:25.839714 - No existing time data file found, starting fresh.\nModule started at 2025-06-18T15:18:25.840982\n2025-07-04T17:43:06.070638 - No existing time data file found, starting fresh.\nModule started at 2025-07-04T17:43:06.075797"
+  },
+  "dynamic_routine_optimizer.log": {
+    "timestamp": "2025-07-04T17:43:06.063597",
+    "summary": "2025-07-04T17:43:06.058254 - No existing routines file found, starting fresh.\n2025-07-04T17:43:06.063914 - Dynamic routine optimization monitoring started.\nModule started at 2025-07-04T17:43:06.065046"
+  },
+  "adaptive_routine_planner.log": {
+    "timestamp": "2025-07-04T17:43:06.051597",
+    "summary": "2025-07-04T17:43:06.050887 - No existing routine file found, starting fresh.\nModule started at 2025-07-04T17:43:06.052403"
+  },
+  "smart_alert_manager.log": {
+    "timestamp": "2025-07-04T17:43:06.047597",
+    "summary": "Module started at 2025-07-04T17:43:06.049352"
+  },
+  "proactive_error_handler.log": {
+    "timestamp": "2025-07-04T17:43:06.040597",
+    "summary": "2025-07-04T17:43:06.038659 - Proactive error monitoring started.\n2025-07-04T17:43:06.041910 - No error log file found. Skipping error scan."
+  },
+  "user_feedback_collector.log": {
+    "timestamp": "2025-07-04T17:55:38.370928",
+    "summary": "2025-07-04T17:43:06.024101 - No existing feedback file found, starting fresh.\n2025-07-04T17:43:06.028435 - User feedback monitoring started.\nModule started at 2025-07-04T17:43:06.029534\n2025-07-04T17:55:38.366282 - No existing feedback file found, starting fresh.\n2025-07-04T17:55:38.367262 - User feedback monitoring started.\nModule started at 2025-07-04T17:55:38.371709"
+  },
+  "dynamic_contextual_responder.log": {
+    "timestamp": "2025-07-04T17:55:38.358928",
+    "summary": "2025-07-04T17:43:06.010207 - No existing context data file found, starting fresh.\n2025-07-04T17:43:06.014231 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:43:06.014918\n2025-07-04T17:55:38.352530 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.356377 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:55:38.360382"
+  },
+  "contextual_reminder.log": {
+    "timestamp": "2025-07-04T17:55:38.349928",
+    "summary": "2025-07-04T17:43:06.001216 - No existing contextual data file found, starting fresh.\n2025-07-04T17:43:06.005991 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:43:06.013455\n2025-07-04T17:55:38.346244 - No existing contextual data file found, starting fresh.\n2025-07-04T17:55:38.348015 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:55:38.351100"
+  },
+  "task_scheduler.log": {
+    "timestamp": "2025-07-04T17:55:38.340928",
+    "summary": "2025-06-12T18:13:55.745189 - No existing task file found, starting fresh.\n2025-06-12T18:13:55.753067 - Task scheduler started.\nModule started at 2025-06-12T18:13:55.755381\n2025-06-12T18:45:04.921913 - No existing task file found, starting fresh.\n2025-06-12T18:45:04.925703 - Task scheduler started.\nModule started at 2025-06-12T18:45:04.929879\n2025-06-17T14:02:05.158268 - No existing task file found, starting fresh.\n2025-06-17T14:02:05.177661 - Task scheduler started.\nModule started at 2025-06-17T14:02:05.179392\n2025-06-18T15:18:25.802454 - No existing task file found, starting fresh."
+  },
+  "contextual_insights.log": {
+    "timestamp": "2025-07-04T17:55:38.334929",
+    "summary": "2025-06-18T15:18:25.792840 - No existing context data file found, starting fresh.\n2025-06-18T15:18:25.794904 - Contextual insights monitoring started.\nModule started at 2025-06-18T15:18:25.796028\n2025-07-04T17:43:05.983913 - No existing context data file found, starting fresh.\n2025-07-04T17:43:05.987026 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:43:05.992277\n2025-07-04T17:55:38.329277 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.332875 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:55:38.335782"
+  },
+  "adaptive_stress_reduction.log": {
+    "timestamp": "2025-07-04T17:55:38.325928",
+    "summary": "2025-07-04T17:43:05.979724 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:43:05.981092\n2025-07-04T17:55:38.324902 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:55:38.327500"
+  },
+  "contextual_focus_booster.log": {
+    "timestamp": "2025-07-04T17:55:38.315928",
+    "summary": "2025-07-04T17:43:05.961808 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:43:05.972770\n2025-07-04T17:55:38.305241 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:55:38.316529"
+  },
+  "habit_builder.log": {
+    "timestamp": "2025-07-04T17:55:38.317928",
+    "summary": "2025-06-12T18:45:04.919838 - No existing habit file found, starting fresh.\n2025-06-17T14:02:05.152761 - No existing habit file found, starting fresh.\n2025-06-18T15:18:25.760902 - No existing habit file found, starting fresh.\n2025-07-04T17:43:05.966428 - No existing habit file found, starting fresh.\n2025-07-04T17:55:38.318514 - No existing habit file found, starting fresh."
+  },
+  "thought_fail.log": {
+    "timestamp": "2025-06-19T08:41:26.213977",
+    "summary": "```json\n{\n  \"module_name\": \"adaptive_break_reminder.py\",\n  \"description\": \"This module encourages users to take regular breaks based on their activity patterns. It monitors user interactions to determine when breaks are needed and provides reminders to take breaks, promoting better work-life balance and preventing burnout.\",\n  \"dependencies\": [],\n  \"code\": \"import os\\nfrom datetime import datetime, timedelta\\nfrom core.event_bus import event_bus\\n\\nLOG_FILE = '/home/triad/mitch/logs/adaptive_break_reminder.log'\\n\\nclass AdaptiveBreakReminder:\\n    def __init__(self):\\n        self.last_break_time = datetime.now()\\n        self.break_interval = timedelta(minutes=60)  # Default break interval\\n\\n    def log_action(self, message):\\n        with open(LOG_FILE, 'a') as log_file:\\n            log_file.write(f'{datetime.now().isoformat()} - {message}\\\\n')\\n\\n    def handle_interaction_event(self, event_data):\\n        # Update the last break time if user interaction is detected\\n        self.last_break_time = datetime.now()\\n        self.log_action('User interaction detected, resetting break timer.')\\n\\n    def check_for_break(self):\\n        # Check if it's time to remind the user to take a break\\n        if datetime.now() - self.last_break_time > self.break_interval:\\n            self.emit_break_reminder()\\n            self.last_break_time = datetime.now()  # Reset break timer\\n\\n    def emit_break_reminder(self):\\n        reminder_message = 'You\\'ve been working for a while. It\\'s time to take a short break!' \\n        event_bus.emit('EMIT_SPEAK', {'message': reminder_message})\\n        self.log_action('Break reminder emitted to user.')\\n\\n    def start_monitoring(self):\\n        self.log_action('Adaptive break monitoring started.')\\n        # Implement a mechanism to periodically call check_for_break\\n        # This could be done using a scheduler or another mechanism within MITCH.\\n\\n\\ndef start_module(event_bus):\\n    break_reminder = AdaptiveBreakReminder()\\n    event_bus.subscribe('INTERACTION_EVENT', break_reminder.handle_interaction_event)\\n    break_reminder.start_monitoring()\\n\\n    # Log the module start\\n    with open(LOG_FILE, 'a') as log_file:\\n        log_file.write(f'Module started at {datetime.now().isoformat()}\\\\n')\\n\"\n}\n```"
   }
 }
 
@@ -102,7 +165,7 @@ Mitch Audit Report:
 
 [thought.py]
   Classes: EchoThoughtThread
-  Functions: list_existing_modules, load_policy, load_recent_feedback, load_recent_inspections, build_prompt_template, feedback_collector, __init__, shutdown, clean_response, fetch_thought, log_thought, log_module_created, process_response, run
+  Functions: list_existing_modules, load_policy, load_recent_feedback, build_prompt_template, feedback_collector, __init__, shutdown, clean_response, fetch_thought, log_thought, log_module_created, process_response, run
   Events Emitted: 
 
 [inputcheck.py]
@@ -123,11 +186,16 @@ Mitch Audit Report:
 [main.py]
   Classes: 
   Functions: main
-  Events Emitted: 
+  Events Emitted: SHUTDOWN
 
 [core/peterjones.py]
   Classes: 
-  Functions: log_event, start_logger, wildcard_logger
+  Functions: get_logger, log_event, start_logger, wildcard_logger
+  Events Emitted: 
+
+[core/config.py]
+  Classes: 
+  Functions: 
   Events Emitted: 
 
 [core/event_bus.py]
@@ -145,10 +213,20 @@ Mitch Audit Report:
   Functions: __init__, get_instance, record_emit, record_subscribe, get_all_events, get_emitters_for, get_subscribers_for, save_registry, load_registry
   Events Emitted: 
 
+[modules/proactive_health_monitor.py]
+  Classes: ProactiveHealthMonitor
+  Functions: start_module, __init__, log_resource_usage, analyze_and_optimize, handle_high_cpu_usage, handle_high_memory_usage
+  Events Emitted: OPTIMIZE_SYSTEM
+
+[modules/goal_planner.py]
+  Classes: GoalPlanner
+  Functions: start_module, __init__, load_goals, save_goals, add_goal, complete_goal, remove_goal, list_goals, log_action
+  Events Emitted: EMIT_GOAL_LIST
+
 [modules/transcriber.py]
   Classes: 
-  Functions: handle_mute, handle_unmute, handle_audio_captured, start_transcriber, shutdown
-  Events Emitted: EMIT_INPUT_RECEIVED
+  Functions: handle_mute, handle_unmute, _trim_recent, handle_audio_captured, start_transcriber, shutdown
+  Events Emitted: EMIT_INPUT_RECEIVED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED
 
 [modules/inspection_log_digester.py]
   Classes: 
@@ -157,7 +235,7 @@ Mitch Audit Report:
 
 [modules/persona.py]
   Classes: 
-  Functions: hash_persona, verify_bedrock, load_persona, load_emotion_state, build_system_prompt
+  Functions: hash_persona, verify_bedrock, load_persona, load_emotion_state, load_event_summaries, build_system_prompt
   Events Emitted: 
 
 [modules/memory.py]
@@ -172,7 +250,7 @@ Mitch Audit Report:
 
 [modules/resource_optimizer.py]
   Classes: ResourceOptimizer
-  Functions: start_module, __init__, log, check_resources, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, start
+  Functions: start_module, __init__, check_resources, handle_high_cpu_usage, handle_high_memory_usage, handle_high_disk_usage, start, shutdown
   Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
 
 [modules/import_backstory.py]
@@ -190,6 +268,11 @@ Mitch Audit Report:
   Functions: 
   Events Emitted: 
 
+[modules/web_search.py]
+  Classes: 
+  Functions: log, clean_query, fetch_results, handle_web_search, start_module
+  Events Emitted: EMIT_WEB_SEARCH_RESULT
+
 [modules/stream_mouth.py]
   Classes: StreamMouth
   Functions: start_stream_mouth, __init__, _audio_loop, _play_with_pyaudio, synthesize_and_queue, speak_chunk, speak_full, on_speak_end, _should_emit, shutdown
@@ -204,6 +287,11 @@ Mitch Audit Report:
   Classes: 
   Functions: safe_path, handle_module_create, handle_module_read, handle_module_edit, handle_main_append, start_module_editor
   Events Emitted: EMIT_MODULE_CONTENT
+
+[modules/resource_monitor.py]
+  Classes: ResourceMonitor
+  Functions: start_module, __init__, check_resources, _get_cpu_usage, _get_memory_usage, _get_disk_usage, _emit_alerts
+  Events Emitted: high_cpu_usage, high_memory_usage, high_disk_usage
 
 [modules/gpt_handler.py]
   Classes: 
@@ -222,8 +310,13 @@ Mitch Audit Report:
 
 [modules/interpreter.py]
   Classes: 
-  Functions: compute_match_score, extract_numbers, match_intent, handle_input, start_interpreter
-  Events Emitted: EMIT_CHAT_REQUEST, EMIT_USER_INTENT, EMIT_USER_INTENT, EMIT_MODULE_REQUEST, EMIT_MODULE_READ, EMIT_MODULE_EDIT, EMIT_SPEAK
+  Functions: compute_match_score, extract_numbers, extract_search_query, match_intent, handle_input, start_interpreter
+  Events Emitted: EMIT_CHAT_REQUEST, EMIT_USER_INTENT, EMIT_USER_INTENT, EMIT_MODULE_REQUEST, EMIT_WEB_SEARCH, EMIT_READ_LOG, EMIT_MODULE_READ, EMIT_MODULE_EDIT, EMIT_SPEAK
+
+[modules/emotion_tracker.py]
+  Classes: EmotionTracker
+  Functions: start_module, __init__, log_emotion_state, summarize_emotions, handle_emotion_event
+  Events Emitted: 
 
 [modules/visual/visual_web.py]
   Classes: VisualOrb

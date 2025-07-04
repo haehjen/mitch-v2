@@ -8,7 +8,7 @@ from core.event_bus import event_bus
 from core.peterjones import get_logger
 from modules import memory, persona
 
-# Optional: Ollama fallback
+# Optional fallback
 try:
     import ollama  # type: ignore
     HAS_OLLAMA = True
@@ -30,7 +30,7 @@ def generate_token():
 
 def emit_chunk(chunk, token):
     if chunk.strip().startswith("```"):
-        return  # skip codeblocks in speech
+        return
     event_bus.emit("EMIT_SPEAK_CHUNK", {"chunk": chunk, "token": token})
 
 def emit_end(token):
@@ -43,7 +43,6 @@ def emit_token_registered(token):
 def maybe_emit_module_create(response_text):
     code_match = re.search(r"```(?:python)?\n(.*?)```", response_text, re.DOTALL)
     file_match = re.search(r"`?(\w+\.py)`?", response_text)
-
     if code_match and file_match:
         filename = f"modules/{file_match.group(1)}"
         code = code_match.group(1).strip()
@@ -53,16 +52,23 @@ def maybe_emit_module_create(response_text):
             "code": code
         })
 
+def validate_tool_calls(messages):
+    tool_calls_present = any("tool_calls" in msg for msg in messages)
+    for msg in messages:
+        if msg.get("role") == "tool":
+            if not tool_calls_present:
+                logger.warning("Invalid message: 'tool' role without preceding 'tool_calls'")
+                return False
+    return True
+
 def handle_chat_request(data):
     global active_token
     prompt = data.get("prompt", "")
     token = generate_token()
     active_token = token
-
-    logger.info(f"New chat request: {prompt} (token: {token})")
     emit_token_registered(token)
+    logger.info(f"New chat request: {prompt} (token: {token})")
     memory.save_memory("user", prompt)
-
     try:
         thread = threading.Thread(target=stream_from_openai, args=(prompt, token))
         thread.start()
@@ -76,13 +82,18 @@ def stream_from_openai(prompt, token):
         recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
         facts = memory.recall_summary()
         fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
-
         knowledge_context = f"The following facts are known and persistent:\n{fact_string}"
+
         messages = [
             {"role": "system", "content": f"{SYSTEM_PROMPT}\n\n{knowledge_context}"},
             *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
             {"role": "user", "content": prompt}
         ]
+
+        if not validate_tool_calls(messages):
+            emit_chunk("Something went wrong with message structure.", token)
+            emit_end(token)
+            return
 
         response = client.chat.completions.create(
             model=OPENAI_MODEL,
@@ -97,7 +108,6 @@ def stream_from_openai(prompt, token):
                 response_buffer += part
                 emit_chunk(part, token)
         emit_end(token)
-
         memory.save_memory("assistant", response_buffer)
         maybe_emit_module_create(response_buffer)
 
@@ -109,7 +119,6 @@ def handle_module_request(data):
     prompt = data.get("prompt", "")
     token = generate_token()
     emit_token_registered(token)
-
     logger.info(f"Module request: {prompt} (token: {token})")
 
     engineer_prompt = (
@@ -120,18 +129,27 @@ def handle_module_request(data):
         f"Request:\n{prompt}"
     )
 
-    messages = [{"role": "system", "content": engineer_prompt}]
+    messages = [
+        {"role": "system", "content": engineer_prompt}
+    ]
 
     try:
         response = client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=messages,
+            temperature=0.7,
             stream=False
         )
+
+        if not response.choices:
+            raise ValueError("Empty choices in GPT response")
+
         full_response = response.choices[0].message.content
         memory.save_memory("assistant", full_response)
         maybe_emit_module_create(full_response)
+        emit_chunk(full_response, token)
         emit_end(token)
+
     except Exception as e:
         logger.error(f"Module generation failed: {e}")
         fallback_or_fail(prompt, token)
@@ -163,8 +181,6 @@ def update_emotion(emotion, delta):
     state[emotion] = max(0, state.get(emotion, 0) + delta)
     path.write_text(json.dumps(state, indent=2))
 
-# === Event Subscription ===
-
 def on_chat_request(data):
     handle_chat_request(data)
 
@@ -173,9 +189,7 @@ def on_module_request(data):
 
 def handle_tool_result(data):
     tool_name = data.get("function_name", "unknown")
-    tool_call_id = data.get("tool_call_id")
     output = data.get("output", "")
-
     token = generate_token()
     memory.save_memory("tool", f"{tool_name} result: {output}")
     emit_token_registered(token)
@@ -191,6 +205,11 @@ def handle_tool_result(data):
         *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
         {"role": "user", "content": prompt},
     ]
+
+    if not validate_tool_calls(messages):
+        emit_chunk("Tool result message structure was invalid.", token)
+        emit_end(token)
+        return
 
     try:
         response = client.chat.completions.create(

@@ -48,7 +48,7 @@ class TimeManagementAssistant:
     def report_time_spent(self):
         report = 'Time Spent Report:\n'
         for task, data in self.time_spent.items():
-            report += f'- {task}: {data['total']:.2f} minutes\n'
+            report += f"- {task}: {data['total']:.2f} minutes\n"
         event_bus.emit('EMIT_SPEAK', {'message': report})
         self.log_action('Time spent report emitted.')
 

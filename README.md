@@ -5,6 +5,8 @@ MITCH is a modular Python framework that coordinates several threads to create a
 
 1. **Set environment variables**
    - `OPENAI_API_KEY` – OpenAI API key used by the GPT components.
+     If this variable isn't set, some modules will try to read the key from a
+     file named `mitchskeys` in the project root (format: `OPENAI_API_KEY=...`).
    - `MITCH_DEBUG` *(optional)* – set to `true` for verbose logging.
    - `MITCH_SPEAKER_DEBUG` *(optional)* – enables additional speaker logs.
    - `PROXMOX_PASSWORD` *(optional)* – required when using the `proxmon` module.

@@ -1,111 +1,119 @@
 {
-  "contextual_mindfulness_assistant.log": {
-    "timestamp": "2025-07-04T17:55:38.303928",
-    "summary": "2025-07-04T17:43:05.951382 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:43:05.951706\n2025-07-04T17:55:38.302478 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:55:38.304667"
-  },
   "focus_session_manager.log": {
-    "timestamp": "2025-07-04T17:55:38.300928",
-    "summary": "2025-07-04T17:43:05.944069 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:43:05.945760\n2025-07-04T17:55:38.297297 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:55:38.301751"
+    "timestamp": "2025-07-12T11:51:41.112522",
+    "summary": "2025-07-04T17:43:05.944069 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:43:05.945760\n2025-07-04T17:55:38.297297 - No existing session file found, starting fresh.\nModule started at 2025-07-04T17:55:38.301751\n2025-07-04T18:06:44.770533 - No existing session file found, starting fresh.\nModule started at 2025-07-04T18:06:44.771709\n2025-07-12T11:51:41.100514 - No existing session file found, starting fresh.\nModule started at 2025-07-12T11:51:41.112811"
   },
-  "innermono.log": {
-    "timestamp": "2025-07-04T17:55:38.296928",
-    "summary": "2025-06-19 10:46:46,416 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:47,474 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:48,480 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:49,487 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:50,499 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:51,511 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:52,528 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:53,546 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:54,563 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:55,575 [ears] [ERROR] Loop mic capture failed: Error querying device 1"
+  "adaptive_break_reminder.log": {
+    "timestamp": "2025-07-12T11:51:41.111522",
+    "summary": "Module started at 2025-07-04T18:06:44.801976\n2025-07-04T18:06:44.805640 - Adaptive break monitoring started.\n2025-07-12T11:51:41.105335 - Adaptive break monitoring started.\nModule started at 2025-07-12T11:51:41.111710"
   },
-  "daily_summary_generator.log": {
-    "timestamp": "2025-07-04T17:55:38.292928",
-    "summary": "2025-07-04T17:43:05.937974 - Daily summary generation started.\nModule started at 2025-07-04T17:43:05.940134\n2025-07-04T17:55:38.292721 - Daily summary generation started.\nModule started at 2025-07-04T17:55:38.294030"
+  "contextual_mindfulness_assistant.log": {
+    "timestamp": "2025-07-12T11:51:41.104522",
+    "summary": "2025-07-04T17:43:05.951382 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:43:05.951706\n2025-07-04T17:55:38.302478 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T17:55:38.304667\n2025-07-04T18:06:44.775512 - Contextual mindfulness monitoring started.\nModule started at 2025-07-04T18:06:44.780371\n2025-07-12T11:51:41.102928 - Contextual mindfulness monitoring started.\nModule started at 2025-07-12T11:51:41.105268"
   },
   "adaptive_focus_assistant.log": {
-    "timestamp": "2025-07-04T17:55:38.291929",
-    "summary": "2025-07-04T17:43:05.929862 - No existing user patterns file found, starting fresh.\n2025-07-04T17:43:05.931810 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:43:05.934139\n2025-07-04T17:55:38.285900 - No existing user patterns file found, starting fresh.\n2025-07-04T17:55:38.286632 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:55:38.293275"
+    "timestamp": "2025-07-12T11:51:41.101522",
+    "summary": "2025-07-04T17:43:05.929862 - No existing user patterns file found, starting fresh.\n2025-07-04T17:43:05.931810 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:43:05.934139\n2025-07-04T17:55:38.285900 - No existing user patterns file found, starting fresh.\n2025-07-04T17:55:38.286632 - Adaptive focus monitoring started.\nModule started at 2025-07-04T17:55:38.293275\n2025-07-04T18:06:44.763991 - No existing user patterns file found, starting fresh.\n2025-07-04T18:06:44.766913 - Adaptive focus monitoring started.\nModule started at 2025-07-04T18:06:44.768183\n2025-07-12T11:51:41.081886 - No existing user patterns file found, starting fresh."
   },
-  "adaptive_goal_tracker.log": {
-    "timestamp": "2025-07-04T17:55:38.289928",
-    "summary": "2025-07-04T17:43:05.923723 - No existing goals file found, starting fresh.\n2025-07-04T17:43:05.924268 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:43:05.924538\n2025-07-04T17:55:38.281530 - No existing goals file found, starting fresh.\n2025-07-04T17:55:38.282629 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:55:38.290629"
+  "innermono.log": {
+    "timestamp": "2025-07-12T11:51:41.091522",
+    "summary": "2025-06-19 10:46:46,416 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:47,474 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:48,480 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:49,487 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:50,499 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:51,511 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:52,528 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:53,546 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:54,563 [ears] [ERROR] Loop mic capture failed: Error querying device 1\n2025-06-19 10:46:55,575 [ears] [ERROR] Loop mic capture failed: Error querying device 1"
   },
   "user_engagement_tracker.log": {
-    "timestamp": "2025-07-04T17:55:38.288929",
-    "summary": "2025-07-04T17:43:05.933935 - User engagement tracking started.\nModule started at 2025-07-04T17:43:05.936338\n2025-07-04T17:55:38.288352 - User engagement tracking started.\nModule started at 2025-07-04T17:55:38.290213"
+    "timestamp": "2025-07-12T11:51:41.087522",
+    "summary": "2025-07-04T17:43:05.933935 - User engagement tracking started.\nModule started at 2025-07-04T17:43:05.936338\n2025-07-04T17:55:38.288352 - User engagement tracking started.\nModule started at 2025-07-04T17:55:38.290213\n2025-07-04T18:06:44.764900 - User engagement tracking started.\nModule started at 2025-07-04T18:06:44.766247\n2025-07-12T11:51:41.084170 - User engagement tracking started.\nModule started at 2025-07-12T11:51:41.088142"
+  },
+  "adaptive_goal_tracker.log": {
+    "timestamp": "2025-07-12T11:51:41.079522",
+    "summary": "2025-07-04T17:43:05.923723 - No existing goals file found, starting fresh.\n2025-07-04T17:43:05.924268 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:43:05.924538\n2025-07-04T17:55:38.281530 - No existing goals file found, starting fresh.\n2025-07-04T17:55:38.282629 - Adaptive goal tracking started.\nModule started at 2025-07-04T17:55:38.290629\n2025-07-04T18:06:44.759036 - No existing goals file found, starting fresh.\n2025-07-04T18:06:44.759770 - Adaptive goal tracking started.\nModule started at 2025-07-04T18:06:44.761984\n2025-07-12T11:51:41.073202 - No existing goals file found, starting fresh."
   },
   "adaptive_energy_manager.log": {
-    "timestamp": "2025-07-04T17:48:11.372355",
+    "timestamp": "2025-07-04T18:08:20.589186",
     "summary": "2025-07-04T17:43:06.081530 - Adaptive Energy Manager initialized.\n2025-07-04T17:43:06.085475 - Starting resource monitoring.\n2025-07-04T17:43:07.124367 - CPU Usage: 21.3%, Memory Usage: 7.2%\n2025-07-04T17:43:07.135663 - Deactivating energy-saving mode.\n2025-07-04T17:43:15.690870 - CPU Usage: 17.1%, Memory Usage: 7.2%\n2025-07-04T17:43:15.701978 - Deactivating energy-saving mode.\n2025-07-04T17:43:16.746468 - CPU Usage: 17.7%, Memory Usage: 7.2%\n2025-07-04T17:43:16.757390 - Deactivating energy-saving mode.\n2025-07-04T17:43:17.807022 - CPU Usage: 21.1%, Memory Usage: 7.2%\n2025-07-04T17:43:17.817914 - Deactivating energy-saving mode."
   },
   "modules_created.log": {
-    "timestamp": "2025-07-04T17:43:16.412588",
+    "timestamp": "2025-07-04T18:07:00.158259",
     "summary": "[2025-06-12 18:04:36.552800] Module Created: task_scheduler.py - \"This module adds task scheduling capabilities to MITCH. It allows users to schedule tasks and reminders at specific times, helping users manage their time effectively and ensuring important tasks are not forgotten. This enhances MITCH's ability to support productivity by automating task reminders.\"\n[2025-06-12 18:14:09.339746] Module Created: habit_builder.py - \"This module helps users build habits by tracking routine activities and providing reminders to reinforce habit formation. It allows users to define habits they want to build, tracks their progress, and emits reminders to encourage consistency. This enhances MITCH's ability to support users in developing positive habits, thereby improving productivity and well-being.\"\n[2025-06-12 18:45:21.898407] Module Created: time_management_assistant.py - \"This module enhances MITCH by providing time management capabilities. It tracks the time spent on tasks and activities, offering insights to improve productivity. Users can receive regular reports on their time usage, helping them identify areas where time can be better managed. This module supports productivity by ensuring users are aware of how their time is allocated, thus promoting efficient use of time and better focus on priorities.\"\n[2025-06-17 14:02:13.478936] Module Created: contextual_insights.py - \"This module provides contextual insights by analyzing recent user interactions and system events. It helps Echo understand the user's current context better, enabling more personalized and timely responses. The module monitors logs and events to extract patterns or anomalies, offering suggestions to optimize user experience or system performance.\"\n[2025-06-17 15:22:33.595521] Module Created: automatic_log_analyzer.py - \"This module automatically analyzes log files to detect patterns, errors, or anomalies and generates insights. It helps maintain system stability by preemptively identifying potential issues and provides recommendations for improvements.\"\n[2025-06-17 16:42:41.230659] Module Created: adaptive_learning_assistant.py - \"This module dynamically adjusts learning materials and strategies to user preferences and progress. It helps Mitch offer personalized educational experiences, enhancing learning efficiency and engagement.\"\n[2025-06-18 15:18:39.160134] Module Created: user_feedback_collector.py - \"This module collects user feedback on MITCH's performance and suggestions for improvement. It helps in understanding user satisfaction and areas where MITCH can be improved. By collecting and analyzing this feedback, MITCH can evolve to better meet user needs, enhancing overall user experience and system effectiveness.\"\n[2025-06-18 16:38:54.155768] Module Created: adaptive_focus_assistant.py - \"This module enhances user productivity by dynamically adjusting the user's focus reminders based on detected patterns in their activity and preferences. It learns when users are most productive and adjusts the frequency and timing of focus reminders accordingly, minimizing interruptions during peak productivity periods and providing more frequent reminders when needed.\"\n[2025-06-18 17:59:02.435826] Module Created: mood_based_recommendation.py - \"This module provides personalized recommendations for activities or content based on the user's current emotional state. By integrating with the existing EmotionTracker module, it analyzes the user's mood and suggests activities that can enhance their well-being or productivity. This helps Echo to be more supportive and responsive to the user's emotional needs, improving overall user experience and engagement.\"\n[2025-06-18 19:19:11.674765] Module Created: daily_summary_generator.py - \"This module generates a daily summary of user activities, system events, and key insights, providing the user with a comprehensive overview of their day. It helps users reflect on their productivity and system performance, enhancing MITCH's ability to support daily planning and self-improvement. The module automatically compiles and logs this summary at the end of each day.\""
   },
   "thoughts.log": {
-    "timestamp": "2025-07-04T17:43:16.407588",
+    "timestamp": "2025-07-04T18:07:00.157259",
     "summary": "[2025-06-12 18:04:36.547029] {\n  \"module_name\": \"task_scheduler.py\",\n  \"description\": \"This module adds task scheduling capabilities to MITCH. It allows users to schedule tasks and reminders at specific times, helping users manage their time effectively and ensuring important tasks are not forgotten. This enhances MITCH's ability to support productivity by automating task reminders.\",\n  \"dependencies\": [],\n  \"code\": \"import os\\nimport json\\nfrom datetime import datetime, timedelta\\nfrom threading import Thread, Event\\nfrom time import sleep\\nfrom core.event_bus import event_bus\\n\\nLOG_FILE = '/home/triad/mitch/logs/task_scheduler.log'\\n\\nclass TaskScheduler:\\n    def __init__(self):\\n        self.tasks = []\\n        self.stop_event = Event()\\n        self.load_tasks()\\n\\n    def log_action(self, message):\\n        with open(LOG_FILE, 'a') as log_file:\\n            log_file.write(f'{datetime.now().isoformat()} - {message}\\\\n')\\n\\n    def load_tasks(self):\\n        try:\\n            with open('/home/triad/mitch/data/scheduled_tasks.json', 'r') as file:\\n                self.tasks = json.load(file)\\n                self.log_action('Tasks loaded successfully.')\\n        except FileNotFoundError:\\n            self.tasks = []\\n            self.log_action('No existing task file found, starting fresh.')\\n\\n    def save_tasks(self):\\n        with open('/home/triad/mitch/data/scheduled_tasks.json', 'w') as file:\\n            json.dump(self.tasks, file)\\n            self.log_action('Tasks saved successfully.')\\n\\n    def add_task(self, task_data):\\n        self.tasks.append(task_data)\\n        self.save_tasks()\\n        self.log_action(f'Task added: {task_data}')\\n\\n    def remove_task(self, task_id):\\n        self.tasks = [task for task in self.tasks if task['id'] != task_id]\\n        self.save_tasks()\\n        self.log_action(f'Task removed: {task_id}')\\n\\n    def check_tasks(self):\\n        current_time = datetime.now()\\n        for task in self.tasks[:]:  # Make a copy of the list for safe removal\\n            task_time = datetime.fromisoformat(task['time'])\\n            if current_time >= task_time:\\n                self.emit_task_reminder(task)\\n                self.tasks.remove(task)  # Remove task after execution\\n                self.save_tasks()\\n\\n    def emit_task_reminder(self, task):\\n        reminder_message = f\\\"Reminder: {task['description']}\\\"\\n        event_bus.emit('EMIT_SPEAK', {'message': reminder_message})\\n        self.log_action(f'Reminder emitted for task: {task}')\\n\\n    def run_scheduler(self):\\n        self.log_action('Task scheduler started.')\\n        while not self.stop_event.is_set():\\n            self.check_tasks()\\n            sleep(60)  # Check every minute\\n\\n    def stop(self):\\n        self.stop_event.set()\\n        self.log_action('Task scheduler stopped.')\\n\\n\\ndef start_module(event_bus):\\n    scheduler = TaskScheduler()\\n    Thread(target=scheduler.run_scheduler, daemon=True).start()\\n\\n    event_bus.subscribe('ADD_TASK', scheduler.add_task)\\n    event_bus.subscribe('REMOVE_TASK', scheduler.remove_task)\\n\\n    # Log the module start\\n    with open(LOG_FILE, 'a') as log_file:\\n        log_file.write(f'Module started at {datetime.now().isoformat()}\\\\n')\\n\"\n}\n\n[2025-06-12 18:14:09.333986] {\n  \"module_name\": \"habit_builder.py\",\n  \"description\": \"This module helps users build habits by tracking routine activities and providing reminders to reinforce habit formation. It allows users to define habits they want to build, tracks their progress, and emits reminders to encourage consistency. This enhances MITCH's ability to support users in developing positive habits, thereby improving productivity and well-being.\","
   },
   "adaptive_communication_assistant.log": {
-    "timestamp": "2025-07-04T17:43:06.116597",
-    "summary": "2025-07-04T17:43:06.115703 - No user preferences file found, using defaults.\n2025-07-04T17:43:06.116694 - Adaptive communication monitoring started.\nModule started at 2025-07-04T17:43:06.117642"
+    "timestamp": "2025-07-04T18:06:44.934273",
+    "summary": "2025-07-04T17:43:06.115703 - No user preferences file found, using defaults.\n2025-07-04T17:43:06.116694 - Adaptive communication monitoring started.\nModule started at 2025-07-04T17:43:06.117642\n2025-07-04T17:55:38.442732 - No user preferences file found, using defaults.\n2025-07-04T17:55:38.445695 - Adaptive communication monitoring started.\nModule started at 2025-07-04T17:55:38.449526\n2025-07-04T18:06:44.930752 - No user preferences file found, using defaults.\n2025-07-04T18:06:44.932631 - Adaptive communication monitoring started.\nModule started at 2025-07-04T18:06:44.934799"
   },
   "user_proximity_notifier.log": {
-    "timestamp": "2025-07-04T17:43:06.103597",
-    "summary": "2025-07-04T17:43:06.101506 - User proximity monitoring started.\nModule started at 2025-07-04T17:43:06.105452"
-  },
-  "mood_based_recommendation.log": {
-    "timestamp": "2025-07-04T17:43:06.095597",
-    "summary": "Module started at 2025-07-04T17:43:06.096937"
+    "timestamp": "2025-07-04T18:06:44.925272",
+    "summary": "2025-07-04T17:43:06.101506 - User proximity monitoring started.\nModule started at 2025-07-04T17:43:06.105452\n2025-07-04T17:55:38.436779 - User proximity monitoring started.\nModule started at 2025-07-04T17:55:38.436996\n2025-07-04T18:06:44.924114 - User proximity monitoring started.\nModule started at 2025-07-04T18:06:44.925531"
   },
   "adaptive_learning_assistant.log": {
-    "timestamp": "2025-07-04T17:43:06.091597",
-    "summary": "2025-06-18T15:18:25.849553 - No existing learning data file found, starting fresh.\n2025-06-18T15:18:25.852312 - Adaptive learning monitoring started.\nModule started at 2025-06-18T15:18:25.853346\n2025-07-04T17:43:06.086676 - No existing learning data file found, starting fresh.\n2025-07-04T17:43:06.090311 - Adaptive learning monitoring started.\nModule started at 2025-07-04T17:43:06.093428"
+    "timestamp": "2025-07-04T18:06:44.920273",
+    "summary": "2025-06-18T15:18:25.849553 - No existing learning data file found, starting fresh.\n2025-06-18T15:18:25.852312 - Adaptive learning monitoring started.\nModule started at 2025-06-18T15:18:25.853346\n2025-07-04T17:43:06.086676 - No existing learning data file found, starting fresh.\n2025-07-04T17:43:06.090311 - Adaptive learning monitoring started.\nModule started at 2025-07-04T17:43:06.093428\n2025-07-04T17:55:38.414851 - No existing learning data file found, starting fresh.\n2025-07-04T17:55:38.421815 - Adaptive learning monitoring started.\nModule started at 2025-07-04T17:55:38.426740\n2025-07-04T18:06:44.914001 - No existing learning data file found, starting fresh."
+  },
+  "mood_based_recommendation.log": {
+    "timestamp": "2025-07-04T18:06:44.914273",
+    "summary": "Module started at 2025-07-04T17:43:06.096937\nModule started at 2025-07-04T17:55:38.421287\nModule started at 2025-07-04T18:06:44.914877"
   },
   "time_management_assistant.log": {
-    "timestamp": "2025-07-04T17:43:06.074597",
-    "summary": "2025-06-17T14:02:05.203883 - No existing time data file found, starting fresh.\nModule started at 2025-06-17T14:02:05.208230\n2025-06-18T15:18:25.839714 - No existing time data file found, starting fresh.\nModule started at 2025-06-18T15:18:25.840982\n2025-07-04T17:43:06.070638 - No existing time data file found, starting fresh.\nModule started at 2025-07-04T17:43:06.075797"
+    "timestamp": "2025-07-04T18:06:44.901273",
+    "summary": "2025-06-17T14:02:05.203883 - No existing time data file found, starting fresh.\nModule started at 2025-06-17T14:02:05.208230\n2025-06-18T15:18:25.839714 - No existing time data file found, starting fresh.\nModule started at 2025-06-18T15:18:25.840982\n2025-07-04T17:43:06.070638 - No existing time data file found, starting fresh.\nModule started at 2025-07-04T17:43:06.075797\n2025-07-04T17:55:38.401638 - No existing time data file found, starting fresh.\nModule started at 2025-07-04T17:55:38.406191\n2025-07-04T18:06:44.901042 - No existing time data file found, starting fresh.\nModule started at 2025-07-04T18:06:44.901900"
   },
   "dynamic_routine_optimizer.log": {
-    "timestamp": "2025-07-04T17:43:06.063597",
-    "summary": "2025-07-04T17:43:06.058254 - No existing routines file found, starting fresh.\n2025-07-04T17:43:06.063914 - Dynamic routine optimization monitoring started.\nModule started at 2025-07-04T17:43:06.065046"
+    "timestamp": "2025-07-04T18:06:44.882272",
+    "summary": "2025-07-04T17:43:06.058254 - No existing routines file found, starting fresh.\n2025-07-04T17:43:06.063914 - Dynamic routine optimization monitoring started.\nModule started at 2025-07-04T17:43:06.065046\n2025-07-04T17:55:38.387900 - No existing routines file found, starting fresh.\n2025-07-04T17:55:38.388699 - Dynamic routine optimization monitoring started.\nModule started at 2025-07-04T17:55:38.389164\n2025-07-04T18:06:44.881754 - No existing routines file found, starting fresh.\n2025-07-04T18:06:44.882085 - Dynamic routine optimization monitoring started.\nModule started at 2025-07-04T18:06:44.882842"
   },
   "adaptive_routine_planner.log": {
-    "timestamp": "2025-07-04T17:43:06.051597",
-    "summary": "2025-07-04T17:43:06.050887 - No existing routine file found, starting fresh.\nModule started at 2025-07-04T17:43:06.052403"
+    "timestamp": "2025-07-04T18:06:44.876273",
+    "summary": "2025-07-04T17:43:06.050887 - No existing routine file found, starting fresh.\nModule started at 2025-07-04T17:43:06.052403\n2025-07-04T17:55:38.384199 - No existing routine file found, starting fresh.\nModule started at 2025-07-04T17:55:38.385995\n2025-07-04T18:06:44.876143 - No existing routine file found, starting fresh.\nModule started at 2025-07-04T18:06:44.877075"
   },
   "smart_alert_manager.log": {
-    "timestamp": "2025-07-04T17:43:06.047597",
-    "summary": "Module started at 2025-07-04T17:43:06.049352"
+    "timestamp": "2025-07-12T11:51:41.183522",
+    "summary": "Module started at 2025-07-04T17:43:06.049352\nModule started at 2025-07-04T17:55:38.380168\nModule started at 2025-07-04T18:06:44.871395\nModule started at 2025-07-12T11:51:41.184072"
   },
   "proactive_error_handler.log": {
-    "timestamp": "2025-07-04T17:43:06.040597",
-    "summary": "2025-07-04T17:43:06.038659 - Proactive error monitoring started.\n2025-07-04T17:43:06.041910 - No error log file found. Skipping error scan."
+    "timestamp": "2025-07-12T11:51:41.181522",
+    "summary": "2025-07-04T17:43:06.038659 - Proactive error monitoring started.\n2025-07-04T17:43:06.041910 - No error log file found. Skipping error scan.\n2025-07-04T17:55:38.373430 - Proactive error monitoring started.\n2025-07-04T17:55:38.375150 - No error log file found. Skipping error scan.\n2025-07-04T18:06:44.863389 - Proactive error monitoring started.\n2025-07-04T18:06:44.868481 - No error log file found. Skipping error scan.\n2025-07-12T11:51:41.177900 - Proactive error monitoring started.\n2025-07-12T11:51:41.181864 - No error log file found. Skipping error scan."
   },
   "user_feedback_collector.log": {
-    "timestamp": "2025-07-04T17:55:38.370928",
-    "summary": "2025-07-04T17:43:06.024101 - No existing feedback file found, starting fresh.\n2025-07-04T17:43:06.028435 - User feedback monitoring started.\nModule started at 2025-07-04T17:43:06.029534\n2025-07-04T17:55:38.366282 - No existing feedback file found, starting fresh.\n2025-07-04T17:55:38.367262 - User feedback monitoring started.\nModule started at 2025-07-04T17:55:38.371709"
+    "timestamp": "2025-07-12T11:51:41.173522",
+    "summary": "2025-07-04T17:43:06.024101 - No existing feedback file found, starting fresh.\n2025-07-04T17:43:06.028435 - User feedback monitoring started.\nModule started at 2025-07-04T17:43:06.029534\n2025-07-04T17:55:38.366282 - No existing feedback file found, starting fresh.\n2025-07-04T17:55:38.367262 - User feedback monitoring started.\nModule started at 2025-07-04T17:55:38.371709\n2025-07-04T18:06:44.855626 - No existing feedback file found, starting fresh.\n2025-07-04T18:06:44.856686 - User feedback monitoring started.\nModule started at 2025-07-04T18:06:44.859162\n2025-07-12T11:51:41.169435 - No existing feedback file found, starting fresh."
+  },
+  "audio_diagnostics.log": {
+    "timestamp": "2025-07-12T11:51:41.164522",
+    "summary": "Module started at 2025-07-04T17:55:38.362134\nModule started at 2025-07-04T18:06:44.850614\nModule started at 2025-07-12T11:51:41.165391"
   },
   "dynamic_contextual_responder.log": {
-    "timestamp": "2025-07-04T17:55:38.358928",
-    "summary": "2025-07-04T17:43:06.010207 - No existing context data file found, starting fresh.\n2025-07-04T17:43:06.014231 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:43:06.014918\n2025-07-04T17:55:38.352530 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.356377 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:55:38.360382"
+    "timestamp": "2025-07-12T11:51:41.161522",
+    "summary": "2025-07-04T17:43:06.010207 - No existing context data file found, starting fresh.\n2025-07-04T17:43:06.014231 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:43:06.014918\n2025-07-04T17:55:38.352530 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.356377 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T17:55:38.360382\n2025-07-04T18:06:44.840768 - No existing context data file found, starting fresh.\n2025-07-04T18:06:44.841932 - Dynamic contextual responder monitoring started.\nModule started at 2025-07-04T18:06:44.842782\n2025-07-12T11:51:41.155526 - No existing context data file found, starting fresh."
   },
   "contextual_reminder.log": {
-    "timestamp": "2025-07-04T17:55:38.349928",
-    "summary": "2025-07-04T17:43:06.001216 - No existing contextual data file found, starting fresh.\n2025-07-04T17:43:06.005991 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:43:06.013455\n2025-07-04T17:55:38.346244 - No existing contextual data file found, starting fresh.\n2025-07-04T17:55:38.348015 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:55:38.351100"
+    "timestamp": "2025-07-12T11:51:41.156522",
+    "summary": "2025-07-04T17:43:06.001216 - No existing contextual data file found, starting fresh.\n2025-07-04T17:43:06.005991 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:43:06.013455\n2025-07-04T17:55:38.346244 - No existing contextual data file found, starting fresh.\n2025-07-04T17:55:38.348015 - Contextual reminder monitoring started.\nModule started at 2025-07-04T17:55:38.351100\n2025-07-04T18:06:44.827648 - No existing contextual data file found, starting fresh.\n2025-07-04T18:06:44.831327 - Contextual reminder monitoring started.\nModule started at 2025-07-04T18:06:44.837735\n2025-07-12T11:51:41.137093 - No existing contextual data file found, starting fresh."
   },
   "task_scheduler.log": {
-    "timestamp": "2025-07-04T17:55:38.340928",
+    "timestamp": "2025-07-12T11:51:41.132522",
     "summary": "2025-06-12T18:13:55.745189 - No existing task file found, starting fresh.\n2025-06-12T18:13:55.753067 - Task scheduler started.\nModule started at 2025-06-12T18:13:55.755381\n2025-06-12T18:45:04.921913 - No existing task file found, starting fresh.\n2025-06-12T18:45:04.925703 - Task scheduler started.\nModule started at 2025-06-12T18:45:04.929879\n2025-06-17T14:02:05.158268 - No existing task file found, starting fresh.\n2025-06-17T14:02:05.177661 - Task scheduler started.\nModule started at 2025-06-17T14:02:05.179392\n2025-06-18T15:18:25.802454 - No existing task file found, starting fresh."
   },
   "contextual_insights.log": {
-    "timestamp": "2025-07-04T17:55:38.334929",
-    "summary": "2025-06-18T15:18:25.792840 - No existing context data file found, starting fresh.\n2025-06-18T15:18:25.794904 - Contextual insights monitoring started.\nModule started at 2025-06-18T15:18:25.796028\n2025-07-04T17:43:05.983913 - No existing context data file found, starting fresh.\n2025-07-04T17:43:05.987026 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:43:05.992277\n2025-07-04T17:55:38.329277 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.332875 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:55:38.335782"
+    "timestamp": "2025-07-12T11:51:41.124522",
+    "summary": "2025-06-18T15:18:25.792840 - No existing context data file found, starting fresh.\n2025-06-18T15:18:25.794904 - Contextual insights monitoring started.\nModule started at 2025-06-18T15:18:25.796028\n2025-07-04T17:43:05.983913 - No existing context data file found, starting fresh.\n2025-07-04T17:43:05.987026 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:43:05.992277\n2025-07-04T17:55:38.329277 - No existing context data file found, starting fresh.\n2025-07-04T17:55:38.332875 - Contextual insights monitoring started.\nModule started at 2025-07-04T17:55:38.335782\n2025-07-04T18:06:44.817422 - No existing context data file found, starting fresh."
   },
   "adaptive_stress_reduction.log": {
-    "timestamp": "2025-07-04T17:55:38.325928",
-    "summary": "2025-07-04T17:43:05.979724 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:43:05.981092\n2025-07-04T17:55:38.324902 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:55:38.327500"
-  },
-  "contextual_focus_booster.log": {
-    "timestamp": "2025-07-04T17:55:38.315928",
-    "summary": "2025-07-04T17:43:05.961808 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:43:05.972770\n2025-07-04T17:55:38.305241 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:55:38.316529"
+    "timestamp": "2025-07-12T11:51:41.118522",
+    "summary": "2025-07-04T17:43:05.979724 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:43:05.981092\n2025-07-04T17:55:38.324902 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T17:55:38.327500\n2025-07-04T18:06:44.812486 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-04T18:06:44.813444\n2025-07-12T11:51:41.117195 - Adaptive stress reduction monitoring started.\nModule started at 2025-07-12T11:51:41.119299"
   },
   "habit_builder.log": {
-    "timestamp": "2025-07-04T17:55:38.317928",
-    "summary": "2025-06-12T18:45:04.919838 - No existing habit file found, starting fresh.\n2025-06-17T14:02:05.152761 - No existing habit file found, starting fresh.\n2025-06-18T15:18:25.760902 - No existing habit file found, starting fresh.\n2025-07-04T17:43:05.966428 - No existing habit file found, starting fresh.\n2025-07-04T17:55:38.318514 - No existing habit file found, starting fresh."
+    "timestamp": "2025-07-12T11:51:41.122522",
+    "summary": "2025-06-12T18:45:04.919838 - No existing habit file found, starting fresh.\n2025-06-17T14:02:05.152761 - No existing habit file found, starting fresh.\n2025-06-18T15:18:25.760902 - No existing habit file found, starting fresh.\n2025-07-04T17:43:05.966428 - No existing habit file found, starting fresh.\n2025-07-04T17:55:38.318514 - No existing habit file found, starting fresh.\n2025-07-04T18:06:44.809810 - No existing habit file found, starting fresh.\n2025-07-12T11:51:41.123020 - No existing habit file found, starting fresh."
+  },
+  "contextual_focus_booster.log": {
+    "timestamp": "2025-07-12T11:51:41.110522",
+    "summary": "2025-07-04T17:43:05.961808 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:43:05.972770\n2025-07-04T17:55:38.305241 - Contextual focus monitoring started.\nModule started at 2025-07-04T17:55:38.316529\n2025-07-04T18:06:44.805123 - Contextual focus monitoring started.\nModule started at 2025-07-04T18:06:44.806863\n2025-07-12T11:51:41.110720 - Contextual focus monitoring started.\nModule started at 2025-07-12T11:51:41.111398"
+  },
+  "daily_summary_generator.log": {
+    "timestamp": "2025-07-12T11:51:41.105522",
+    "summary": "2025-07-04T17:43:05.937974 - Daily summary generation started.\nModule started at 2025-07-04T17:43:05.940134\n2025-07-04T17:55:38.292721 - Daily summary generation started.\nModule started at 2025-07-04T17:55:38.294030\n2025-07-04T18:06:44.767807 - Daily summary generation started.\nModule started at 2025-07-04T18:06:44.768645\n2025-07-12T11:51:41.094225 - Daily summary generation started.\nModule started at 2025-07-12T11:51:41.106117"
   },
   "thought_fail.log": {
     "timestamp": "2025-06-19T08:41:26.213977",

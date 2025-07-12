@@ -232,3 +232,11 @@ def handle_listen():
 
 def start_visual():
     threading.Thread(target=run_visual_server, daemon=True).start()
+
+@app.route("/housecore/ping", methods=["POST"])
+def housecore_ping():
+    data = request.get_json()
+    identity = data.get("identity")
+    hostname = data.get("hostname")
+    logger.info(f"Ping received from {identity} ({hostname})")
+    return jsonify({"status": "acknowledged"})

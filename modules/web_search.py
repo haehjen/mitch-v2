@@ -1,17 +1,18 @@
-import requests
+from ddgs import DDGS
 import os
 import re
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
+from datetime import datetime, timezone
 
-logger = get_logger("innermono")  # Changed logger name
+logger = get_logger("innermono")
 
-SEARCH_API = 'https://api.duckduckgo.com/'
-LOG_PATH = os.path.join(MITCH_ROOT, 'logs', 'innermono.log')  # Updated path
+LOG_PATH = os.path.join(MITCH_ROOT, 'logs', 'innermono.log')
 
 def log(message: str) -> None:
-    logger.info(message)
+    ts = datetime.now(timezone.utc).isoformat()
+    logger.info(f"[{ts}] {message}")
 
 def clean_query(raw: str) -> str:
     """Strip filler phrases for more accurate web queries."""
@@ -25,32 +26,10 @@ def clean_query(raw: str) -> str:
 
 def fetch_results(query: str) -> str:
     try:
-        resp = requests.get(
-            SEARCH_API,
-            params={'q': query, 'format': 'json', 'no_redirect': '1', 'no_html': '1'},
-            timeout=5,
-        )
-        if resp.status_code == 200:
-            data = resp.json()
-            results = []
-
-            for item in data.get('RelatedTopics', []):
-                if isinstance(item, dict) and 'Text' in item:
-                    results.append(item['Text'])
-                elif 'Topics' in item:
-                    for sub in item['Topics']:
-                        if 'Text' in sub:
-                            results.append(sub['Text'])
-                        if len(results) >= 3:
-                            break
-                if len(results) >= 3:
-                    break
-
-            if not results and data.get('AbstractText'):
-                results.append(data['AbstractText'])
-
-            return ' | '.join(results) if results else 'No relevant results.'
-        return f"Search API error {resp.status_code}."
+        with DDGS() as ddgs:
+            results = ddgs.text(query)
+            top_results = [r["body"] for r in results if "body" in r][:3]
+            return ' | '.join(top_results) if top_results else "No relevant results found."
     except Exception as e:
         return f"Search failed: {e}"
 

@@ -1,78 +1,60 @@
-import os
-import json
+import threading
+import time
 from datetime import datetime, timedelta
-from threading import Thread, Event
-from time import sleep
 from core.event_bus import event_bus
-
-LOG_FILE = '/home/triad/mitch/logs/task_scheduler.log'
 
 class TaskScheduler:
     def __init__(self):
-        self.tasks = []
-        self.stop_event = Event()
-        self.load_tasks()
+        self.tasks = []  # List to store scheduled tasks
+        self.running = True
 
-    def log_action(self, message):
-        with open(LOG_FILE, 'a') as log_file:
-            log_file.write(f'{datetime.now().isoformat()} - {message}\n')
+    def add_task(self, task_name, task_time, event_name, data):
+        """
+        Schedule a new task.
 
-    def load_tasks(self):
-        try:
-            with open('/home/triad/mitch/data/scheduled_tasks.json', 'r') as file:
-                self.tasks = json.load(file)
-                self.log_action('Tasks loaded successfully.')
-        except FileNotFoundError:
-            self.tasks = []
-            self.log_action('No existing task file found, starting fresh.')
+        :param task_name: Name of the task
+        :param task_time: Time to execute the task (datetime object)
+        :param event_name: Event to emit when the task is executed
+        :param data: Data to send with the event
+        """
+        self.tasks.append({
+            'task_name': task_name,
+            'task_time': task_time,
+            'event_name': event_name,
+            'data': data
+        })
+        self.log_action(f"Scheduled task '{task_name}' for {task_time}.")
 
-    def save_tasks(self):
-        with open('/home/triad/mitch/data/scheduled_tasks.json', 'w') as file:
-            json.dump(self.tasks, file)
-            self.log_action('Tasks saved successfully.')
-
-    def add_task(self, task_data):
-        self.tasks.append(task_data)
-        self.save_tasks()
-        self.log_action(f'Task added: {task_data}')
-
-    def remove_task(self, task_id):
-        self.tasks = [task for task in self.tasks if task['id'] != task_id]
-        self.save_tasks()
-        self.log_action(f'Task removed: {task_id}')
-
-    def check_tasks(self):
-        current_time = datetime.now()
-        for task in self.tasks[:]:  # Make a copy of the list for safe removal
-            task_time = datetime.fromisoformat(task['time'])
-            if current_time >= task_time:
-                self.emit_task_reminder(task)
-                self.tasks.remove(task)  # Remove task after execution
-                self.save_tasks()
-
-    def emit_task_reminder(self, task):
-        reminder_message = f"Reminder: {task['description']}"
-        event_bus.emit('EMIT_SPEAK', {'message': reminder_message})
-        self.log_action(f'Reminder emitted for task: {task}')
-
-    def run_scheduler(self):
-        self.log_action('Task scheduler started.')
-        while not self.stop_event.is_set():
-            self.check_tasks()
-            sleep(60)  # Check every minute
+    def run(self):
+        while self.running:
+            now = datetime.now()
+            for task in self.tasks[:]:  # Iterate over a copy to modify the list inside the loop
+                if now >= task['task_time']:
+                    event_bus.emit(task['event_name'], task['data'])
+                    self.log_action(f"Executed task '{task['task_name']}' at {now}.")
+                    self.tasks.remove(task)
+            time.sleep(1)  # Sleep to prevent CPU overuse
 
     def stop(self):
-        self.stop_event.set()
-        self.log_action('Task scheduler stopped.')
+        self.running = False
 
+    def log_action(self, message):
+        with open('/home/triad/mitch/logs/task_scheduler.log', 'a') as log_file:
+            log_file.write(f"{datetime.now()} - {message}\n")
+
+scheduler = TaskScheduler()
 
 def start_module(event_bus):
-    scheduler = TaskScheduler()
-    Thread(target=scheduler.run_scheduler, daemon=True).start()
+    """
+    Entry point for the Task Scheduler module.
+    """
+    def handle_new_task(event_data):
+        task_name = event_data.get('task_name')
+        task_time = event_data.get('task_time')
+        event_name = event_data.get('event_name')
+        data = event_data.get('data')
+        scheduler.add_task(task_name, task_time, event_name, data)
 
-    event_bus.subscribe('ADD_TASK', scheduler.add_task)
-    event_bus.subscribe('REMOVE_TASK', scheduler.remove_task)
-
-    # Log the module start
-    with open(LOG_FILE, 'a') as log_file:
-        log_file.write(f'Module started at {datetime.now().isoformat()}\n')
+    event_bus.subscribe('schedule_task', handle_new_task)
+    scheduler_thread = threading.Thread(target=scheduler.run)
+    scheduler_thread.start()

@@ -1,42 +1,60 @@
-import os
-from datetime import datetime, timedelta
+import time
 from core.event_bus import event_bus
-
-LOG_FILE = '/home/triad/mitch/logs/user_engagement_tracker.log'
 
 class UserEngagementTracker:
     def __init__(self):
-        self.interaction_count = 0
-        self.engagement_start = datetime.now()
-        self.engagement_duration = timedelta()
+        self.engagement_log = '/home/triad/mitch/logs/user_engagement.log'
+        self.interactions = []
 
-    def log_action(self, message):
-        with open(LOG_FILE, 'a') as log_file:
-            log_file.write(f'{datetime.now().isoformat()} - {message}\n')
+    def log_interaction(self, event_data):
+        """
+        Logs each user interaction with a timestamp for future analysis.
 
-    def handle_interaction(self, event_data):
-        self.interaction_count += 1
-        self.engagement_duration = datetime.now() - self.engagement_start
-        self.log_action(f'User interaction recorded. Total interactions: {self.interaction_count}')
+        :param event_data: Data associated with the user interaction event
+        """
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        interaction_details = f"{timestamp} - Interaction: {event_data}"
+        self.interactions.append(interaction_details)
+        self._write_log(interaction_details)
 
-    def start_tracking(self):
-        self.log_action('User engagement tracking started.')
+    def _write_log(self, message):
+        """
+        Writes a log entry to the engagement log file.
 
-    def report_engagement(self):
-        report_message = {
-            'total_interactions': self.interaction_count,
-            'engagement_duration_minutes': self.engagement_duration.total_seconds() / 60
-        }
-        event_bus.emit('USER_ENGAGEMENT_REPORT', report_message)
-        self.log_action(f'User engagement report emitted: {report_message}')
+        :param message: The log message to write
+        """
+        with open(self.engagement_log, 'a') as log_file:
+            log_file.write(f"{message}\n")
+
+    def analyze_engagement(self):
+        """
+        Analyzes the logged interactions to provide insights on user engagement.
+        This could involve calculating interaction frequency, identifying peak usage times, etc.
+        """
+        # Placeholder for more complex analysis logic
+        total_interactions = len(self.interactions)
+        self._write_log(f"Total interactions recorded: {total_interactions}")
+
+    def handle_user_event(self, event_data):
+        """
+        Handles user-related events and logs them as interactions.
+
+        :param event_data: Data related to the user event
+        """
+        self.log_interaction(event_data)
 
 
 def start_module(event_bus):
-    engagement_tracker = UserEngagementTracker()
-    event_bus.subscribe('INTERACTION_EVENT', engagement_tracker.handle_interaction)
-    event_bus.subscribe('REPORT_ENGAGEMENT', lambda _: engagement_tracker.report_engagement())
-    engagement_tracker.start_tracking()
+    """
+    Entry point for the User Engagement Tracker module.
+    """
+    tracker = UserEngagementTracker()
 
-    # Log the module start
-    with open(LOG_FILE, 'a') as log_file:
-        log_file.write(f'Module started at {datetime.now().isoformat()}\n')
+    # Subscribe to relevant events that indicate user interaction
+    event_bus.subscribe('EMIT_USER_INTENT', tracker.handle_user_event)
+    event_bus.subscribe('EMIT_CHAT_REQUEST', tracker.handle_user_event)
+
+    # Optionally, run periodic analysis
+    # This could be done in a separate thread or integrated with an existing scheduler
+    # For simplicity, we just log once upon startup
+    tracker.analyze_engagement()

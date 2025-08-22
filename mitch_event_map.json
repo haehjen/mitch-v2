@@ -9,6 +9,9 @@
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
     "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/modules/contextual_reminder.py",
+    "/home/triad/mitch/modules/proactive_error_handler.py",
+    "/home/triad/mitch/modules/user_motivation_booster.py",
     "/home/triad/mitch/modules/interpreter.py"
   ],
   "EMIT_ACK": [
@@ -28,12 +31,17 @@
   "OPTIMIZE_SYSTEM": [
     "/home/triad/mitch/modules/proactive_health_monitor.py"
   ],
+  "routine_analysis_complete": [
+    "/home/triad/mitch/modules/automated_routine_checker.py"
+  ],
   "EMIT_GOAL_LIST": [
-    "/home/triad/mitch/modules/goal_planner.py"
+    "/home/triad/mitch/modules/goal_planner.py",
+    "/home/triad/mitch/modules/goal_tracker.py"
   ],
   "EMIT_INPUT_RECEIVED": [
     "/home/triad/mitch/modules/transcriber.py",
     "/home/triad/mitch/modules/ears.py",
+    "/home/triad/mitch/modules/interpreter.py",
     "/home/triad/mitch/modules/visual/visual_web.py"
   ],
   "EMIT_TRANSCRIBE_FAILED": [
@@ -41,11 +49,17 @@
     "/home/triad/mitch/modules/transcriber.py",
     "/home/triad/mitch/modules/transcriber.py"
   ],
+  "EMIT_PUBLISH_DIGEST": [
+    "/home/triad/mitch/modules/publish_logs.py"
+  ],
   "inspection_digest_ready": [
     "/home/triad/mitch/modules/inspection_log_digester.py"
   ],
   "EMIT_AUDIO_CAPTURED": [
     "/home/triad/mitch/modules/ears.py"
+  ],
+  "optimized_response": [
+    "/home/triad/mitch/modules/adaptive_response_optimizer.py"
   ],
   "high_cpu_usage": [
     "/home/triad/mitch/modules/resource_optimizer.py",
@@ -70,6 +84,9 @@
     "/home/triad/mitch/modules/folder_access.py",
     "/home/triad/mitch/modules/folder_access.py"
   ],
+  "suggestion_generated": [
+    "/home/triad/mitch/modules/adaptive_suggestion_engine.py"
+  ],
   "EMIT_WEB_SEARCH_RESULT": [
     "/home/triad/mitch/modules/web_search.py"
   ],
@@ -86,6 +103,12 @@
   "EMIT_MODULE_CONTENT": [
     "/home/triad/mitch/modules/module_editor.py"
   ],
+  "EMIT_RESPONSE": [
+    "/home/triad/mitch/modules/dynamic_intent_responder.py"
+  ],
+  "user_contextual_insights": [
+    "/home/triad/mitch/modules/user_contextual_insight.py"
+  ],
   "EMIT_SPEAK_CHUNK": [
     "/home/triad/mitch/modules/gpt_handler.py"
   ],
@@ -97,6 +120,10 @@
   ],
   "EMIT_MODULE_CREATE": [
     "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "adjust_response_strategy": [
+    "/home/triad/mitch/modules/interaction_optimizer.py",
+    "/home/triad/mitch/modules/interaction_optimizer.py"
   ],
   "EMIT_CHAT_REQUEST": [
     "/home/triad/mitch/modules/interpreter.py"
@@ -119,6 +146,12 @@
   ],
   "EMIT_MODULE_EDIT": [
     "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "routine_optimization_suggestion": [
+    "/home/triad/mitch/modules/user_routine_optimizer.py"
+  ],
+  "adaptive_response": [
+    "/home/triad/mitch/modules/adaptive_communication_module.py"
   ],
   "audio_chunk": [
     "/home/triad/mitch/modules/visual/visual_web.py"

@@ -1,56 +1,65 @@
-import os
-import json
+import threading
+import time
 from datetime import datetime
 from core.event_bus import event_bus
 
-LOG_FILE = '/home/triad/mitch/logs/contextual_reminder.log'
-
 class ContextualReminder:
     def __init__(self):
-        self.contextual_data = {}
-        self.load_contextual_data()
+        self.reminders = []  # Stores all reminders
+        self.running = True
+
+    def add_reminder(self, reminder_text, reminder_time, context=None):
+        """
+        Adds a new reminder to the system.
+
+        :param reminder_text: The text of the reminder
+        :param reminder_time: The time to trigger the reminder (datetime object)
+        :param context: Optional context to trigger the reminder
+        """
+        self.reminders.append({
+            'reminder_text': reminder_text,
+            'reminder_time': reminder_time,
+            'context': context
+        })
+        self.log_action(f"Reminder set for {reminder_text} at {reminder_time}, context: {context}.")
+
+    def run(self):
+        while self.running:
+            now = datetime.now()
+            for reminder in self.reminders[:]:  # Iterate over a copy to modify the list inside the loop
+                if now >= reminder['reminder_time']:
+                    self.trigger_reminder(reminder)
+                    self.reminders.remove(reminder)
+            time.sleep(1)  # Sleep to prevent CPU overuse
+
+    def trigger_reminder(self, reminder):
+        """
+        Triggers the reminder.
+
+        :param reminder: The reminder to be triggered
+        """
+        event_bus.emit('EMIT_SPEAK', {'message': reminder['reminder_text']})
+        self.log_action(f"Triggered reminder: {reminder['reminder_text']}")
+
+    def stop(self):
+        self.running = False
 
     def log_action(self, message):
-        with open(LOG_FILE, 'a') as log_file:
-            log_file.write(f'{datetime.now().isoformat()} - {message}\n')
+        with open('/home/triad/mitch/logs/contextual_reminder.log', 'a') as log_file:
+            log_file.write(f"{datetime.now()} - {message}\n")
 
-    def load_contextual_data(self):
-        try:
-            with open('/home/triad/mitch/data/contextual_data.json', 'r') as file:
-                self.contextual_data = json.load(file)
-                self.log_action('Contextual data loaded successfully.')
-        except FileNotFoundError:
-            self.contextual_data = {}
-            self.log_action('No existing contextual data file found, starting fresh.')
-
-    def save_contextual_data(self):
-        with open('/home/triad/mitch/data/contextual_data.json', 'w') as file:
-            json.dump(self.contextual_data, file)
-            self.log_action('Contextual data saved successfully.')
-
-    def handle_interaction_event(self, event_data):
-        # Update contextual data based on user interactions
-        self.contextual_data.update(event_data)
-        self.save_contextual_data()
-        self.log_action('Contextual data updated with new interaction event.')
-
-    def provide_contextual_reminder(self):
-        # Analyze contextual data to provide relevant reminders
-        if 'task' in self.contextual_data:
-            reminder_message = f"Don't forget to complete your task: {self.contextual_data['task']}"
-            event_bus.emit('EMIT_SPEAK', {'message': reminder_message})
-            self.log_action(f'Contextual reminder emitted: {reminder_message}')
-
-    def start_monitoring(self):
-        self.log_action('Contextual reminder monitoring started.')
-        # This could be integrated with a scheduler to periodically call provide_contextual_reminder()
-
+reminder_system = ContextualReminder()
 
 def start_module(event_bus):
-    contextual_reminder = ContextualReminder()
-    event_bus.subscribe('INTERACTION_EVENT', contextual_reminder.handle_interaction_event)
-    contextual_reminder.start_monitoring()
+    """
+    Entry point for the Contextual Reminder module.
+    """
+    def handle_new_reminder(event_data):
+        reminder_text = event_data.get('reminder_text')
+        reminder_time = event_data.get('reminder_time')
+        context = event_data.get('context')
+        reminder_system.add_reminder(reminder_text, reminder_time, context)
 
-    # Log the module start
-    with open(LOG_FILE, 'a') as log_file:
-        log_file.write(f'Module started at {datetime.now().isoformat()}\n')
+    event_bus.subscribe('set_reminder', handle_new_reminder)
+    reminder_thread = threading.Thread(target=reminder_system.run)
+    reminder_thread.start()

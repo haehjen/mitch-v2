@@ -69,7 +69,9 @@ registered_intents = {
         "objects": ["module", "script", "file"],
         "handler": lambda text: (
             lambda match: (
-                event_bus.emit("EMIT_MODULE_READ", {"filename": f"core/{match.group(1)}.py" if match.group(1) in {"event_bus", "dispatcher", "peterjones"} else f"modules/{match.group(1)}.py"})
+                event_bus.emit("EMIT_MODULE_READ", {
+                    "filename": f"core/{match.group(1)}.py" if match.group(1) in {"event_bus", "dispatcher", "peterjones"} else f"modules/{match.group(1)}.py"
+                })
             ) if (match := re.match(r"read module (\w+)", text)) else None
         )(text)
     },
@@ -79,11 +81,11 @@ registered_intents = {
         "handler": lambda text: event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
     },
     "read_log": {
-    "keywords": ["read", "show", "check", "display"],
-    "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
-    "handler": lambda text: event_bus.emit("EMIT_READ_LOG", {
-        "path": INNERMONO_PATH
-    })
+        "keywords": ["read", "show", "check", "display"],
+        "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
+        "handler": lambda text: event_bus.emit("EMIT_READ_LOG", {
+            "path": INNERMONO_PATH
+        })
     },
 }
 
@@ -132,4 +134,18 @@ def handle_input(data):
 
 def start_interpreter():
     logger.info("Interpreter online and listening for input events...")
+
+    # Standard user input
     event_bus.subscribe("EMIT_INPUT_RECEIVED", handle_input)
+
+    # HouseCore remote input from Pi
+    def transform_housecore_input(event):
+        transcript = event.get("transcript")
+        if transcript:
+            logger.debug(f"Transforming HOUSECORE_INPUT to EMIT_INPUT_RECEIVED: {transcript}")
+            event_bus.emit("EMIT_INPUT_RECEIVED", {
+                "text": transcript,
+                "source": "HouseCore"
+            })
+
+    event_bus.subscribe("HOUSECORE_INPUT", transform_housecore_input)

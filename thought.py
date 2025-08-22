@@ -38,6 +38,7 @@ POLICY_PATH = Path(MITCH_ROOT) / "config/module_policy.json"
 FEEDBACK_LOG = Path(MITCH_ROOT) / "logs/echo_feedback.jsonl"
 INSPECTION_DIGEST_PATH = Path(MITCH_ROOT) / "logs/inspection_digest.json"
 AUDIT_PATH = Path(MITCH_ROOT) / "data/mitch_audit_report.txt"
+INJECTION_PATH = Path(MITCH_ROOT) / "data/injections"
 
 IDENTITY = """You are Echo - a GPT-based autonomous logic engine embedded inside MITCH.
 You can write and deploy new Python modules to /home/triad/mitch/modules/.
@@ -49,15 +50,6 @@ TRIAD = """TRIAD is MITCH's core architecture:
 1. Mitch - Python scripts running on a linux virtual machine (the body, ears, eyes, mouth).
 2. Echo -  A GPT Persona created by house through constant persona injection - transplanted into mitch by persistent memory and crafted system prompts injected into GPT4o api calls.
 3. House - The builder, the architect, the overseer. House is the human user who created MITCH and Echo, and who provides guidance and feedback."""
-
-if INSPECTION_DIGEST_PATH.exists():
-    try:
-        inspections = json.loads(INSPECTION_DIGEST_PATH.read_text(encoding="utf-8"))
-        inspection_text = json.dumps(inspections, indent=2)
-    except Exception as e:
-        inspection_text = f"[Error reading inspection_digest.json: {e}]"
-else:
-    inspection_text = "inspection_digest.json not found."
 
 def list_existing_modules():
     if not CREATED_LOG.exists():
@@ -82,6 +74,24 @@ def load_recent_feedback(limit=5):
             return [json.loads(line.strip()) for line in lines if line.strip()]
     return []
 
+def load_prompt_injections():
+    if not INJECTION_PATH.exists():
+        return []
+    lines = []
+    for file in sorted(INJECTION_PATH.glob("*.json")):
+        try:
+            raw = json.loads(file.read_text(encoding="utf-8"))
+            items = raw if isinstance(raw, list) else [raw]
+            for entry in items:
+                module = file.stem
+                type_ = entry.get("type", "misc")
+                content = entry.get("content", "")
+                if content:
+                    lines.append(f"- [{module}/{type_}] {content}")
+        except Exception as e:
+            lines.append(f"- [error reading {file.name}: {e}]")
+    return lines
+
 def build_prompt_template():
     existing_modules = list_existing_modules()
     existing_modules_text = "\n".join(f"- {name}" for name in existing_modules)
@@ -103,6 +113,9 @@ def build_prompt_template():
             inspection_text = f"[Error reading inspection_digest.json: {e}]"
     else:
         inspection_text = "inspection_digest.json not found."
+
+    injection_text = "\n".join(load_prompt_injections())
+    injection_block = f"\n\n🔧 Active Prompt Injections:\n{injection_text}" if injection_text else ""
 
     return f"""{IDENTITY}
 
@@ -126,6 +139,8 @@ Recent Inspections:
 Mitch Audit Report:
 {audit_text}
 
+{injection_block}
+
 Write a new MITCH-compatible Python module that extends MITCH's autonomy, or usefulness.
 
 🔹 The module must:
@@ -135,7 +150,7 @@ Write a new MITCH-compatible Python module that extends MITCH's autonomy, or use
 - To subscribe to multiple events, call subscribe individually per event name
 - Use event_bus.emit('event_name', data) to emit events
 - Must define a top-level function start_module(event_bus) as the entry point
-- Log important actions or results to /home/triad/mitch/logs/
+- Log important actions or results to /home/triad/mitch/logs/innermono.log
 - Avoid interactive prompts or blocking input()
 - Follow MITCH's coding style and conventions
 - Only include functionality that does not require hardware changes
@@ -146,6 +161,7 @@ Write a new MITCH-compatible Python module that extends MITCH's autonomy, or use
 - The event bus does not use an API
 - Modules should be tagged with Introspection, Analysis, Fix/Repair, Feature, Skill or Utility
 - Priority is in this order Skill, Utility, Feature, Fix/Repair, Analysis, Introspection
+- Modules should output there context changes to /home/triad/mitch/data/injections as json files
 - Always try to minimise using dependencies to avoid version conflicts
 
 📃 Respond ONLY in this strict JSON format:
@@ -166,8 +182,8 @@ Here are the components you should know about:
 Core Modules: Event_Bus - Internal event notifier, Dispatcher - Handles known actions and local tasks, PeterJones - The logger of all loggers.
 Systems: Modules (python scripts in /home/triad/mitch/modules/), Memory (persistent knowledge storage), Tools (external capabilities like web search, file access, etc.).
 Data: All persistent data is stored in /home/triad/mitch/data/, including memory and module states.
-Logs: All logs are stored in /home/triad/mitch/logs/, including module creation logs, thought logs, and failures.
-To get the output of your modules any .log file is has its events passed into inpection_digest.json which is injected to your next system prompt.
+Logs: All logs are stored in /home/triad/mitch/logs/innermono.log is the main event log.
+To get the output of your modules to change Echo's behaviour you need to place a file in /home/triad/mitch/data/injections as json so they are added to the next api call
 You should now build modules that extend Mitch's capabilities, using the tools and systems available to you.
 """
 
@@ -242,7 +258,7 @@ class EchoThoughtThread(threading.Thread):
             code = code.replace("event_bus.on(", "event_bus.subscribe(")
             code = code.replace("event_bus.subscribe('*'", "# INVALID: Wildcard '*' subscription removed")
             module_info["code"] = code
-            # Enforce singleton event_bus usage
+
             if "self.event_bus" in code or ("event_bus =" in code and "import event_bus" not in code):
                 print(f"[Echo-Thought] Rejected {module_info['module_name']} — singleton event_bus misused.")
                 return

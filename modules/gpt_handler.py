@@ -8,6 +8,7 @@ import os
 from core.event_bus import event_bus
 from core.peterjones import get_logger
 from modules import memory, persona
+from core.config import MITCH_ROOT
 
 # Optional fallback
 try:
@@ -31,12 +32,35 @@ if not os.getenv("OPENAI_API_KEY"):
 
 client = OpenAI()
 
-SYSTEM_PROMPT = persona.build_system_prompt()
 OPENAI_MODEL = "gpt-4o"
 OLLAMA_MODEL = "mistral"
 MEMORY_WINDOW = 8
+INJECTION_PATH = Path(MITCH_ROOT) / "data" / "injections"
 
 active_token = None
+
+def load_prompt_injections():
+    if not INJECTION_PATH.exists():
+        return []
+    injections = []
+    for file in INJECTION_PATH.glob("*.json"):
+        try:
+            data = json.loads(file.read_text(encoding="utf-8"))
+            entries = data if isinstance(data, list) else [data]
+            for entry in entries:
+                content = entry.get("content")
+                if content:
+                    injections.append(content)
+        except Exception as e:
+            logger.warning(f"Failed to load prompt injection from {file.name}: {e}")
+    return injections
+
+def build_system_prompt():
+    base = persona.build_system_prompt()
+    injections = load_prompt_injections()
+    if injections:
+        return f"{base}\n\n\ud83d\udd27 Active Prompt Injections:\n" + "\n".join(f"- {i}" for i in injections)
+    return base
 
 def generate_token():
     return str(time.time()).replace('.', '')
@@ -91,14 +115,14 @@ def handle_chat_request(data):
 
 def stream_from_openai(prompt, token):
     try:
-        SYSTEM_PROMPT = persona.build_system_prompt()
+        system_prompt = build_system_prompt()
         recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
         facts = memory.recall_summary()
         fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
         knowledge_context = f"The following facts are known and persistent:\n{fact_string}"
 
         messages = [
-            {"role": "system", "content": f"{SYSTEM_PROMPT}\n\n{knowledge_context}"},
+            {"role": "system", "content": f"{system_prompt}\n\n{knowledge_context}"},
             *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
             {"role": "user", "content": prompt}
         ]
@@ -189,7 +213,7 @@ def fallback_to_ollama(prompt, token):
         emit_end(token)
 
 def update_emotion(emotion, delta):
-    path = Path("data/emotion_state.json")
+    path = Path(MITCH_ROOT) / "data/emotion_state.json"
     state = json.loads(path.read_text()) if path.exists() else {}
     state[emotion] = max(0, state.get(emotion, 0) + delta)
     path.write_text(json.dumps(state, indent=2))
@@ -212,9 +236,10 @@ def handle_tool_result(data):
     recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
     facts = memory.recall_summary()
     fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
+    system_prompt = build_system_prompt()
 
     messages = [
-        {"role": "system", "content": f"{SYSTEM_PROMPT}\n\nThe following facts are known and persistent:\n{fact_string}"},
+        {"role": "system", "content": f"{system_prompt}\n\nThe following facts are known and persistent:\n{fact_string}"},
         *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
         {"role": "user", "content": prompt},
     ]

@@ -7,6 +7,7 @@ import os
 import json
 import requests
 from core.config import MITCH_ROOT
+from core.event_registry import EventRegistry
 
 # --- Configuration ---
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
@@ -64,6 +65,7 @@ class EventBus:
         if callback not in self.listeners[event_type]:
             self.listeners[event_type].append(callback)
             self.registry["subscriptions"][event_type].add(callback.__module__)
+            EventRegistry.get_instance().record_subscribe(event_type, callback.__module__)
             if DEBUG:
                 print(f"[EventBus] Subscribed to {event_type}: {callback_id}")
         else:
@@ -82,6 +84,7 @@ class EventBus:
         emitter = self._infer_emitter_module()
         if emitter:
             self.registry["emits"][event_type].add(emitter)
+            EventRegistry.get_instance().record_emit(event_type, emitter)
 
         # Build compact preview (digest etc. summarized)
         preview = self._summarize(event_type, data, self._preview_len)

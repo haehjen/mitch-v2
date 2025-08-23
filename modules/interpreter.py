@@ -1,5 +1,7 @@
+import os
 import re
 import time
+import json
 from core.event_bus import event_bus, INNERMONO_PATH
 from core.peterjones import get_logger
 from difflib import SequenceMatcher
@@ -149,3 +151,38 @@ def start_interpreter():
             })
 
     event_bus.subscribe("HOUSECORE_INPUT", transform_housecore_input)
+
+    # === DYNAMIC INTENTS LOADER ===
+    dynamic_path = "/home/triad/mitch/data/injections/dynamic_intents.json"
+    if os.path.exists(dynamic_path):
+        try:
+            with open(dynamic_path, "r") as f:
+                data = json.load(f)
+                for intent_obj in data.get("intents", []):
+                    intent_name = intent_obj.get("intent")
+                    pattern = intent_obj.get("pattern")
+                    action = intent_obj.get("action")
+
+                    if not intent_name or not action:
+                        logger.warning(f"Skipping malformed dynamic intent: {intent_obj}")
+                        continue
+
+                    logger.info(f"Registering dynamic intent: {intent_name} -> {action}")
+
+                    def handler_factory(intent_name, action):
+                        def handler(text):
+                            logger.info(f"Dynamic intent '{intent_name}' matched. Dispatching to action '{action}'.")
+                            event_bus.emit("EMIT_USER_INTENT", {
+                                "intent": action,
+                                "params": {"text": text}
+                            })
+                        return handler
+
+                    registered_intents[intent_name] = {
+                        "keywords": pattern.split(),
+                        "objects": [],
+                        "handler": handler_factory(intent_name, action)
+                    }
+
+        except Exception as e:
+            logger.error(f"Failed to load dynamic intents: {e}")

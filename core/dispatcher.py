@@ -2,6 +2,7 @@ import asyncio
 import threading
 import time
 import os
+import json
 from core.event_bus import event_bus
 from modules.vision_ai import VisionAI
 
@@ -95,21 +96,47 @@ def handle_user_intent(data):
             })
 
     else:
-        msg = f"Sorry, I didn't understand the command: {intent}"
-        event_bus.emit("EMIT_SPEAK", {
-            "text": msg,
-            "source": "intent",
-            "token": token
-        })
-        event_bus.emit("EMIT_FAILURE", {
-            "intent": intent,
-            "reason": "Unknown intent"
-        })
-        event_bus.emit("EMIT_TOOL_RESULT", {
-            "tool_call_id": data.get("tool_call_id"),
-            "function_name": intent,
-            "output": msg
-        })
+        # Try to resolve via dynamic intents
+        dynamic_path = "/home/triad/mitch/data/injections/dynamic_intents.json"
+        intent_routed = False
+
+        if os.path.exists(dynamic_path):
+            try:
+                with open(dynamic_path, "r") as f:
+                    dynamic_data = json.load(f)
+                    for entry in dynamic_data.get("intents", []):
+                        if entry.get("intent") == intent:
+                            action = entry.get("action")
+                            if action:
+                                routed_event = f"dynamic_intent:{action}"
+                                event_bus.emit(routed_event, data)
+                                event_bus.emit("EMIT_ACK", {
+                                    "status": "dispatched",
+                                    "intent": intent,
+                                    "routed_event": routed_event
+                                })
+                                intent_routed = True
+                                break
+            except Exception as e:
+                if DEBUG:
+                    print(f"[DISPATCHER] Failed reading dynamic intents: {e}")
+
+        if not intent_routed:
+            msg = f"Sorry, I didn't understand the command: {intent}"
+            event_bus.emit("EMIT_SPEAK", {
+                "text": msg,
+                "source": "intent",
+                "token": token
+            })
+            event_bus.emit("EMIT_FAILURE", {
+                "intent": intent,
+                "reason": "Unknown intent"
+            })
+            event_bus.emit("EMIT_TOOL_RESULT", {
+                "tool_call_id": data.get("tool_call_id"),
+                "function_name": intent,
+                "output": msg
+            })
 
 def start_dispatcher():
     global _dispatcher_started

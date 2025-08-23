@@ -5,7 +5,7 @@ from datetime import datetime
 from threading import Lock
 from core.config import MITCH_ROOT
 
-REGISTRY_LOG_PATH = os.path.join(MITCH_ROOT, "logs", "event_registry.jsonl")
+REGISTRY_LOG_PATH = os.path.join(MITCH_ROOT, "data/injections", "event_registry.json")
 
 class EventRegistry:
     _instance = None

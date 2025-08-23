@@ -1,4 +1,3 @@
-import time
 import threading
 import json
 import re
@@ -10,7 +9,6 @@ from core.peterjones import get_logger
 from modules import memory, persona
 from core.config import MITCH_ROOT
 
-# Optional fallback
 try:
     import ollama  # type: ignore
     HAS_OLLAMA = True
@@ -42,27 +40,31 @@ active_token = None
 def load_prompt_injections():
     if not INJECTION_PATH.exists():
         return []
-    injections = []
-    for file in INJECTION_PATH.glob("*.json"):
+    lines = []
+    for file in sorted(INJECTION_PATH.glob("*.json")):
         try:
-            data = json.loads(file.read_text(encoding="utf-8"))
-            entries = data if isinstance(data, list) else [data]
-            for entry in entries:
-                content = entry.get("content")
+            raw = json.loads(file.read_text(encoding="utf-8"))
+            items = raw if isinstance(raw, list) else [raw]
+            for entry in items:
+                module = file.stem
+                type_ = entry.get("type", "misc")
+                content = entry.get("content", json.dumps(entry))
                 if content:
-                    injections.append(content)
+                    safe_content = content.encode('utf-8', errors='replace').decode('utf-8')
+                    lines.append(f"- [{module}/{type_}] {safe_content}")
         except Exception as e:
-            logger.warning(f"Failed to load prompt injection from {file.name}: {e}")
-    return injections
+            lines.append(f"- [error reading {file.name}: {e}]")
+    return lines
 
 def build_system_prompt():
     base = persona.build_system_prompt()
     injections = load_prompt_injections()
     if injections:
-        return f"{base}\n\n\ud83d\udd27 Active Prompt Injections:\n" + "\n".join(f"- {i}" for i in injections)
+        return f"{base}\n\n\U0001F527 Active Prompt Injections:\n" + "\n".join(injections)
     return base
 
 def generate_token():
+    import time
     return str(time.time()).replace('.', '')
 
 def emit_chunk(chunk, token):
@@ -88,15 +90,6 @@ def maybe_emit_module_create(response_text):
             "filename": filename,
             "code": code
         })
-
-def validate_tool_calls(messages):
-    tool_calls_present = any("tool_calls" in msg for msg in messages)
-    for msg in messages:
-        if msg.get("role") == "tool":
-            if not tool_calls_present:
-                logger.warning("Invalid message: 'tool' role without preceding 'tool_calls'")
-                return False
-    return True
 
 def handle_chat_request(data):
     global active_token
@@ -127,15 +120,10 @@ def stream_from_openai(prompt, token):
             {"role": "user", "content": prompt}
         ]
 
-        if not validate_tool_calls(messages):
-            emit_chunk("Something went wrong with message structure.", token)
-            emit_end(token)
-            return
-
         response = client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=messages,
-            stream=True,
+            stream=True
         )
 
         response_buffer = ""
@@ -212,12 +200,6 @@ def fallback_to_ollama(prompt, token):
         emit_chunk("Fallback failed too. Sorry.", token)
         emit_end(token)
 
-def update_emotion(emotion, delta):
-    path = Path(MITCH_ROOT) / "data/emotion_state.json"
-    state = json.loads(path.read_text()) if path.exists() else {}
-    state[emotion] = max(0, state.get(emotion, 0) + delta)
-    path.write_text(json.dumps(state, indent=2))
-
 def on_chat_request(data):
     handle_chat_request(data)
 
@@ -231,43 +213,8 @@ def handle_tool_result(data):
     memory.save_memory("tool", f"{tool_name} result: {output}")
     emit_token_registered(token)
 
-    prompt = f"The tool '{tool_name}' completed with the following result:\n{output}\nRespond to House, consistent with your personality."
-
-    recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
-    facts = memory.recall_summary()
-    fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
-    system_prompt = build_system_prompt()
-
-    messages = [
-        {"role": "system", "content": f"{system_prompt}\n\nThe following facts are known and persistent:\n{fact_string}"},
-        *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
-        {"role": "user", "content": prompt},
-    ]
-
-    if not validate_tool_calls(messages):
-        emit_chunk("Tool result message structure was invalid.", token)
-        emit_end(token)
-        return
-
-    try:
-        response = client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=messages,
-            stream=True,
-        )
-        response_buffer = ""
-        for chunk in response:
-            part = chunk.choices[0].delta.content
-            if part:
-                response_buffer += part
-                emit_chunk(part, token)
-        emit_end(token)
-        memory.save_memory("assistant", response_buffer)
-        maybe_emit_module_create(response_buffer)
-    except Exception as e:
-        logger.error(f"Tool result response failed: {e}")
-        emit_chunk("Something went wrong reflecting on the tool result.", token)
-        emit_end(token)
+    emit_chunk(f"Tool '{tool_name}' returned: {output}", token)
+    emit_end(token)
 
 # Register handlers
 event_bus.subscribe("EMIT_CHAT_REQUEST", on_chat_request)

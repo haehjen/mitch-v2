@@ -4,16 +4,13 @@ import os
 import requests
 import urllib3
 from threading import Thread
-from dotenv import load_dotenv
+from core.keys_loader import load_keys  # noqa: F401
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 logger = get_logger("proxmon")
-
-# Load secrets
-load_dotenv("mitchskeys")
 
 class ProxMonModule:
     def __init__(self, event_bus):

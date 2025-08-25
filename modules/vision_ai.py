@@ -2,21 +2,8 @@
 
 import openai
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 from modules.vision import VisionModule
 from core.peterjones import get_logger
-
-# Load secrets
-load_dotenv(dotenv_path="mitchskeys")
-
-if not os.getenv("OPENAI_API_KEY"):
-    key_path = Path(__file__).resolve().parent.parent / "mitchskeys"
-    if key_path.exists():
-        for line in key_path.read_text(encoding="utf-8").splitlines():
-            if "OPENAI_API_KEY=" in line:
-                os.environ["OPENAI_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
-                break
 
 if not os.getenv("OPENAI_API_KEY"):
     print("[VisionAI] Warning: OPENAI_API_KEY not set; vision features may fail.")

@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List, Tuple
 import re
 import requests
-from pathlib import Path
 
 from core.peterjones import get_logger
 from core.config import MITCH_ROOT
@@ -53,17 +52,6 @@ def _get_token() -> str | None:
     now = time.time()
     if _token_cache["value"] and now < _token_cache["expires"]:
         return _token_cache["value"]
-
-    # Load API keys from local file if env vars not set
-    key_path = Path(__file__).resolve().parent.parent / "mitchskeys"
-    if key_path.exists():
-        for line in key_path.read_text(encoding="utf-8").splitlines():
-            if "=" in line:
-                key, val = line.split("=", 1)
-                key = key.strip()
-                val = val.strip().strip('"').strip("'")
-                if key and not os.getenv(key):
-                    os.environ[key] = val
 
     client_id = os.getenv("OPENSKY_CLIENT_ID")
     client_secret = os.getenv("OPENSKY_CLIENT_SECRET")

@@ -11,18 +11,8 @@ from modules import memory
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 
-# Fallback: load API key from mitchskeys if not already in environment
 if not os.getenv("OPENAI_API_KEY"):
-    mitchskeys_path = Path(__file__).parent / "mitchskeys"
-    if mitchskeys_path.exists():
-        for line in mitchskeys_path.read_text(encoding="utf-8").replace("\r", "").split("\n"):
-            if "OPENAI_API_KEY=" in line:
-                key = line.split("=", 1)[1].strip().strip('"').strip("'")
-                os.environ["OPENAI_API_KEY"] = key
-                break
-
-if not os.getenv("OPENAI_API_KEY"):
-    raise EnvironmentError("OPENAI_API_KEY is not set. Please source mitchskeys or export the key.")
+    raise EnvironmentError("OPENAI_API_KEY is not set in the environment.")
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL = "gpt-4o"

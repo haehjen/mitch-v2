@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 logger = get_logger("interpreter")
 
 _last_input_text = None  # Prevent repeated GPT calls
-THRESHOLD = 0.1  # Match confidence threshold
+THRESHOLD = 0.15  # Match confidence threshold
 
 def compute_match_score(text, keywords, objects):
     score = 0
@@ -19,7 +19,7 @@ def compute_match_score(text, keywords, objects):
     for obj in objects:
         if obj in text:
             score += 0.5
-    return score / (len(keywords) + len(objects))
+    return score / (len(keywords) + len(objects)) if (keywords or objects) else 0
 
 def extract_numbers(text):
     return list(map(int, re.findall(r"\b\d+\b", text)))
@@ -27,6 +27,45 @@ def extract_numbers(text):
 def extract_search_query(text):
     match = re.search(r"(?:search|google|look(?:\s*up)?|find)(?:\s+for)?\s+(.*)", text)
     return match.group(1).strip() if match else text.strip()
+
+# --- helper for flights ---
+# Accepts things like:
+# - "track flights newcastle"
+# - "are there any planes over london"
+# - "show aircraft near manchester"
+def extract_region_for_flights(text: str) -> str:
+    # 1) direct "track flights <region>"
+    m = re.search(r"(?:track\s+(?:flight|flights)|show\s+(?:flight|flights)|planes|aircraft)\s+([a-zA-Z][a-zA-Z\s\-]+)$", text)
+    if m:
+        return m.group(1).strip()
+
+    # 2) preposition form "... over/above/near/in/around <region>"
+    m = re.search(r"(?:over|above|near|in|around)\s+([a-zA-Z][a-zA-Z\s\-]+)$", text)
+    if m:
+        return m.group(1).strip()
+
+    # 3) last token fallback (single word region at the end)
+    tokens = [t for t in re.split(r"[^a-zA-Z\-]+", text) if t]
+    if tokens:
+        return tokens[-1].strip()
+    return ""
+
+# Extract rough location name from weather request
+def extract_location_from_text(text: str) -> str:
+    m = re.search(r"(?:weather|forecast|conditions)\s+(in|at|for)\s+([a-zA-Z\s\-]+)", text)
+    if m:
+        return m.group(2).strip()
+    # fallback: last place-like word
+    tokens = [t for t in re.split(r"[^a-zA-Z\-]+", text) if t]
+    return tokens[-1] if tokens else ""
+
+# Dummy route extraction — replace with real geocoder later
+def extract_route_coordinates(match) -> list:
+    start = match.group(1).strip()
+    end = match.group(2).strip()
+    # You could call a geocoding API here to convert to [lon, lat]
+    # Placeholder coordinates for now:
+    return [[-1.61, 54.97], [-2.24, 53.48]]  # Newcastle to Manchester
 
 # === INTENT REGISTRY ===
 registered_intents = {
@@ -82,6 +121,14 @@ registered_intents = {
         "objects": ["web", "internet"],
         "handler": lambda text: event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
     },
+    # --- NEW: track flights intent ---
+    "track_flights": {
+        "keywords": ["track", "planes", "plane", "flights", "flight", "aircraft", "traffic"],
+        "objects": ["over", "above", "near", "in", "around"],  # language cues
+        "handler": lambda text: event_bus.emit("EMIT_TRACK_FLIGHTS", {
+            "region": extract_region_for_flights(text) or "newcastle"  # sensible default
+        })
+    },
     "read_log": {
         "keywords": ["read", "show", "check", "display"],
         "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
@@ -89,16 +136,51 @@ registered_intents = {
             "path": INNERMONO_PATH
         })
     },
+    "get_weather": {
+    "keywords": ["weather", "forecast", "rain", "temperature", "conditions"],
+    "objects": ["today", "outside", "like", "right now", "Tommorrow", "in", "at", "for"],
+    "handler": lambda text: event_bus.emit("GET_WEATHER", {
+        "location": extract_location_from_text(text) or "newcastle"
+    })
+    },
+    "plan_route": {
+    "keywords": ["route", "directions", "navigate", "travel", "get"],
+    "objects": ["from", "to", "via", "waypoint"],
+    "handler": lambda text: (
+        lambda match: event_bus.emit("PLAN_ROUTE", {
+            "coords": extract_route_coordinates(match)
+        }) if (match := re.search(r"from (.+?) to (.+)", text)) else event_bus.emit("EMIT_USER_INTENT", {
+            "intent": "plan_route",
+            "params": {"text": text}
+        })
+    )(text)
+   },
 }
 
 def match_intent(text):
+    # 1. Exact prefix match on intent name (e.g., "web_search latest ai model releases")
+    for intent_name in registered_intents:
+        if text.startswith(intent_name):
+            logger.debug(f"Matched intent via direct prefix: {intent_name}")
+            return intent_name
+
+    # 2. Exact keyword pattern match (mostly for dynamic intents)
+    for intent_name, config in registered_intents.items():
+        pattern = ' '.join(config.get("keywords", []))
+        if pattern and pattern.strip().lower() == text.strip().lower():
+            logger.debug(f"Matched intent via exact pattern: {intent_name}")
+            return intent_name
+
+    # 3. Scored keyword/object match
     best_score = 0
     best_intent = None
-    for intent, config in registered_intents.items():
+    for intent_name, config in registered_intents.items():
         score = compute_match_score(text, config["keywords"], config["objects"])
+        logger.debug(f"[Intent Scoring] {intent_name}: {score:.2f}")
         if score > best_score:
             best_score = score
-            best_intent = intent
+            best_intent = intent_name
+
     return best_intent if best_score >= THRESHOLD else None
 
 def handle_input(data):
@@ -178,6 +260,7 @@ def start_interpreter():
                             })
                         return handler
 
+                    # Dynamic intents will still be scored unless matched exactly
                     registered_intents[intent_name] = {
                         "keywords": pattern.split(),
                         "objects": [],

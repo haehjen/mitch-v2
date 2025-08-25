@@ -1,0 +1,162 @@
+=== MITCH AUDIT REPORT ===
+
+[thought.py]
+  Classes: EchoThoughtThread
+  Functions: list_existing_modules, load_policy, load_recent_feedback, load_prompt_injections, build_prompt_template, feedback_collector, __init__, shutdown, clean_response, fetch_thought, log_thought, log_module_created, process_response, run
+  Events Emitted: 
+
+[audit_mitch.py]
+  Classes: 
+  Functions: analyze_file, scan_project, write_summary
+  Events Emitted: 
+
+[main.py]
+  Classes: 
+  Functions: _log_event, _start_thread, main
+  Events Emitted: SHUTDOWN
+
+[core/peterjones.py]
+  Classes: 
+  Functions: get_logger, _summarize, _maybe_print_to_console, log_event, start_logger, wildcard_logger
+  Events Emitted: 
+
+[core/config.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[core/event_bus.py]
+  Classes: EventBus
+  Functions: _log_emit_speak, __init__, get_instance, set_preview_len, mute_console, unmute_console, subscribe, unsubscribe, emit, _infer_emitter_module, _summarize, get_registry, get_registered_handlers
+  Events Emitted: 
+
+[core/dispatcher.py]
+  Classes: 
+  Functions: handle_user_intent, start_dispatcher
+  Events Emitted: EMIT_SPEAK, EMIT_ACK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_FAILURE, EMIT_TOOL_RESULT, EMIT_SPEAK, EMIT_TOOL_RESULT, EMIT_ACK
+
+[core/event_registry.py]
+  Classes: EventRegistry
+  Functions: __init__, get_instance, record_emit, record_subscribe, get_all_events, get_emitters_for, get_subscribers_for, save_registry, load_registry
+  Events Emitted: 
+
+[modules/route_planner.py]
+  Classes: 
+  Functions: plan_route, start_module
+  Events Emitted: 
+
+[modules/transcriber.py]
+  Classes: 
+  Functions: handle_mute, handle_unmute, _trim_recent, handle_audio_captured, start_transcriber, shutdown
+  Events Emitted: EMIT_INPUT_RECEIVED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED, EMIT_TRANSCRIBE_FAILED
+
+[modules/flight_tracker.py]
+  Classes: 
+  Functions: _token, normalize_region, _get_token, get_aircraft_in_region, summarize_aircraft, inject_summary, speak_message, handle_track_flights, start_module
+  Events Emitted: EMIT_TOKEN_REGISTERED, EMIT_SPEAK_CHUNK, EMIT_SPEAK_END, EMIT_FLIGHT_TRACK_RESULT, EMIT_FLIGHT_TRACK_RESULT
+
+[modules/publish_logs.py]
+  Classes: DigestPublisherThread
+  Functions: _setup_logger, _tail_lines, _read_json, _read_jsonl_tail, _safe_emit, start_module, shutdown_module, __init__, shutdown, build_digest, run
+  Events Emitted: EMIT_PUBLISH_DIGEST
+
+[modules/inspection_log_digester.py]
+  Classes: 
+  Functions: summarize_log, extract_digest, save_digest, start_module
+  Events Emitted: inspection_digest_ready
+
+[modules/persona.py]
+  Classes: 
+  Functions: hash_persona, verify_bedrock, load_persona, load_emotion_state, load_event_summaries, build_system_prompt
+  Events Emitted: 
+
+[modules/memory.py]
+  Classes: 
+  Functions: save_memory, recall_recent, clear_memory, load_knowledge, save_knowledge, recall_summary, truncate_tail, clear_temp_context
+  Events Emitted: 
+
+[modules/ears.py]
+  Classes: 
+  Functions: on_speak_end, pause_microphone_briefly, continuous_microphone_listener, listen_keyboard, start_keyboard, start_microphone, start_ears, shutdown
+  Events Emitted: EMIT_AUDIO_CAPTURED, EMIT_INPUT_RECEIVED
+
+[modules/task_scheduler.py]
+  Classes: TaskScheduler
+  Functions: start_module, __init__, schedule_task, run, save_task_context, shutdown, handle_shutdown_event, heartbeat
+  Events Emitted: ECHO_HEARTBEAT
+
+[modules/weather_fetcher.py]
+  Classes: 
+  Functions: fetch_weather, describe_weather_code, start_module
+  Events Emitted: INJECTION_UPDATED
+
+[modules/proxmon.py]
+  Classes: ProxMonModule
+  Functions: handle_restart_vm, handle_get_vm_status, __init__, authenticate, get_nodes, fetch_node_status, fetch_vm_list, fetch_vm_status, log_jsonl, run, shutdown, restart_vm, get_vm_status
+  Events Emitted: speak, speak
+
+[modules/__init__.py]
+  Classes: 
+  Functions: 
+  Events Emitted: 
+
+[modules/web_search.py]
+  Classes: 
+  Functions: log, clean_query, fetch_results, inject_summary, handle_web_search, start_module
+  Events Emitted: EMIT_TOKEN_REGISTERED, EMIT_VISUAL_TOKEN, EMIT_SPEAK_CHUNK, EMIT_SPEAK_END, EMIT_CHAT_RESPONSE
+
+[modules/stream_mouth.py]
+  Classes: StreamMouth
+  Functions: start_stream_mouth, __init__, _audio_loop, _play_with_pyaudio, synthesize_and_queue, speak_chunk, speak_full, on_speak_end, _should_emit, shutdown
+  Events Emitted: EMIT_SPEAK_END, UNMUTE_EARS, MUTE_EARS
+
+[modules/dynamic_intent_register.py]
+  Classes: 
+  Functions: log_dynamic_intent, handle_user_feedback, start_module
+  Events Emitted: 
+
+[modules/vision_ai.py]
+  Classes: VisionAI
+  Functions: describe_image_from_url, __init__
+  Events Emitted: 
+
+[modules/automated_flight_tracker.py]
+  Classes: 
+  Functions: _get_token, _compile_patterns, _inside, _kind_from_callsign, _is_interesting, _fetch_states, _to_contact, _split_regions, _atomic_write_json, _apply_declutter, _loop, start_module
+  Events Emitted: EMIT_FLIGHT_CONTACTS
+
+[modules/module_editor.py]
+  Classes: 
+  Functions: safe_path, handle_module_create, handle_module_read, handle_module_edit, handle_main_append, start_module_editor
+  Events Emitted: EMIT_MODULE_CONTENT
+
+[modules/gpt_handler.py]
+  Classes: 
+  Functions: load_prompt_injections, build_system_prompt, generate_token, emit_chunk, emit_end, emit_token_registered, maybe_emit_module_create, handle_chat_request, stream_from_openai, handle_module_request, fallback_or_fail, fallback_to_ollama, on_chat_request, on_module_request, handle_tool_result
+  Events Emitted: EMIT_SPEAK_CHUNK, EMIT_SPEAK_END, EMIT_TOKEN_REGISTERED, EMIT_VISUAL_TOKEN, EMIT_MODULE_CREATE
+
+[modules/file_ingestor.py]
+  Classes: 
+  Functions: _classify, analyze_image, extract_pdf_text, extract_html_text, extract_text_file, handle_file_event, start_module
+  Events Emitted: EMIT_PREVIEW_URL
+
+[modules/vision.py]
+  Classes: VisionModule
+  Functions: __init__, force_exposure_v4l2, capture_image
+  Events Emitted: 
+
+[modules/folder_access.py]
+  Classes: FolderAccessModule
+  Functions: __init__, list_folder, create_folder, read_file
+  Events Emitted: speak, speak, speak, speak, speak, speak, speak
+
+[modules/interpreter.py]
+  Classes: 
+  Functions: compute_match_score, extract_numbers, extract_search_query, extract_region_for_flights, extract_location_from_text, extract_route_coordinates, match_intent, handle_input, start_interpreter, transform_housecore_input, handler_factory, handler
+  Events Emitted: EMIT_CHAT_REQUEST, EMIT_USER_INTENT, EMIT_USER_INTENT, EMIT_MODULE_REQUEST, EMIT_WEB_SEARCH, EMIT_TRACK_FLIGHTS, EMIT_READ_LOG, GET_WEATHER, EMIT_INPUT_RECEIVED, EMIT_MODULE_READ, PLAN_ROUTE, EMIT_USER_INTENT, EMIT_MODULE_EDIT, EMIT_SPEAK, EMIT_USER_INTENT
+
+[modules/visual/visual_web.py]
+  Classes: VisualOrb
+  Functions: stream_innermono_log, run_visual_server, start_visual, index, send_static, serve_objloader, serve_mainjs, serve_mesh, metrics, latest_image, video_feed, gen_frames, receive_audio, emit_response, get_response, handle_listen, handle_upload, serve_upload, handle_emit_file_ready, __init__, on_visual_token, on_token_registered, on_speak, on_speak_chunk, on_speak_end, on_video_frame, set_speaking_state
+  Events Emitted: audio_chunk, EMIT_FILE_READY, EMIT_FILE_READY, speak_chunk, speak_end, EMIT_INPUT_RECEIVED, video_frame, INNEMONO_LINE
+

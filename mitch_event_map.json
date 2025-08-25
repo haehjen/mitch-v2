@@ -1,0 +1,163 @@
+{
+  "SHUTDOWN": [
+    "/home/triad/mitch/main.py"
+  ],
+  "EMIT_SPEAK": [
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_ACK": [
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py"
+  ],
+  "EMIT_TOOL_RESULT": [
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py",
+    "/home/triad/mitch/core/dispatcher.py"
+  ],
+  "EMIT_FAILURE": [
+    "/home/triad/mitch/core/dispatcher.py"
+  ],
+  "EMIT_INPUT_RECEIVED": [
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/ears.py",
+    "/home/triad/mitch/modules/interpreter.py",
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "EMIT_TRANSCRIBE_FAILED": [
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/transcriber.py",
+    "/home/triad/mitch/modules/transcriber.py"
+  ],
+  "EMIT_TOKEN_REGISTERED": [
+    "/home/triad/mitch/modules/flight_tracker.py",
+    "/home/triad/mitch/modules/web_search.py",
+    "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "EMIT_SPEAK_CHUNK": [
+    "/home/triad/mitch/modules/flight_tracker.py",
+    "/home/triad/mitch/modules/web_search.py",
+    "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "EMIT_SPEAK_END": [
+    "/home/triad/mitch/modules/flight_tracker.py",
+    "/home/triad/mitch/modules/web_search.py",
+    "/home/triad/mitch/modules/stream_mouth.py",
+    "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "EMIT_FLIGHT_TRACK_RESULT": [
+    "/home/triad/mitch/modules/flight_tracker.py",
+    "/home/triad/mitch/modules/flight_tracker.py"
+  ],
+  "EMIT_PUBLISH_DIGEST": [
+    "/home/triad/mitch/modules/publish_logs.py"
+  ],
+  "inspection_digest_ready": [
+    "/home/triad/mitch/modules/inspection_log_digester.py"
+  ],
+  "EMIT_AUDIO_CAPTURED": [
+    "/home/triad/mitch/modules/ears.py"
+  ],
+  "ECHO_HEARTBEAT": [
+    "/home/triad/mitch/modules/task_scheduler.py"
+  ],
+  "INJECTION_UPDATED": [
+    "/home/triad/mitch/modules/weather_fetcher.py"
+  ],
+  "speak": [
+    "/home/triad/mitch/modules/proxmon.py",
+    "/home/triad/mitch/modules/proxmon.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py",
+    "/home/triad/mitch/modules/folder_access.py"
+  ],
+  "EMIT_VISUAL_TOKEN": [
+    "/home/triad/mitch/modules/web_search.py",
+    "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "EMIT_CHAT_RESPONSE": [
+    "/home/triad/mitch/modules/web_search.py"
+  ],
+  "UNMUTE_EARS": [
+    "/home/triad/mitch/modules/stream_mouth.py"
+  ],
+  "MUTE_EARS": [
+    "/home/triad/mitch/modules/stream_mouth.py"
+  ],
+  "EMIT_FLIGHT_CONTACTS": [
+    "/home/triad/mitch/modules/automated_flight_tracker.py"
+  ],
+  "EMIT_MODULE_CONTENT": [
+    "/home/triad/mitch/modules/module_editor.py"
+  ],
+  "EMIT_MODULE_CREATE": [
+    "/home/triad/mitch/modules/gpt_handler.py"
+  ],
+  "EMIT_PREVIEW_URL": [
+    "/home/triad/mitch/modules/file_ingestor.py"
+  ],
+  "EMIT_CHAT_REQUEST": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_USER_INTENT": [
+    "/home/triad/mitch/modules/interpreter.py",
+    "/home/triad/mitch/modules/interpreter.py",
+    "/home/triad/mitch/modules/interpreter.py",
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_MODULE_REQUEST": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_WEB_SEARCH": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_TRACK_FLIGHTS": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_READ_LOG": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "GET_WEATHER": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_MODULE_READ": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "PLAN_ROUTE": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "EMIT_MODULE_EDIT": [
+    "/home/triad/mitch/modules/interpreter.py"
+  ],
+  "audio_chunk": [
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "EMIT_FILE_READY": [
+    "/home/triad/mitch/modules/visual/visual_web.py",
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "speak_chunk": [
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "speak_end": [
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "video_frame": [
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ],
+  "INNEMONO_LINE": [
+    "/home/triad/mitch/modules/visual/visual_web.py"
+  ]
+}

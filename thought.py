@@ -27,7 +27,7 @@ if not os.getenv("OPENAI_API_KEY"):
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL = "gpt-4o"
 
-THINK_INTERVAL = 300  # seconds between thoughts
+THINK_INTERVAL = 5000  # seconds between thoughts
 MODULE_PATH = Path(MITCH_ROOT) / "modules"
 THOUGHT_LOG = Path(MITCH_ROOT) / "logs/thoughts.log"
 CREATED_LOG = Path(MITCH_ROOT) / "logs/modules_created.log"

@@ -1,201 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>MITCH Interface</title>
+
   <style>
-    body {
-      margin: 0;
-      background-color: black;
-      font-family: monospace;
-      color: #0ff;
-      overflow: hidden;
+    :root{
+      --chat-blue: rgba(0,100,255,0.2);
+      --z-chat: 100; --z-site: 60; --z-log: 40; --z-overlay: 120; /* above 3D canvas */
     }
 
-    canvas { display: block; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:#000;color:#0ff;font-family:monospace;overflow:hidden}
 
-    #chat-container {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 720px;
-      height: auto;
-      background-color: rgba(30, 30, 30, 0.95);
-      padding: 0.5rem 1rem;
-      overflow: hidden;
-      border-radius: 16px;
-      box-shadow: 0 0 12px rgba(0, 100, 255, 0.2);
-      border: 1px solid rgba(0, 100, 255, 0.2);
-      z-index: 10;
-    }
+    /* Three.js canvas */
+    body > canvas { position:fixed; inset:0; z-index:1; display:block; }
 
-    #chat-log {
-      color: #0ff;
-      font-size: 1rem;
-      line-height: 1.4rem;
-      white-space: pre-wrap;
-      margin-bottom: 0.5rem;
-      max-height: 200px;
-      overflow-y: auto;
-    }
+    .chrome{border:1px solid var(--chat-blue);box-shadow:0 0 12px var(--chat-blue);border-radius:16px;background:#000}
 
-    #chat-input {
-      width: 100%;
-      padding: 0.4rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      background-color: #111;
-      color: #0ff;
-    }
+    #chat-container{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+      width:90%;max-width:720px;background:rgba(30,30,30,.95);padding:.5rem 1rem;border-radius:16px;
+      box-shadow:0 0 12px var(--chat-blue);border:1px solid var(--chat-blue);z-index:var(--z-chat)}
+    #chat-log{color:#0ff;font-size:1rem;line-height:1.4rem;white-space:pre-wrap;margin-bottom:.5rem;max-height:200px;overflow-y:auto}
+    #chat-input{width:100%;padding:.4rem;font-size:1rem;border-radius:8px;border:none;outline:none;background:#111;color:#0ff}
 
-    .vision-eye {
-      position: absolute;
-      top: 37%;
-      width: 100px;
-      height: 55px;
-      z-index: 10;
-      border: 1px solid #0040ff;
-      box-shadow: 0 0 6px rgba(0, 64, 255, 0.5);
-    }
+    #workspace-frame{position:absolute;top:24px;right:24px;width:354px;height:260px;z-index:var(--z-site)}
+    #workspace-frame.chrome{background:#000}
 
-    #vision-left {
-      left: 48%;
-      transform: translate(-100%, -50%);
-    }
+    #log-console{position:absolute;right:24px;bottom:24px;width:520px;height:300px;color:#0ff;font-size:.75rem;
+      padding:.5rem;overflow-y:auto;z-index:var(--z-log);background:rgba(0,0,0,.6)}
+    #log-console.chrome{background:rgba(0,0,0,.6)}
 
-    #vision-right {
-      left: 52%;
-      transform: translate(0, -50%);
-    }
+    /* Flight frames on top of the scene */
+    #flight-frames{position:fixed;inset:0;z-index:var(--z-overlay);pointer-events:none}
+    .flight-frame{position:absolute;overflow:hidden}
+    .flight-frame.chrome{border-radius:16px}
+    #uk-frame{top:24px;left:24px;width:360px;height:420px}
+    #ne-frame{top:24px;left:408px;width:720px;height:300px}
 
-    .vision-eye img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .frame-title{position:absolute;top:6px;left:8px;font:600 12px/1.2 ui-sans-serif,system-ui,Segoe UI,sans-serif;color:#a0b4c8;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 
-    .corner-line {
-      position: absolute;
-      background-color: #0040ff;
-    }
-
-    .top-left, .top-right {
-      width: 20px;
-      height: 1px;
-      top: 0;
-    }
-
-    .bottom-left, .bottom-right {
-      width: 20px;
-      height: 1px;
-      bottom: 0;
-    }
-
-    .top-left, .bottom-left { left: 0; }
-    .top-right, .bottom-right { right: 0; }
-
-    /* Floating iframe panel (Visual Workspace) */
-    #workspace-frame {
-      position: absolute;
-      top: 10%;
-      right: 5%;
-      width: 512px;
-      height: 288px;
-      border: 2px solid #0044ff;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #0044ff44;
-      z-index: 50;
-      background: #000;
-    }
+    /* Make sure the canvas sits above the map image */
+    .map-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.05) saturate(.95);z-index:0}
+    .map-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1}
   </style>
 </head>
 <body>
-  <div id="vision-left" class="vision-eye">
-    <img src="/video_feed" />
-    <div class="corner-line top-left"></div>
-    <div class="corner-line top-right"></div>
-    <div class="corner-line bottom-left"></div>
-    <div class="corner-line bottom-right"></div>
+  <div id="flight-frames">
+    <div id="uk-frame" class="flight-frame chrome">
+      <div class="frame-title">UK Air Picture</div>
+      <img id="uk-map" class="map-img" src="/static/maps/uk-sat.png" alt="UK map" loading="eager" decoding="async"/>
+      <canvas id="uk-canvas" class="map-layer"></canvas>
+    </div>
+    <div id="ne-frame" class="flight-frame chrome">
+      <div class="frame-title">North East (approx)</div>
+      <img id="ne-map" class="map-img" src="/static/maps/north-east-sat.png" alt="NE map" loading="eager" decoding="async"/>
+      <canvas id="ne-canvas" class="map-layer"></canvas>
+    </div>
   </div>
 
-  <div id="vision-right" class="vision-eye">
-    <img src="/video_feed" />
-    <div class="corner-line top-left"></div>
-    <div class="corner-line top-right"></div>
-    <div class="corner-line bottom-left"></div>
-    <div class="corner-line bottom-right"></div>
-  </div>
-
-  <div id="chat-container">
+  <div id="chat-container" class="chrome">
     <div id="chat-log"></div>
-    <input id="chat-input" type="text" placeholder="Say something to Echo..." />
+    <div style="display:flex;gap:.5rem">
+      <button id="upload-btn" title="Upload file" style="background:none;border:none;color:inherit;font-size:2rem;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">+</button>
+      <input type="file" id="file-upload" style="display:none" accept=".jpg,.jpeg,.png,.pdf,.html,.txt">
+      <input id="chat-input" type="text" placeholder="Say something to Echo..." style="flex:1">
+    </div>
   </div>
 
-  <!-- Visual Workspace -->
-  <iframe id="workspace-frame" src="https://andymitchell.online" frameborder="0"></iframe>
+  <iframe id="workspace-frame" class="chrome" src="https://andymitchell.online" frameborder="0"></iframe>
+  <div id="log-console" class="chrome"></div>
 
-  <!-- Three.js + OBJLoader + Socket.IO -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
   <script src="OBJLoader.js"></script>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
   <script>
-    const chatLog = document.getElementById('chat-log');
-    const chatInput = document.getElementById('chat-input');
-    const MAX_LINES = 10;
+    /* ===== Chat plumbing (guarded) ===== */
+    (function(){
+      var chatLog=document.getElementById('chat-log');
+      var chatInput=document.getElementById('chat-input');
+      var MAX_LINES=10;
 
-    function appendMessage(sender, message) {
-      const entry = document.createElement('div');
-      entry.textContent = `${sender}: ${message}`;
-      entry.style.color = sender === "YOU" ? '#aaa' : '#0ff';
-      chatLog.appendChild(entry);
+      function appendMessage(sender,message){
+        if(!chatLog) return;
+        var entry=document.createElement('div');
+        entry.textContent=(sender?sender:'')+': '+(message||'');
+        entry.style.color=(sender==='YOU')?'#aaa':'#0ff';
+        chatLog.appendChild(entry);
+        while(chatLog.children.length>MAX_LINES){ chatLog.removeChild(chatLog.firstChild); }
+        chatLog.scrollTop=chatLog.scrollHeight;
+      }
+      window.appendMessage=appendMessage; // reuse in uploader
 
-      while (chatLog.children.length > MAX_LINES) {
-        chatLog.removeChild(chatLog.firstChild);
+      function checkForMitchUpdates(){
+        fetch('/get_response').then(function(res){return res.json();})
+          .then(function(data){
+            if(data && data.text) appendMessage('Echo', data.text);
+            if(data && data.audio){ new Audio('/audio/'+data.audio).play(); }
+          }).catch(function(){});
       }
 
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
+      function sendUserInput(text){
+        if(!text || !text.trim()) return;
+        appendMessage('YOU', text);
+        fetch('/listen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});
+      }
 
-    function checkForMitchUpdates() {
-      fetch("/get_response")
-        .then(res => res.json())
-        .then(data => {
-          if (data.text) appendMessage("Echo", data.text);
-          if (data.audio) {
-            const audio = new Audio(`/audio/${data.audio}`);
-            audio.play();
+      if(chatInput){
+        chatInput.addEventListener('keydown',function(e){
+          if(e.key==='Enter'){
+            var t=e.target.value; e.target.value='';
+            sendUserInput(t);
           }
-        })
-        .catch(console.error);
-    }
+        });
+      }
+      setInterval(checkForMitchUpdates,2000);
+    })();
 
-    function sendUserInput(text) {
-      if (!text.trim()) return;
-      appendMessage("YOU", text);
-
-      fetch("/listen", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-    }
-
-    chatInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        const text = e.target.value;
-        e.target.value = '';
-        sendUserInput(text);
+    /* ===== Upload button (no optional chaining) ===== */
+    window.addEventListener('DOMContentLoaded', function(){
+      var uploadBtn=document.getElementById('upload-btn');
+      var fileInput=document.getElementById('file-upload');
+      if(uploadBtn && !uploadBtn.dataset.bound){
+        uploadBtn.addEventListener('click', function(){ if(fileInput) fileInput.click(); });
+        uploadBtn.dataset.bound='1';
+      }
+      if(fileInput && !fileInput.dataset.bound){
+        fileInput.addEventListener('change', function(e){
+          var f=(e && e.target && e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+          if(!f) return;
+          if(window.appendMessage) window.appendMessage('YOU','Uploading: '+f.name);
+          var form=new FormData(); form.append('file', f, f.name);
+          fetch('/upload',{method:'POST',body:form})
+            .then(function(res){return res.json();})
+            .then(function(data){
+              if(window.appendMessage) window.appendMessage('Echo',(data && data.message)?data.message:('Received '+f.name));
+            }).catch(function(){
+              if(window.appendMessage) window.appendMessage('Echo','Upload failed.');
+            }).finally(function(){ fileInput.value=''; });
+        });
+        fileInput.dataset.bound='1';
       }
     });
 
-    setInterval(checkForMitchUpdates, 2000);
+    /* ===== Flight overlay drawing (decluttered + robust JSON) ===== */
+    (function(){
+      var UK_BOUNDS={latMin:49.8,latMax:60.9,lonMin:-8.7,lonMax:2.1};
+      var NE_BOUNDS={latMin:53.8,latMax:56.9,lonMin:-3.6,lonMax:-0.3};
+
+      function safeParse(raw){
+        try { return JSON.parse(raw); }
+        catch(e){
+          var i = raw.lastIndexOf('{');
+          if(i >= 0){ try { return JSON.parse(raw.slice(i)); } catch(_) {} }
+          return null;
+        }
+      }
+
+      function ensureCanvasSize(canvas){
+        var r = canvas.getBoundingClientRect();
+        var dpr = window.devicePixelRatio || 1;
+        var W = Math.max(1, Math.floor(r.width));
+        var H = Math.max(1, Math.floor(r.height));
+        if(canvas.width !== W*dpr || canvas.height !== H*dpr){
+          canvas.width = W*dpr; canvas.height = H*dpr;
+        }
+        var ctx = canvas.getContext('2d');
+        if(ctx) ctx.setTransform(dpr,0,0,dpr,0,0);
+        return { ctx, width: W, height: H };
+      }
+
+      function llToPx(lat,lon,w,h,B){
+        return {
+          x: ((lon-B.lonMin)/(B.lonMax-B.lonMin))*w,
+          y: (1- (lat-B.latMin)/(B.latMax-B.latMin))*h
+        };
+      }
+
+      function drawBase(ctx, bounds, base, w, h){
+        if(!base) return;
+        var p = llToPx(base.lat, base.lon, w, h, bounds);
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.strokeStyle = '#00E5FF';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0,0,7,0,Math.PI*2); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-10,0); ctx.lineTo(-3,0); ctx.moveTo(3,0); ctx.lineTo(10,0);
+        ctx.moveTo(0,-10); ctx.lineTo(0,-3); ctx.moveTo(0,3); ctx.lineTo(0,10);
+        ctx.stroke();
+        ctx.restore();
+
+        var label = base.label || 'MITCHcore';
+        ctx.font = '600 11px ui-sans-serif,system-ui,Segoe UI';
+        var pad=6, hBox=18, m=ctx.measureText(label);
+        var bx=Math.min(Math.max(p.x+12,0), w-(m.width+pad*2));
+        var by=Math.min(Math.max(p.y-20,0), h-hBox);
+        ctx.fillStyle='rgba(5,15,25,0.85)';
+        ctx.fillRect(bx,by,m.width+pad*2,hBox);
+        ctx.fillStyle='#76FFF1';
+        ctx.fillText(label,bx+pad,by+13);
+      }
+
+      function drawContacts(canvas, bounds, contacts, base, opts){
+        if(!canvas || !bounds) return;
+        contacts = Array.isArray(contacts) ? contacts : [];
+        opts = opts || {};
+        var showCivDots = ('showCivDots' in opts)?opts.showCivDots:true;
+        var labelCiv    = ('labelCiv'    in opts)?opts.labelCiv:false;
+        var labelMil    = ('labelMil'    in opts)?opts.labelMil:true;
+        var maxLabels   = ('maxLabels'   in opts)?opts.maxLabels:60;
+        var grid        = ('grid'        in opts)?opts.grid:56;
+
+        var sz = ensureCanvasSize(canvas);
+        var ctx=sz.ctx, W=sz.width, H=sz.height;
+        if(!ctx) return;
+        ctx.clearRect(0,0,W,H);
+
+        function toPx(lat,lon){ return llToPx(lat,lon,W,H,bounds); }
+
+        // Aircraft glyphs
+        for(var i=0;i<contacts.length;i++){
+          var c=contacts[i]; if(!c) continue;
+          var p=toPx(c.lat,c.lon);
+          var isMil=(c.kind==='mil');
+          ctx.save();
+          if(isMil){
+            ctx.translate(p.x,p.y);
+            ctx.rotate(((c.heading||0)*Math.PI)/180);
+            ctx.fillStyle='rgba(255,168,76,0.95)';
+            ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(7,8); ctx.lineTo(-7,8); ctx.closePath(); ctx.fill();
+          }else if(showCivDots){
+            ctx.fillStyle='rgba(118,255,241,0.95)';
+            ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Labels (declutter)
+        var seen={}, placed=[], labels=0;
+        function overlaps(a,b){ return !(a.x+a.w<b.x || b.x+b.w<a.x || a.y+a.h<b.y || b.y+b.h<a.y); }
+        ctx.font='600 11px ui-sans-serif,system-ui,Segoe UI';
+
+        for(var j=0;j<contacts.length;j++){
+          var c2=contacts[j]; if(!c2) continue;
+          var isMil2=(c2.kind==='mil');
+          var want = (isMil2 && labelMil) || (!isMil2 && labelCiv);
+          if(!want) continue; if(labels>=maxLabels) break;
+
+          var pt=toPx(c2.lat,c2.lon);
+          var cellKey= (Math.floor(pt.x/grid)+':'+Math.floor(pt.y/grid));
+          if(seen[cellKey]) continue; seen[cellKey]=1;
+
+          var label=(c2.label || c2.callsign || 'UNK');
+          var padX=6, hBox=18, m=ctx.measureText(label);
+          var bx=Math.min(Math.max(pt.x+8,0), W-(m.width+padX*2));
+          var by=Math.min(Math.max(pt.y-18,0), H-hBox);
+          var box={x:bx,y:by,w:m.width+padX*2,h:hBox};
+
+          var collide=false;
+          for(var k=0;k<placed.length;k++){ if(overlaps(box,placed[k])){ collide=true; break; } }
+          if(collide) continue;
+
+          ctx.fillStyle='rgba(12,18,24,0.9)';
+          ctx.fillRect(box.x,box.y,box.w,box.h);
+          ctx.fillStyle=isMil2?'#FFD1A6':'#B2F9FF';
+          ctx.fillText(label, box.x+padX, box.y+13);
+
+          placed.push(box); labels++;
+        }
+
+        // Base marker
+        drawBase(ctx, bounds, base, W, H);
+      }
+
+      function fetchContacts(){
+        fetch('/static/flight_contacts.json?ts='+Date.now(),{cache:'no-store'})
+          .then(function(res){ if(!res.ok) throw new Error('fetch failed'); return res.text(); })
+          .then(function(raw){
+            var payload = safeParse(raw) || {};
+            var uk = Array.isArray(payload.uk)?payload.uk:[];
+            var ne = Array.isArray(payload.ne)?payload.ne:[];
+            var base = payload.base || null;
+
+            drawContacts(document.getElementById('uk-canvas'), UK_BOUNDS, uk, base,
+              {showCivDots:true,labelCiv:false,labelMil:true,maxLabels:70,grid:56});
+            drawContacts(document.getElementById('ne-canvas'), NE_BOUNDS, ne, base,
+              {showCivDots:true,labelCiv:true,labelMil:true,maxLabels:40,grid:44});
+
+            console.debug('[flights]', {uk: uk.length, ne: ne.length, updated: payload.updated});
+          })
+          .catch(function(err){ console.debug('fetchContacts failed', err && err.message); });
+      }
+
+      window.addEventListener('DOMContentLoaded', function(){
+        fetchContacts();
+        setInterval(fetchContacts,15000);
+        window.addEventListener('resize', fetchContacts);
+      });
+    })();
   </script>
 
+  <!-- your orb scene -->
   <script src="main.js"></script>
 </body>
 </html>

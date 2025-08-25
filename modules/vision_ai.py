@@ -80,3 +80,27 @@ class VisionAI:
         )
 
         return response.choices[0].message.content
+
+def describe_image_from_url(image_url: str) -> str:
+    """
+    Uses GPT-4o vision to describe an image at a given public URL.
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Please describe this image clearly and concisely."},
+                        {"type": "image_url", "image_url": {"url": image_url}}
+                    ]
+                }
+            ],
+            max_tokens=800,
+            temperature=0.7
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        logger.error(f"[VisionAI] Failed to describe image: {e}")
+        return f"[VisionAI] Error: {e}"

@@ -7,7 +7,7 @@ import cv2
 import psutil
 from core.peterjones import get_logger
 from pathlib import Path
-import requests  # <-- added for HouseCore instruction post
+import requests
 
 logger = get_logger("visual_web")
 
@@ -119,14 +119,6 @@ class VisualOrb:
             if full_reply and DEBUG:
                 logger.debug(f"Final reply to chat: {full_reply}")
             live_log.append(full_reply)
-            try:
-                requests.post(
-                    "https://mitch.andymitchell.online/housecore/instruction",
-                    json={"instruction": full_reply},
-                    timeout=5
-                )
-            except Exception as e:
-                logger.warning(f"Failed to post to HouseCore: {e}")
 
         self.active_token = None
 
@@ -144,7 +136,29 @@ class VisualOrb:
 
 visual_orb = VisualOrb()
 
+import time
+from threading import Thread
+from flask_socketio import emit
+
+LOG_PATH = "/home/triad/mitch/logs/innermono.log"
+
+def stream_innermono_log():
+    try:
+        with open(LOG_PATH, "r") as f:
+            # Seek to end of file initially
+            f.seek(0, os.SEEK_END)
+            while True:
+                line = f.readline()
+                if line:
+                    socketio.emit("INNEMONO_LINE", {"line": line.strip()})
+                else:
+                    time.sleep(0.3)
+    except Exception as e:
+        print(f"[log_streamer] Failed: {e}")
+
+
 def run_visual_server():
+    Thread(target=stream_innermono_log, daemon=True).start()  # <== 🔥 START LOG STREAM
     if DEBUG:
         logger.debug("Starting visual server...")
 
@@ -154,6 +168,9 @@ def run_visual_server():
         log.setLevel(logging.ERROR)
 
     socketio.run(app, host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+
+def start_visual():
+    run_visual_server()
 
 @app.route("/")
 def index():
@@ -239,57 +256,43 @@ def handle_listen():
         event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
     return jsonify({"status": "ok"})
 
-@app.route("/housecore/ping", methods=["POST"])
-def housecore_ping():
-    data = request.get_json()
-    identity = data.get("identity")
-    hostname = data.get("hostname")
-    logger.info(f"Ping received from {identity} ({hostname})")
-    return jsonify({"status": "acknowledged"})
+# === File Upload handling ===
+from werkzeug.utils import secure_filename
+from pathlib import Path
 
-@app.route("/housecore/event", methods=["POST"])
-def housecore_event():
-    data = request.get_json()
-    event_type = data.get("event")
-    payload = data.get("payload", {})
+UPLOAD_DIR = Path("/home/triad/mitch/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-    if DEBUG:
-        logger.info(f"HouseCore event received: {event_type} | {payload}")
+@app.route("/upload", methods=["POST"])
+def handle_upload():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
 
-    event_bus.emit(event_type, payload)
-    return jsonify({"status": "emitted"})
+    filename = secure_filename(file.filename)
+    filepath = UPLOAD_DIR / filename
+    file.save(str(filepath))
 
-@app.route("/housecore/instruction", methods=["POST"])
-def housecore_instruction():
-    data = request.get_json()
-    instruction = data.get("instruction")
+    file_info = {
+        "filename": filename,
+        "type": filename.split(".")[-1].lower(),
+        "filetype": filename.split(".")[-1].lower(),  # normalize for file_ingestor
+        "url": f"/uploads/{filename}"
+    }
 
-    with open("/tmp/housecore_instruction.json", "w") as f:
-        import json
-        json.dump({"instruction": instruction}, f)
+    logger.info(f"[visual_web] Upload handled: {file_info}")
+    event_bus.emit("EMIT_FILE_READY", file_info)  # send to ingestor
 
-    logger.info(f"Instruction queued for HouseCore: {instruction}")
-    return jsonify({"status": "queued"})
+    return jsonify(file_info)
 
-@app.route("/housecore/instruction", methods=["GET"])
-def get_instruction():
-    import os
-    import json
+@app.route("/uploads/<filename>")
+def serve_upload(filename):
+    return send_from_directory(str(UPLOAD_DIR), filename)
 
-    try:
-        with open("/tmp/housecore_instruction.json", "r") as f:
-            data = json.load(f)
-        return jsonify(data)
-    except Exception:
-        return jsonify({})
-
-@app.route("/digest", methods=["GET"])
-def serve_digest():
-    digest_path = Path("/home/triad/mitch/data/recent_digest.json")
-    if digest_path.exists():
-        return send_file(str(digest_path), mimetype="application/json")
-    else:
-        return jsonify({"error": "Digest not found."}), 404
-
-def start_visual():
-    threading.Thread(target=run_visual_server, daemon=True).start()
+# === SocketIO bridge for frontend emits ===
+@socketio.on("emit_file_ready")
+def handle_emit_file_ready(data):
+    logger.info(f"[visual_web] Socket emit_file_ready received: {data}")
+    event_bus.emit("EMIT_FILE_READY", data or {})

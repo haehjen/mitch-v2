@@ -17,12 +17,15 @@ except ImportError:
 
 logger = get_logger("gptv2")
 
+# Load API key from local file if env var not set
 if not os.getenv("OPENAI_API_KEY"):
     key_path = Path(__file__).resolve().parent.parent / "mitchskeys"
     if key_path.exists():
         for line in key_path.read_text(encoding="utf-8").splitlines():
             if "OPENAI_API_KEY=" in line:
-                os.environ["OPENAI_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
+                os.environ["OPENAI_API_KEY"] = (
+                    line.split("=", 1)[1].strip().strip('"').strip("'")
+                )
                 break
 
 if not os.getenv("OPENAI_API_KEY"):
@@ -37,6 +40,7 @@ INJECTION_PATH = Path(MITCH_ROOT) / "data" / "injections"
 
 active_token = None
 
+
 def load_prompt_injections():
     if not INJECTION_PATH.exists():
         return []
@@ -50,11 +54,12 @@ def load_prompt_injections():
                 type_ = entry.get("type", "misc")
                 content = entry.get("content", json.dumps(entry))
                 if content:
-                    safe_content = content.encode('utf-8', errors='replace').decode('utf-8')
+                    safe_content = content.encode("utf-8", errors="replace").decode("utf-8")
                     lines.append(f"- [{module}/{type_}] {safe_content}")
         except Exception as e:
             lines.append(f"- [error reading {file.name}: {e}]")
     return lines
+
 
 def build_system_prompt():
     base = persona.build_system_prompt()
@@ -63,21 +68,28 @@ def build_system_prompt():
         return f"{base}\n\n\U0001F527 Active Prompt Injections:\n" + "\n".join(injections)
     return base
 
+
 def generate_token():
     import time
-    return str(time.time()).replace('.', '')
+
+    return str(time.time()).replace(".", "")
+
 
 def emit_chunk(chunk, token):
+    # Avoid sending fenced code ticks as individual chunks (can break some UIs)
     if chunk.strip().startswith("```"):
         return
     event_bus.emit("EMIT_SPEAK_CHUNK", {"chunk": chunk, "token": token})
 
+
 def emit_end(token):
     event_bus.emit("EMIT_SPEAK_END", {"token": token})
+
 
 def emit_token_registered(token):
     event_bus.emit("EMIT_TOKEN_REGISTERED", {"token": token})
     event_bus.emit("EMIT_VISUAL_TOKEN", {"token": token})
+
 
 def maybe_emit_module_create(response_text):
     code_match = re.search(r"```(?:python)?\n(.*?)```", response_text, re.DOTALL)
@@ -86,19 +98,28 @@ def maybe_emit_module_create(response_text):
         filename = f"modules/{file_match.group(1)}"
         code = code_match.group(1).strip()
         logger.info(f"Detected module creation: {filename}")
-        event_bus.emit("EMIT_MODULE_CREATE", {
-            "filename": filename,
-            "code": code
-        })
+        event_bus.emit(
+            "EMIT_MODULE_CREATE",
+            {
+                "filename": filename,
+                "code": code,
+            },
+        )
+
 
 def handle_chat_request(data):
+    """
+    Entry point for user chat. IMPORTANT: we no longer save the user prompt here.
+    Saving here caused duplication because recall() would include the just-saved
+    prompt and stream_from_openai() would append it again.
+    """
     global active_token
     prompt = data.get("prompt", "")
     token = generate_token()
     active_token = token
     emit_token_registered(token)
     logger.info(f"New chat request: {prompt} (token: {token})")
-    memory.save_memory("user", prompt)
+
     try:
         thread = threading.Thread(target=stream_from_openai, args=(prompt, token))
         thread.start()
@@ -106,10 +127,15 @@ def handle_chat_request(data):
         logger.error(f"OpenAI thread start failed: {e}")
         fallback_or_fail(prompt, token)
 
+
 def stream_from_openai(prompt, token):
     try:
         system_prompt = build_system_prompt()
+
+        # Recall recent turns WITHOUT the current prompt (since we haven't saved it yet)
         recent = memory.recall_recent(n=MEMORY_WINDOW, include_roles=True)
+
+        # Summarized facts / long-term memory
         facts = memory.recall_summary()
         fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
         knowledge_context = f"The following facts are known and persistent:\n{fact_string}"
@@ -117,13 +143,13 @@ def stream_from_openai(prompt, token):
         messages = [
             {"role": "system", "content": f"{system_prompt}\n\n{knowledge_context}"},
             *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": prompt},
         ]
 
         response = client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=messages,
-            stream=True
+            stream=True,
         )
 
         response_buffer = ""
@@ -132,13 +158,19 @@ def stream_from_openai(prompt, token):
             if part:
                 response_buffer += part
                 emit_chunk(part, token)
+
         emit_end(token)
+
+        # Persist AFTER completion to avoid duplicate user message in recall()
+        memory.save_memory("user", prompt)
         memory.save_memory("assistant", response_buffer)
+
         maybe_emit_module_create(response_buffer)
 
     except Exception as e:
         logger.error(f"OpenAI streaming error: {e}")
         fallback_or_fail(prompt, token)
+
 
 def handle_module_request(data):
     prompt = data.get("prompt", "")
@@ -155,7 +187,7 @@ def handle_module_request(data):
     )
 
     messages = [
-        {"role": "system", "content": engineer_prompt}
+        {"role": "system", "content": engineer_prompt},
     ]
 
     try:
@@ -163,7 +195,7 @@ def handle_module_request(data):
             model=OPENAI_MODEL,
             messages=messages,
             temperature=0.7,
-            stream=False
+            stream=False,
         )
 
         if not response.choices:
@@ -179,6 +211,7 @@ def handle_module_request(data):
         logger.error(f"Module generation failed: {e}")
         fallback_or_fail(prompt, token)
 
+
 def fallback_or_fail(prompt, token):
     if HAS_OLLAMA:
         fallback_to_ollama(prompt, token)
@@ -187,24 +220,34 @@ def fallback_or_fail(prompt, token):
         emit_chunk("Something went wrong.", token)
         emit_end(token)
 
+
 def fallback_to_ollama(prompt, token):
     logger.info(f"Falling back to Ollama: {OLLAMA_MODEL}")
     try:
-        response = ollama.chat(model=OLLAMA_MODEL, messages=[{"role": "user", "content": prompt}])
-        for part in response['message']['content'].split():
-            emit_chunk(part + ' ', token)
+        response = ollama.chat(
+            model=OLLAMA_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        for part in response["message"]["content"].split():
+            emit_chunk(part + " ", token)
         emit_end(token)
-        memory.save_memory("assistant", response['message']['content'])
+
+        # Keep memory order consistent with main path
+        memory.save_memory("user", prompt)
+        memory.save_memory("assistant", response["message"]["content"])
     except Exception as e:
         logger.error(f"Ollama failed: {e}")
         emit_chunk("Fallback failed too. Sorry.", token)
         emit_end(token)
 
+
 def on_chat_request(data):
     handle_chat_request(data)
 
+
 def on_module_request(data):
     handle_module_request(data)
+
 
 def handle_tool_result(data):
     tool_name = data.get("function_name", "unknown")
@@ -215,6 +258,7 @@ def handle_tool_result(data):
 
     emit_chunk(f"Tool '{tool_name}' returned: {output}", token)
     emit_end(token)
+
 
 # Register handlers
 event_bus.subscribe("EMIT_CHAT_REQUEST", on_chat_request)

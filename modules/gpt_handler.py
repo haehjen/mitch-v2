@@ -17,17 +17,6 @@ except ImportError:
 
 logger = get_logger("gptv2")
 
-# Load API key from local file if env var not set
-if not os.getenv("OPENAI_API_KEY"):
-    key_path = Path(__file__).resolve().parent.parent / "mitchskeys"
-    if key_path.exists():
-        for line in key_path.read_text(encoding="utf-8").splitlines():
-            if "OPENAI_API_KEY=" in line:
-                os.environ["OPENAI_API_KEY"] = (
-                    line.split("=", 1)[1].strip().strip('"').strip("'")
-                )
-                break
-
 if not os.getenv("OPENAI_API_KEY"):
     logger.warning("OPENAI_API_KEY not found; GPT features will fail unless set.")
 

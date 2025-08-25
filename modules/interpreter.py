@@ -4,12 +4,14 @@ import time
 import json
 from core.event_bus import event_bus, INNERMONO_PATH
 from core.peterjones import get_logger
+from core.config import MITCH_ROOT
 from difflib import SequenceMatcher
 
 logger = get_logger("interpreter")
 
 _last_input_text = None  # Prevent repeated GPT calls
 THRESHOLD = 0.15  # Match confidence threshold
+INTENTS_PATH = os.path.join(MITCH_ROOT, "data", "injections", "intents.json")
 
 def compute_match_score(text, keywords, objects):
     score = 0
@@ -157,6 +159,34 @@ registered_intents = {
    },
 }
 
+def register_intent(data: dict) -> None:
+    """Merge a new intent into the registry and persist it."""
+    intent = data.get("intent")
+    keywords = data.get("keywords", [])
+    objects = data.get("objects", [])
+    handler = data.get("handler")
+
+    if not intent or not callable(handler):
+        logger.warning(f"REGISTER_INTENT missing fields: {data}")
+        return
+
+    registered_intents[intent] = {
+        "keywords": keywords,
+        "objects": objects,
+        "handler": handler,
+    }
+
+    try:
+        os.makedirs(os.path.dirname(INTENTS_PATH), exist_ok=True)
+        serialisable = {
+            name: {"keywords": cfg["keywords"], "objects": cfg["objects"]}
+            for name, cfg in registered_intents.items()
+        }
+        with open(INTENTS_PATH, "w", encoding="utf-8") as f:
+            json.dump(serialisable, f, indent=2)
+    except Exception as e:
+        logger.error(f"Failed to persist intents: {e}")
+
 def match_intent(text):
     # 1. Exact prefix match on intent name (e.g., "web_search latest ai model releases")
     for intent_name in registered_intents:
@@ -233,6 +263,9 @@ def start_interpreter():
             })
 
     event_bus.subscribe("HOUSECORE_INPUT", transform_housecore_input)
+
+    # Dynamic intent registration from other modules
+    event_bus.subscribe("REGISTER_INTENT", register_intent)
 
     # === DYNAMIC INTENTS LOADER ===
     dynamic_path = "/home/triad/mitch/data/injections/dynamic_intents.json"

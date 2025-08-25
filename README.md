@@ -25,3 +25,28 @@ Install Python requirements (if a `requirements.txt` is present) with:
 pip install -r requirements.txt
 ```
 
+## Registering intents
+
+Modules can contribute new phrases by emitting a `REGISTER_INTENT` event when they
+start up. The event payload must include:
+
+- `intent` – unique name for the intent.
+- `keywords` – list of words used for matching.
+- `objects` – optional secondary words.
+- `handler` – callable invoked with the original text when the intent matches.
+
+Example:
+
+```python
+event_bus.emit("REGISTER_INTENT", {
+    "intent": "get_weather",
+    "keywords": ["weather", "forecast"],
+    "objects": ["in", "at", "for"],
+    "handler": lambda text: event_bus.emit("GET_WEATHER", {"location": "newcastle"})
+})
+```
+
+The interpreter stores the keywords and objects in
+`data/injections/intents.json` so newly registered intents are immediately
+available for matching.
+

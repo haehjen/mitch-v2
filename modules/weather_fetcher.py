@@ -7,6 +7,7 @@ from datetime import datetime
 from core.event_bus import event_bus
 from core.peterjones import get_logger
 from core.config import MITCH_ROOT
+from modules.interpreter import extract_location_from_text
 
 logger = get_logger("weather_fetcher")
 
@@ -112,3 +113,11 @@ def fetch_weather(location="newcastle"):
 def start_module(event_bus):
     logger.info("Weather module started")
     event_bus.subscribe("GET_WEATHER", lambda data: fetch_weather(data.get("location", "newcastle")))
+    event_bus.emit("REGISTER_INTENT", {
+        "intent": "get_weather",
+        "keywords": ["weather", "forecast", "rain", "temperature", "conditions"],
+        "objects": ["today", "outside", "like", "right now", "tomorrow", "in", "at", "for"],
+        "handler": lambda text: event_bus.emit(
+            "GET_WEATHER", {"location": extract_location_from_text(text) or "newcastle"}
+        ),
+    })

@@ -6,6 +6,7 @@ from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
 from core.keys_loader import load_keys  # <-- add this
+from modules.interpreter import extract_region_for_flights
 
 logger = get_logger("flight_tracker")
 
@@ -57,3 +58,27 @@ def _get_token() -> str | None:
         logger.warning(f"[opensky-oauth] token fetch failed: {e}")
 
     return None
+
+
+def start_module(event_bus):
+    logger.info("Flight tracker module started")
+    event_bus.emit(
+        "REGISTER_INTENT",
+        {
+            "intent": "track_flights",
+            "keywords": [
+                "track",
+                "planes",
+                "plane",
+                "flights",
+                "flight",
+                "aircraft",
+                "traffic",
+            ],
+            "objects": ["over", "above", "near", "in", "around"],
+            "handler": lambda text: event_bus.emit(
+                "EMIT_TRACK_FLIGHTS",
+                {"region": extract_region_for_flights(text) or "newcastle"},
+            ),
+        },
+    )

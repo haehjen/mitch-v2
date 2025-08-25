@@ -1,0 +1,42 @@
+{
+  "launch_drone": {
+    "keywords": ["launch", "deploy", "send", "activate"],
+    "objects": ["drone", "unit"]
+  },
+  "describe_scene": {
+    "keywords": ["describe", "what", "can", "see"],
+    "objects": ["room", "scene", "view"]
+  },
+  "create_module": {
+    "keywords": ["create", "make", "generate", "write"],
+    "objects": ["module", "script", "file", "tool", "module name", "python file"]
+  },
+  "edit_module": {
+    "keywords": ["edit", "modify", "update"],
+    "objects": ["module", "script", "file"]
+  },
+  "read_module": {
+    "keywords": ["read", "show", "open", "display"],
+    "objects": ["module", "script", "file"]
+  },
+  "web_search": {
+    "keywords": ["search", "google", "look", "find"],
+    "objects": ["web", "internet"]
+  },
+  "track_flights": {
+    "keywords": ["track", "planes", "plane", "flights", "flight", "aircraft", "traffic"],
+    "objects": ["over", "above", "near", "in", "around"]
+  },
+  "read_log": {
+    "keywords": ["read", "show", "check", "display"],
+    "objects": ["log", "logfile", "modules_created", "created modules", "log file"]
+  },
+  "get_weather": {
+    "keywords": ["weather", "forecast", "rain", "temperature", "conditions"],
+    "objects": ["today", "outside", "like", "right now", "Tommorrow", "in", "at", "for"]
+  },
+  "plan_route": {
+    "keywords": ["route", "directions", "navigate", "travel", "get"],
+    "objects": ["from", "to", "via", "waypoint"]
+  }
+}

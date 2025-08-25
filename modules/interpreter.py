@@ -68,94 +68,108 @@ def extract_route_coordinates(match) -> list:
     return [[-1.61, 54.97], [-2.24, 53.48]]  # Newcastle to Manchester
 
 # === INTENT REGISTRY ===
-registered_intents = {
-    "launch_drone": {
-        "keywords": ["launch", "deploy", "send", "activate"],
-        "objects": ["drone", "unit"],
-        "handler": lambda text: event_bus.emit("EMIT_USER_INTENT", {
-            "intent": "launch_drone",
-            "params": {"drone_ids": extract_numbers(text) or [1]}
-        })
-    },
-    "describe_scene": {
-        "keywords": ["describe", "what", "can", "see"],
-        "objects": ["room", "scene", "view"],
-        "handler": lambda text: event_bus.emit("EMIT_USER_INTENT", {
-            "intent": "describe_scene",
-            "params": {}
-        })
-    },
-    "create_module": {
-        "keywords": ["create", "make", "generate", "write"],
-        "objects": ["module", "script", "file", "tool", "module name", "python file"],
-        "handler": lambda text: event_bus.emit("EMIT_MODULE_REQUEST", {
-            "prompt": text
-        })
-    },
-    "edit_module": {
-        "keywords": ["edit", "modify", "update"],
-        "objects": ["module", "script", "file"],
-        "handler": lambda text: (
-            lambda match: (
-                event_bus.emit("EMIT_MODULE_EDIT", {"filename": f"modules/{match.group(1)}.py", "content": match.group(2)}),
-                event_bus.emit("EMIT_SPEAK", {
-                    "text": f"Module {match.group(1)} has been updated.",
-                    "token": str(time.time())
-                })
-            ) if (match := re.match(r"edit module (\w+)\s+(.*)", text)) else None
-        )(text)
-    },
-    "read_module": {
-        "keywords": ["read", "show", "open", "display"],
-        "objects": ["module", "script", "file"],
-        "handler": lambda text: (
-            lambda match: (
-                event_bus.emit("EMIT_MODULE_READ", {
-                    "filename": f"core/{match.group(1)}.py" if match.group(1) in {"event_bus", "dispatcher", "peterjones"} else f"modules/{match.group(1)}.py"
-                })
-            ) if (match := re.match(r"read module (\w+)", text)) else None
-        )(text)
-    },
-    "web_search": {
-        "keywords": ["search", "google", "look", "find"],
-        "objects": ["web", "internet"],
-        "handler": lambda text: event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
-    },
-    # --- NEW: track flights intent ---
-    "track_flights": {
-        "keywords": ["track", "planes", "plane", "flights", "flight", "aircraft", "traffic"],
-        "objects": ["over", "above", "near", "in", "around"],  # language cues
-        "handler": lambda text: event_bus.emit("EMIT_TRACK_FLIGHTS", {
-            "region": extract_region_for_flights(text) or "newcastle"  # sensible default
-        })
-    },
-    "read_log": {
-        "keywords": ["read", "show", "check", "display"],
-        "objects": ["log", "logfile", "modules_created", "created modules", "log file"],
-        "handler": lambda text: event_bus.emit("EMIT_READ_LOG", {
-            "path": INNERMONO_PATH
-        })
-    },
-    "get_weather": {
-    "keywords": ["weather", "forecast", "rain", "temperature", "conditions"],
-    "objects": ["today", "outside", "like", "right now", "Tommorrow", "in", "at", "for"],
-    "handler": lambda text: event_bus.emit("GET_WEATHER", {
-        "location": extract_location_from_text(text) or "newcastle"
+registered_intents = {}
+
+def handle_launch_drone(text):
+    event_bus.emit("EMIT_USER_INTENT", {
+        "intent": "launch_drone",
+        "params": {"drone_ids": extract_numbers(text) or [1]},
     })
-    },
-    "plan_route": {
-    "keywords": ["route", "directions", "navigate", "travel", "get"],
-    "objects": ["from", "to", "via", "waypoint"],
-    "handler": lambda text: (
-        lambda match: event_bus.emit("PLAN_ROUTE", {
-            "coords": extract_route_coordinates(match)
-        }) if (match := re.search(r"from (.+?) to (.+)", text)) else event_bus.emit("EMIT_USER_INTENT", {
-            "intent": "plan_route",
-            "params": {"text": text}
+
+def handle_describe_scene(text):
+    event_bus.emit("EMIT_USER_INTENT", {
+        "intent": "describe_scene",
+        "params": {},
+    })
+
+def handle_create_module(text):
+    event_bus.emit("EMIT_MODULE_REQUEST", {"prompt": text})
+
+def handle_edit_module(text):
+    match = re.match(r"edit module (\w+)\s+(.*)", text)
+    if match:
+        event_bus.emit("EMIT_MODULE_EDIT", {
+            "filename": f"modules/{match.group(1)}.py",
+            "content": match.group(2),
         })
-    )(text)
-   },
+        event_bus.emit("EMIT_SPEAK", {
+            "text": f"Module {match.group(1)} has been updated.",
+            "token": str(time.time()),
+        })
+
+def handle_read_module(text):
+    match = re.match(r"read module (\w+)", text)
+    if match:
+        filename = (
+            f"core/{match.group(1)}.py"
+            if match.group(1) in {"event_bus", "dispatcher", "peterjones"}
+            else f"modules/{match.group(1)}.py"
+        )
+        event_bus.emit("EMIT_MODULE_READ", {"filename": filename})
+
+def handle_web_search(text):
+    event_bus.emit("EMIT_WEB_SEARCH", {"query": extract_search_query(text)})
+
+def handle_track_flights(text):
+    event_bus.emit("EMIT_TRACK_FLIGHTS", {
+        "region": extract_region_for_flights(text) or "newcastle"
+    })
+
+def handle_read_log(text):
+    event_bus.emit("EMIT_READ_LOG", {"path": INNERMONO_PATH})
+
+def handle_get_weather(text):
+    event_bus.emit("GET_WEATHER", {
+        "location": extract_location_from_text(text) or "newcastle",
+    })
+
+def handle_plan_route(text):
+    match = re.search(r"from (.+?) to (.+)", text)
+    if match:
+        event_bus.emit("PLAN_ROUTE", {"coords": extract_route_coordinates(match)})
+    else:
+        event_bus.emit("EMIT_USER_INTENT", {
+            "intent": "plan_route",
+            "params": {"text": text},
+        })
+
+HANDLERS = {
+    "launch_drone": handle_launch_drone,
+    "describe_scene": handle_describe_scene,
+    "create_module": handle_create_module,
+    "edit_module": handle_edit_module,
+    "read_module": handle_read_module,
+    "web_search": handle_web_search,
+    "track_flights": handle_track_flights,
+    "read_log": handle_read_log,
+    "get_weather": handle_get_weather,
+    "plan_route": handle_plan_route,
 }
+
+INTENTS_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "data", "injections", "intents.json"
+)
+
+def load_intents():
+    global registered_intents
+    try:
+        with open(INTENTS_PATH, "r") as f:
+            data = json.load(f)
+        for name, cfg in data.items():
+            handler = HANDLERS.get(name)
+            if not handler:
+                logger.warning(f"No handler for intent '{name}'")
+                continue
+            registered_intents[name] = {
+                "keywords": cfg.get("keywords", []),
+                "objects": cfg.get("objects", []),
+                "handler": handler,
+            }
+    except Exception as e:
+        logger.error(f"Failed to load intents: {e}")
+        registered_intents = {}
+
+load_intents()
 
 def match_intent(text):
     # 1. Exact prefix match on intent name (e.g., "web_search latest ai model releases")

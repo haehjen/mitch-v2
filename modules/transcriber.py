@@ -3,6 +3,7 @@ import time
 import os
 from core.event_bus import event_bus
 from core.peterjones import get_logger
+from core.config import DEBUG
 
 logger = get_logger("transcriber")
 
@@ -17,15 +18,20 @@ running = True
 
 MAX_RECENT = 100  # Maximum tracked recent files/phrases
 
+# Global debug mode (e.g., set DEBUG=true in .env)
+DEBUG = os.getenv("DEBUG", "false").lower() in ["1", "true", "yes"]
+
 def handle_mute(_):
     global mute
     mute = True
-    logger.debug("Muted.")
+    if DEBUG:
+        logger.debug("Muted.")
 
 def handle_unmute(_):
     global mute
     mute = False
-    logger.debug("Unmuted.")
+    if DEBUG:
+        logger.debug("Unmuted.")
 
 def _trim_recent():
     global recent_phrases, recent_files
@@ -43,30 +49,36 @@ def handle_audio_captured(data):
 
     path = data.get("path")
     if not path:
-        logger.warning("No audio path provided")
+        if DEBUG:
+            logger.warning("No audio path provided")
         return
 
     if mute:
-        logger.debug("Ignored due to mute state.")
+        if DEBUG:
+            logger.debug("Ignored due to mute state.")
         return
 
     if path in recent_files:
-        logger.debug(f"Ignoring duplicate file: {path}")
+        if DEBUG:
+            logger.debug(f"Ignoring duplicate file: {path}")
         return
 
     if not os.path.exists(path):
-        logger.warning(f"File missing: {path}")
+        if DEBUG:
+            logger.warning(f"File missing: {path}")
         return
 
     if os.path.getsize(path) < 1024:
-        logger.debug(f"File too small to process: {path}")
+        if DEBUG:
+            logger.debug(f"File too small to process: {path}")
         return
 
     time.sleep(0.1)
     recent_files.add(path)
     _trim_recent()
 
-    logger.debug(f"Processing audio from {path}")
+    if DEBUG:
+        logger.debug(f"Processing audio from {path}")
 
     try:
         with sr.AudioFile(path) as source:
@@ -78,7 +90,8 @@ def handle_audio_captured(data):
             last_time = recent_phrases.get(text_lower, 0)
 
             if now - last_time < 2:
-                logger.debug(f"Ignoring duplicate phrase: {text}")
+                if DEBUG:
+                    logger.debug(f"Ignoring duplicate phrase: {text}")
                 return
 
             recent_phrases[text_lower] = now
@@ -86,13 +99,18 @@ def handle_audio_captured(data):
             event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
 
     except sr.UnknownValueError:
-        logger.debug("Could not understand the audio")
+        if DEBUG:
+            logger.debug("Could not understand the audio")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": "unintelligible"})
+
     except sr.RequestError as e:
-        logger.warning(f"Speech recognition service error: {e}")
+        if DEBUG:
+            logger.warning(f"Speech recognition service error: {e}")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
+
     except Exception as e:
-        logger.error(f"Failed to process audio: {e}")
+        if DEBUG:
+            logger.error(f"Failed to process audio: {e}")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
 
 def start_transcriber():

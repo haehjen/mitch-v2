@@ -4,6 +4,7 @@ import os
 import time
 import json
 from datetime import datetime
+from threading import Thread
 from core.event_bus import event_bus
 from core.peterjones import get_logger
 from core.config import MITCH_ROOT
@@ -46,11 +47,13 @@ def describe_weather_code(code):
     }.get(code, "Unknown")
 
 def fetch_weather(location="newcastle"):
+    logger.info(f"[weather_fetcher] Fetching weather for: {location}")
     coords = KNOWN_LOCATIONS.get(location.lower(), KNOWN_LOCATIONS["newcastle"])
     lat, lon = coords["lat"], coords["lon"]
 
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
     try:
+        logger.info(f"[weather_fetcher] Requesting URL: {url}")
         r = requests.get(url, timeout=5)
         r.raise_for_status()
         weather = r.json().get("current_weather")
@@ -69,7 +72,6 @@ def fetch_weather(location="newcastle"):
 - Wind: {wind} km/h
 - Conditions: {desc}"""
 
-        # Write to JSON injection
         with open(JSON_PATH, "w") as f:
             json.dump({
                 "weather_location": location,
@@ -77,7 +79,6 @@ def fetch_weather(location="newcastle"):
                 "weather_summary": summary
             }, f, indent=2)
 
-        # Also write to Markdown (for GPT-friendly context)
         with open(MD_PATH, "w") as f:
             f.write(f"### Weather Summary ({location.title()}, {timestamp})\n\n")
             f.write(f"- Temperature: {temp}°C\n")
@@ -87,7 +88,6 @@ def fetch_weather(location="newcastle"):
         event_bus.emit("INJECTION_UPDATED", {"source": "weather"})
         logger.info(f"Weather data injected for {location}")
 
-        # Token + voice stream
         token = f"tool_weather_{int(time.time() * 1000)}"
         event_bus.emit("EMIT_TOKEN_REGISTERED", {"token": token})
         event_bus.emit("EMIT_VISUAL_TOKEN", {"token": token})
@@ -97,7 +97,6 @@ def fetch_weather(location="newcastle"):
         event_bus.emit("EMIT_SPEAK_CHUNK", {"chunk": spoken, "token": token})
         event_bus.emit("EMIT_SPEAK_END", {"token": token, "full_text": summary})
 
-        # Also post to UI
         event_bus.emit("EMIT_CHAT_RESPONSE", {
             "tool": "weather_fetcher",
             "location": location,
@@ -107,8 +106,25 @@ def fetch_weather(location="newcastle"):
         })
 
     except Exception as e:
-        logger.error(f"Failed to fetch weather for {location}: {e}")
+        logger.error(f"[weather_fetcher] Failed to fetch weather for {location}: {e}")
 
 def start_module(event_bus):
     logger.info("Weather module started")
-    event_bus.subscribe("GET_WEATHER", lambda data: fetch_weather(data.get("location", "newcastle")))
+    event_bus.subscribe("GET_WEATHER", lambda data: Thread(target=fetch_weather, args=(data.get("location", "newcastle"),)).start())
+
+    from core.event_registry import IntentRegistry
+
+    def weather_handler(text):
+        location = "newcastle"
+        for loc in KNOWN_LOCATIONS:
+            if loc in text.lower():
+                location = loc
+                break
+        event_bus.emit("GET_WEATHER", {"location": location})
+
+    IntentRegistry.register_intent(
+        name="get_weather",
+        handler=weather_handler,
+        keywords=["weather", "forecast", "temperature", "wind", "conditions"],
+        objects=list(KNOWN_LOCATIONS.keys())
+    )

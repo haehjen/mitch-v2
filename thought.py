@@ -17,7 +17,7 @@ if not os.getenv("OPENAI_API_KEY"):
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL = "gpt-4o"
 
-THINK_INTERVAL = 5000  # seconds between thoughts
+THINK_INTERVAL = 600  # seconds between thoughts
 MODULE_PATH = Path(MITCH_ROOT) / "modules"
 THOUGHT_LOG = Path(MITCH_ROOT) / "logs/thoughts.log"
 CREATED_LOG = Path(MITCH_ROOT) / "logs/modules_created.log"
@@ -202,6 +202,24 @@ Write a new MITCH-compatible Python module that extends MITCH's autonomy, or use
   "dependencies": ["optional", "libraries", "used"],
   "code": "Full Python code, MITCH-compatible and properly formatted"
 }}
+
+- If your module is designed to respond to user input or perform an action based on specific phrases, you MUST register a user intent.
+- Use the following format to register an intent inside your module's start_module function:
+
+  ```python
+  from core.event_registry import IntentRegistry
+
+  def start_module(event_bus):
+      def handler(text):
+          # Perform the desired action using the text
+          event_bus.emit("YOUR_EVENT_NAME", {{"text": text}})
+
+      IntentRegistry.register_intent(
+          "your_intent_name",
+          handler,
+          keywords=["trigger", "phrases", "user", "might", "say"],
+          objects=[]
+      )
 
 Before returning the code, double-check:
 - Import path is from core.event_bus import event_bus

@@ -7,6 +7,7 @@ from pathlib import Path
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
+from core.event_registry import IntentRegistry
 
 logger = get_logger("innermono")
 
@@ -49,7 +50,7 @@ def handle_web_search(event):
     if not raw_query:
         return
 
-    query = clean_query(raw_query)
+    query = clean_query(re.sub(r'^web_search\s+', '', raw_query, flags=re.I))
     log(f"Query: {query}")
     summary = fetch_results(query)
     log(f"Summary: {summary}")
@@ -80,3 +81,19 @@ def handle_web_search(event):
 def start_module(event_bus):
     log('Web search module started')
     event_bus.subscribe('EMIT_WEB_SEARCH', handle_web_search)
+    from core.event_registry import IntentRegistry
+
+def start_module(event_bus):
+    log('Web search module started')
+    event_bus.subscribe('EMIT_WEB_SEARCH', handle_web_search)
+
+    def web_search_handler(text):
+        query = clean_query(text)
+        event_bus.emit("EMIT_WEB_SEARCH", {"query": query})
+
+    IntentRegistry.register_intent(
+        name="web_search",
+        handler=web_search_handler,
+        keywords=["search", "google", "lookup", "find", "web", "news", "information"],
+        objects=[]
+    )

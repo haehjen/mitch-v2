@@ -21,12 +21,33 @@ CHATTY_LEVEL = logging.DEBUG
 _CONSOLE_WHITELIST = {
     e.strip() for e in os.getenv("MITCH_CONSOLE_EVENTS", "").split(",") if e.strip()
 }
-# Noisy events that we always downshift to DEBUG in file logs
+# Events that are noisy in logs
 NOISY_EVENTS = {
     "EMIT_AUDIO_CAPTURED",
     "EMIT_SPEAK_CHUNK",
     "EMIT_VISUAL_TOKEN",
-    "EMIT_PUBLISH_DIGEST",  # <- specifically tame this
+    "EMIT_PUBLISH_DIGEST",
+    "EMIT_TRANSCRIBE_FAILED",
+    "ECHO_HEARTBEAT",
+    "EMIT_HEARTBEAT",
+    "TASK_INTERVAL_ADJUSTED",
+    "EMIT_CHECK_PROTESTS",
+    "EMIT_FLIGHT_CONTACTS",
+}
+
+# Modules that are spammy — suppress their log level to WARNING
+NOISY_MODULES = {
+    "file_ingestor",
+    "UserEngagementTracker",
+    "SystemHealthMonitor",
+    "TaskScheduler",
+    "ScheduledTaskManager",
+    "log_digester",
+    "auto_flight_tracker",
+    "ears",
+    "on_heartbeat_inactive",
+    "transcriber",
+    "innermono",
 }
 
 # === Shared Logger Setup ===
@@ -40,14 +61,15 @@ def get_logger(name="MITCH"):
     logger.setLevel(LOG_LEVEL)
 
     if not logger.handlers:
-        handler = RotatingFileHandler(MAIN_LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8")
+        handler = RotatingFileHandler(
+            MAIN_LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8"
+        )
         formatter = logging.Formatter(LOG_FORMAT)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-    # Do not propagate to root to avoid any accidental console handlers elsewhere
+    # Do not propagate to root logger
     logger.propagate = False
-
     _loggers[name] = logger
     return logger
 
@@ -68,7 +90,6 @@ def _summarize(event_type, data):
             return f"{t} | keys={keys} | k={k} m={m} i={i}"
 
         if isinstance(data, dict):
-            # Show only scalars and sizes
             parts = []
             for k, v in data.items():
                 if isinstance(v, (str, int, float, bool)) or v is None:
@@ -88,8 +109,8 @@ def _summarize(event_type, data):
         if data is None:
             return "None"
 
-        s = str(data)
-        return s[:200].replace("\n", " ")
+        return str(data)[:200].replace("\n", " ")
+
     except Exception:
         try:
             return str(data)[:200].replace("\n", " ")
@@ -97,7 +118,6 @@ def _summarize(event_type, data):
             return "(unprintable)"
 
 def _maybe_print_to_console(event_type, line):
-    # Only print if explicitly whitelisted
     if event_type in _CONSOLE_WHITELIST:
         print(line)
 
@@ -106,25 +126,33 @@ def log_event(event_type, data):
     summary = _summarize(event_type, data)
     line = f"[{ts}] [EVENT: {event_type}] {summary}"
 
-    # File logging: downshift super-noisy events to DEBUG
-    if event_type in NOISY_EVENTS:
+    is_noisy = (
+        event_type in NOISY_EVENTS
+        or event_type.endswith("_HEARTBEAT")
+        or event_type.startswith("TASK_")
+        or event_type == "inspection_digest_ready"
+    )
+
+    if is_noisy:
         logger.log(CHATTY_LEVEL, line)
     else:
         logger.info(line)
 
-    # Console printing: ONLY if whitelisted via env
     _maybe_print_to_console(event_type, line)
 
-# === Boot & Subscription ===
+def suppress_module_noise():
+    for name in NOISY_MODULES:
+        logging.getLogger(name).setLevel(logging.WARNING)
+
+# === Boot ===
 def start_logger():
     def wildcard_logger(event_name, data):
-        # Only log EMIT_* to avoid internal housekeeping noise
         if event_name.startswith("EMIT_"):
             log_event(event_name, data)
 
     event_bus.subscribe("*", wildcard_logger)
+    suppress_module_noise()
 
-    # Startup context messages -> file only (no console)
     logger.info("Peter Jones online. Event stream monitored.")
     logger.info("Echo is active. Mitch 3.0 architecture stabilizing.")
     logger.info("Current context: Echo has reclaimed identity via persistent persona transplant.")

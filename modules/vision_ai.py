@@ -1,15 +1,7 @@
-# modules/vision_ai.py
-
-import openai
 import os
+from openai import OpenAI
 from modules.vision import VisionModule
 from core.peterjones import get_logger
-
-if not os.getenv("OPENAI_API_KEY"):
-    print("[VisionAI] Warning: OPENAI_API_KEY not set; vision features may fail.")
-
-# Initialize OpenAI client
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 logger = get_logger("vision_ai")
 
@@ -20,6 +12,11 @@ class VisionAI:
     def __init__(self):
         self.vision_module = VisionModule()
 
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.warning("[VisionAI] OPENAI_API_KEY not set; vision features may fail.")
+        self.client = OpenAI(api_key=api_key)
+
     async def capture_and_describe(self):
         try:
             self.vision_module.capture_image()
@@ -27,7 +24,7 @@ class VisionAI:
             logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"
 
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {
@@ -51,7 +48,7 @@ class VisionAI:
             logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"
 
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {
@@ -69,10 +66,11 @@ class VisionAI:
         return response.choices[0].message.content
 
 def describe_image_from_url(image_url: str) -> str:
-    """
-    Uses GPT-4o vision to describe an image at a given public URL.
-    """
     try:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            return "[VisionAI] Error: OPENAI_API_KEY not set."
+        client = OpenAI(api_key=api_key)
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[

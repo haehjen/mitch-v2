@@ -1,8 +1,10 @@
-import threading
 import os
+# --- Load secrets before anything else ---
+from core.keys_loader import load_keys
+load_keys()
+import threading
 import sys
 import importlib
-from core.keys_loader import load_keys
 from core import peterjones, dispatcher
 from core.event_bus import event_bus
 from modules import (
@@ -29,13 +31,6 @@ shutdown_hooks = []
 loaded_modules = []
 thread_refs = []
 _stop_event = threading.Event()
-
-def main():
-    print("⚡ ECHO starting...")
-
-    # --- Load secrets before anything else ---
-    load_keys()
-
 
 def _log_event(level: str, message: str, **kv):
     """Send a structured line into innermono.log via peterjones logger."""

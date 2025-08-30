@@ -1,4 +1,4 @@
 import os
-from pathlib import Path
 
-MITCH_ROOT = os.getenv("MITCH_ROOT", Path(__file__).resolve().parents[1])
+MITCH_ROOT = os.getenv("MITCH_ROOT", "/home/triad/mitch")
+DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"

@@ -4,11 +4,18 @@ import time
 import os
 import json
 from core.event_bus import event_bus
-from modules.vision_ai import VisionAI
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
 
-vision_ai = VisionAI()
+vision_ai = None
+
+def get_vision_ai():
+    global vision_ai
+    if vision_ai is None:
+        from modules.vision_ai import VisionAI
+        vision_ai = VisionAI()
+    return vision_ai
+
 _dispatcher_started = False
 
 def handle_user_intent(data):
@@ -45,7 +52,7 @@ def handle_user_intent(data):
 
     elif intent == "describe_scene":
         try:
-            description = asyncio.run(vision_ai.capture_and_describe())
+            description = asyncio.run(get_vision_ai().capture_and_describe())
             event_bus.emit("EMIT_SPEAK", {
                 "text": description,
                 "source": "intent",
@@ -71,7 +78,7 @@ def handle_user_intent(data):
 
     elif intent == "detect_objects":
         try:
-            objects = asyncio.run(vision_ai.detect_objects())
+            objects = asyncio.run(get_vision_ai().detect_objects())
             event_bus.emit("EMIT_SPEAK", {
                 "text": objects,
                 "source": "intent",

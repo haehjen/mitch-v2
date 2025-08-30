@@ -84,14 +84,8 @@ class EventBus:
         if DEBUG and event_type not in self._muted_console:
             print(f"[{ts}] [EventBus] EMIT: {event_type} -> {preview}")
 
-        if INNERMONO_PATH:
-            try:
-                os.makedirs(os.path.dirname(INNERMONO_PATH), exist_ok=True)
-                with open(INNERMONO_PATH, "a", encoding="utf-8") as f:
-                    f.write(f"{ts} [{event_type}] {preview}\n")
-            except Exception as e:
-                if DEBUG:
-                    print(f"[EventBus] Failed to write to innermono.log: {e}")
+        # Centralized file logging is handled by core.peterjones.
+        # Avoid writing directly to innermono.log here to prevent duplication/noise.
 
         for callback in list(self.listeners.get(event_type, [])):
             try:

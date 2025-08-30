@@ -129,16 +129,22 @@ def stream_from_openai(prompt, token):
         fact_string = "\n".join(f"- {fact}" for fact in facts[:5])
         knowledge_context = f"The following facts are known and persistent:\n{fact_string}"
 
+        # Construct messages payload
         messages = [
             {"role": "system", "content": f"{system_prompt}\n\n{knowledge_context}"},
-            *[{"role": entry["role"], "content": entry["content"]} for entry in recent],
+            *[
+                {"role": entry["role"], "content": entry["content"]}
+                for entry in recent
+            ],
             {"role": "user", "content": prompt},
         ]
 
+        # Ensure the client and parameters are valid
         response = client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=messages,
-            stream=True,
+            model=OPENAI_MODEL,  # Ensure OPENAI_MODEL is a valid string
+            messages=messages,  # Ensure messages is a list of dicts with "role" and "content"
+            temperature=0.7,  # Ensure temperature is a float
+            stream=True,  # Ensure stream is a boolean
         )
 
         response_buffer = ""
@@ -181,10 +187,10 @@ def handle_module_request(data):
 
     try:
         response = client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=messages,
-            temperature=0.7,
-            stream=False,
+            model=OPENAI_MODEL,  # Ensure OPENAI_MODEL is a valid string
+            messages=messages,  # Ensure messages is a list of dicts with "role" and "content"
+            temperature=0.7,  # Ensure temperature is a float
+            stream=False,  # Ensure stream is a boolean
         )
 
         if not response.choices:

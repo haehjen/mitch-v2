@@ -18,7 +18,7 @@ running = True
 
 MAX_RECENT = 100  # Maximum tracked recent files/phrases
 
-# Global debug mode (e.g., set DEBUG=true in .env)
+# Global debug mode (override if needed)
 DEBUG = os.getenv("DEBUG", "false").lower() in ["1", "true", "yes"]
 
 def handle_mute(_):
@@ -41,6 +41,14 @@ def _trim_recent():
             del recent_phrases[phrase]
     while len(recent_files) > MAX_RECENT:
         recent_files.pop()
+
+def _cleanup(path):
+    try:
+        os.remove(path)
+        if DEBUG:
+            logger.debug(f"Deleted temp audio: {path}")
+    except Exception as e:
+        logger.warning(f"Failed to delete temp audio: {path} | {e}")
 
 def handle_audio_captured(data):
     global recent_files, recent_phrases, mute, running
@@ -71,6 +79,7 @@ def handle_audio_captured(data):
     if os.path.getsize(path) < 1024:
         if DEBUG:
             logger.debug(f"File too small to process: {path}")
+        _cleanup(path)
         return
 
     time.sleep(0.1)
@@ -92,26 +101,31 @@ def handle_audio_captured(data):
             if now - last_time < 2:
                 if DEBUG:
                     logger.debug(f"Ignoring duplicate phrase: {text}")
+                _cleanup(path)
                 return
 
             recent_phrases[text_lower] = now
             logger.info(f"Recognized: {text}")
             event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
+            _cleanup(path)
 
     except sr.UnknownValueError:
         if DEBUG:
             logger.debug("Could not understand the audio")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": "unintelligible"})
+        _cleanup(path)
 
     except sr.RequestError as e:
         if DEBUG:
             logger.warning(f"Speech recognition service error: {e}")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
+        _cleanup(path)
 
     except Exception as e:
         if DEBUG:
             logger.error(f"Failed to process audio: {e}")
         event_bus.emit("EMIT_TRANSCRIBE_FAILED", {"path": path, "reason": str(e)})
+        _cleanup(path)
 
 def start_transcriber():
     logger.info("Transcriber online and listening for EMIT_AUDIO_CAPTURED...")

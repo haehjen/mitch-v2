@@ -1,10 +1,12 @@
 import json
 import time
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 
 class ProtestTracker:
     def __init__(self):
         self.protests_log = []
+        self.logger = get_logger("protest_tracker")
 
     def check_for_protests(self, event_data):
         # Placeholder for web scraping or API call to gather protest data
@@ -18,9 +20,8 @@ class ProtestTracker:
         self.emit_protest_updates(sample_protests)
 
     def _log_to_file(self, protests):
-        with open('/home/triad/mitch/logs/innermono.log', 'a') as log_file:
-            for protest in protests:
-                log_file.write(f"Protest logged: {protest['description']} at {protest['location']}\n")
+        for protest in protests:
+            self.logger.info(f"Protest logged: {protest['description']} at {protest['location']}")
 
     def emit_protest_updates(self, protests):
         # Emit an event with the protest data for other modules to use
@@ -44,5 +45,4 @@ def handle_heartbeat(event_data):
 
 def start_module(event_bus):
     event_bus.subscribe('ECHO_HEARTBEAT', handle_heartbeat)
-    with open('/home/triad/mitch/logs/innermono.log', 'a') as log_file:
-        log_file.write("Protest Tracker module started.\n")
+    get_logger("protest_tracker").info("Protest Tracker module started.")

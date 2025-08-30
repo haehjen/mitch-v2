@@ -5,14 +5,9 @@ from core.event_bus import event_bus
 from threading import Thread, Event
 from time import sleep, time
 from datetime import datetime
+from core.peterjones import get_logger
 
-# Setup logging
-log_path = "/home/triad/mitch/logs/innermono.log"
-logging.basicConfig(
-    filename=log_path,
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logger = get_logger("TaskScheduler")
 
 class TaskScheduler:
     def __init__(self):
@@ -31,7 +26,7 @@ class TaskScheduler:
             'last_run': 0
         }
         self.tasks.append(task)
-        logging.info(f"[TaskScheduler] Scheduled task '{task_name}' every {interval} seconds.")
+        logger.info(f"[TaskScheduler] Scheduled task '{task_name}' every {interval} seconds.")
 
     def run(self):
         """Main loop to run tasks at intervals."""
@@ -39,12 +34,12 @@ class TaskScheduler:
             current_time = time()
             for task in self.tasks:
                 if current_time - task['last_run'] >= task['interval']:
-                    logging.info(f"[TaskScheduler] Executing task: {task['name']}")
+                    logger.info(f"[TaskScheduler] Executing task: {task['name']}")
                     try:
                         task['action']()
                         task['last_run'] = current_time
                     except Exception as e:
-                        logging.error(f"[TaskScheduler] Error in task '{task['name']}': {e}")
+                        logger.error(f"[TaskScheduler] Error in task '{task['name']}': {e}")
             sleep(1)
 
     def save_task_context(self):
@@ -58,15 +53,15 @@ class TaskScheduler:
             path = os.path.join(self.injections_dir, "task_schedule.json")
             with open(path, "w") as f:
                 json.dump(context, f, indent=2)
-            logging.info("[TaskScheduler] Saved task schedule to injection.")
+            logger.info("[TaskScheduler] Saved task schedule to injection.")
         except Exception as e:
-            logging.error(f"[TaskScheduler] Failed to save task context: {e}")
+            logger.error(f"[TaskScheduler] Failed to save task context: {e}")
 
     def shutdown(self):
         """Stop scheduler thread cleanly."""
         self.stop_event.set()
         self.thread.join()
-        logging.info("[TaskScheduler] Scheduler stopped.")
+        logger.info("[TaskScheduler] Scheduler stopped.")
 
     def handle_shutdown_event(self, event_data):
         self.shutdown()
@@ -85,12 +80,12 @@ def start_module(event_bus):
             "source": "task_scheduler"
         }
         event_bus.emit("ECHO_HEARTBEAT", payload)
-        logging.info("[TaskScheduler] Emitted ECHO_HEARTBEAT.")
+        logger.debug("[TaskScheduler] Emitted ECHO_HEARTBEAT.")
 
     # Schedule tasks
     scheduler.schedule_task("Heartbeat", 10, heartbeat)
     scheduler.schedule_task("Save Schedule", 120, scheduler.save_task_context)
-    scheduler.schedule_task("Log Maintenance", 3600, lambda: logging.info("Performing log maintenance."))
+    scheduler.schedule_task("Log Maintenance", 3600, lambda: logger.info("Performing log maintenance."))
 
     scheduler.thread.start()
-    logging.info("[TaskScheduler] Module started.")
+    logger.info("[TaskScheduler] Module started.")

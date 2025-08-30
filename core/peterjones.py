@@ -147,10 +147,11 @@ def log_event(event_type, data):
     )
 
     if is_noisy:
-        logger.log(CHATTY_LEVEL, line)
+        logger.debug(line)  # Use DEBUG level for noisy events
     else:
         logger.info(line)
 
+    # Only print to console if explicitly whitelisted
     _maybe_print_to_console(event_type, line)
 
 def suppress_module_noise():

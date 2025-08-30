@@ -1,14 +1,16 @@
 import json
 import os
 from core.event_bus import event_bus
+from core.peterjones import get_logger
 
-LOG_PATH = "/home/triad/mitch/logs/innermono.log"
 INJECTION_PATH = "/home/triad/mitch/data/injections/dynamic_intent_update.json"
 
 
+logger = get_logger("dynamic_intent_updater")
+
+
 def log_action(message):
-    with open(LOG_PATH, "a") as log_file:
-        log_file.write(f"{message}\n")
+    logger.info(message)
 
 
 def handle_intent_match_failed(event_data):

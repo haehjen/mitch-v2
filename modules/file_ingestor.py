@@ -1,28 +1,21 @@
 import os
 import json
-import logging
 from pathlib import Path
 import mimetypes
 
 from core.event_bus import event_bus
 from modules.vision_ai import describe_image_from_url  # ✅ NEW
+from core.peterjones import get_logger
 
 # Optional parsers (present in your stack)
 from bs4 import BeautifulSoup
 from pdfminer.high_level import extract_text
 from PIL import Image
-
-LOG_PATH = "/home/triad/mitch/logs/innermono.log"
 INJECTION_PATH = "/home/triad/mitch/data/injections/"
 UPLOAD_DIR = "/home/triad/mitch/uploads"
 PUBLIC_URL_BASE = "https://mitch.andymitchell.online/uploads"  # ✅ for GPT-4o vision
 
-logging.basicConfig(
-    filename=LOG_PATH,
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger("file_ingestor")
+logger = get_logger("file_ingestor")
 
 IMAGE_EXTS = {"png", "jpg", "jpeg", "gif", "bmp", "webp"}
 HTML_EXTS = {"html", "htm"}

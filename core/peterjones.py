@@ -8,7 +8,7 @@ from core.event_bus import event_bus, INNERMONO_PATH
 from core.config import MITCH_ROOT
 
 # === Paths ===
-MAIN_LOG_PATH = INNERMONO_PATH
+MAIN_LOG_PATH = INNERMONO_PATH or os.path.join(MITCH_ROOT, "logs", "mitch.log")
 os.makedirs(os.path.dirname(MAIN_LOG_PATH), exist_ok=True)
 
 # === Formatter / Levels ===
@@ -17,10 +17,13 @@ LOG_LEVEL = logging.INFO  # default level for most events
 CHATTY_LEVEL = logging.DEBUG
 
 # === Environment controls ===
+DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
+
 # Comma-separated events that should ALSO print to console (default: none)
 _CONSOLE_WHITELIST = {
     e.strip() for e in os.getenv("MITCH_CONSOLE_EVENTS", "").split(",") if e.strip()
 }
+
 # Events that are noisy in logs
 NOISY_EVENTS = {
     "EMIT_AUDIO_CAPTURED",
@@ -61,6 +64,9 @@ def get_logger(name="MITCH"):
     logger.setLevel(LOG_LEVEL)
 
     if not logger.handlers:
+        # Ensure MAIN_LOG_PATH is valid
+        if not MAIN_LOG_PATH:
+            raise ValueError("MAIN_LOG_PATH is not set or invalid.")
         handler = RotatingFileHandler(
             MAIN_LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8"
         )
@@ -122,6 +128,13 @@ def _maybe_print_to_console(event_type, line):
         print(line)
 
 def log_event(event_type, data):
+    """
+    Logs any EMIT_* event unless it's explicitly muted or DEBUG mode is off.
+    Noisy events are skipped completely unless MITCH_DEBUG=true.
+    """
+    if event_type in NOISY_EVENTS and not DEBUG:
+        return  # silently suppress noisy events when not in debug mode
+
     ts = datetime.utcnow().isoformat()
     summary = _summarize(event_type, data)
     line = f"[{ts}] [EVENT: {event_type}] {summary}"

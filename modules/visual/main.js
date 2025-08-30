@@ -1,3 +1,6 @@
+// Boot marker for debugging
+try { console.info('[orb] main.js loaded'); } catch(_) {}
+
 // === Three.js Scene Setup ===
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -169,9 +172,23 @@ scene.add(particleSystem);
 
 // === Socket Handling ===
 const socket = io();
+window.socket = socket;
 let speaking = false;
 socket.on('speak_chunk', () => speaking = true);
 socket.on('speak_end', () => speaking = false);
+
+// Connection diagnostics
+try {
+  socket.on('connect', () => console.info('[orb] socket connected:', socket.id));
+  socket.on('disconnect', (r) => console.warn('[orb] socket disconnected:', r));
+  socket.io.on('error', (e) => console.error('[orb] io error:', e));
+  socket.on('connect_error', (e) => console.error('[orb] connect_error:', e && e.message || e));
+  socket.onAny((ev, ...args) => {
+    if (ev !== 'video_frame') { // avoid spamming
+      console.debug('[orb] event:', ev, args && args[0]);
+    }
+  });
+} catch (_) {}
 
 const logConsole = document.getElementById("log-console");
 const logLines = [];
@@ -182,6 +199,98 @@ socket.on("INNEMONO_LINE", (data) => {
   logConsole.innerHTML = logLines.map(line => `<div>${line}</div>`).join("");
   logConsole.scrollTop = logConsole.scrollHeight;
 });
+
+// === Map Pin Handler (force-visible cones + pulsing halo) ===
+const activePins = [];
+socket.on("EMIT_MAP_PIN", ({ lat, lon, label, description }) => {
+  if (typeof lat !== 'number' || typeof lon !== 'number') return;
+  console.log("📍 Map Pin:", label, lat, lon);
+  try {
+    if (logConsole) {
+      const msg = `📍 ${label || 'Pin'} @ ${lat.toFixed(3)}, ${lon.toFixed(3)}${description? ' — '+description: ''}`;
+      const div = document.createElement('div');
+      div.textContent = msg;
+      logConsole.appendChild(div);
+      if (logConsole.children.length > 25) logConsole.removeChild(logConsole.firstChild);
+      logConsole.scrollTop = logConsole.scrollHeight;
+    }
+  } catch (_) {}
+
+  // Push outside the glow/particles so it’s clearly visible
+  const radius = 0.70; // was 0.58
+  const phi   = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+
+  const x = radius * Math.sin(phi) * Math.cos(theta);
+  const y = radius * Math.cos(phi) - 1; // orb center is y = -1
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+
+  // Cone: render on top of everything (no depth test), slightly bigger, double-sided
+  const pin = new THREE.Mesh(
+    new THREE.ConeGeometry(0.10, 0.36, 16),
+    new THREE.MeshBasicMaterial({
+      color: 0xff0040,
+      depthTest: false,
+      depthWrite: false,
+      transparent: true,
+      opacity: 1.0,
+      side: THREE.DoubleSide
+    })
+  );
+  pin.position.set(x, y, z);
+  pin.lookAt(0, -1, 0);
+  pin.renderOrder = 1000;
+  scene.add(pin);
+
+  // Glow dot: also on top (pulses in animate)
+  const dot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: 0xff6666,
+      depthTest: false,
+      depthWrite: false,
+      transparent: true,
+      opacity: 0.95
+    })
+  );
+  dot.position.set(x, y, z);
+  dot.renderOrder = 1000;
+  scene.add(dot);
+
+  activePins.push({ pin, dot, created: performance.now() });
+});
+
+// Simple debug helper to verify 3D pins without backend
+window.debugOrbPin = function(lat, lon, label, description){
+  socket.emit && console.debug('[debugOrbPin] adding local pin');
+  socket.listeners && console.debug('[debugOrbPin]');
+  socket.emit?.("__noop");
+  // Reuse the same logic by emitting a synthetic event to our handler
+  const evt = new Event('synthetic');
+  // Call handler directly
+  try { window.dispatchEvent(evt); } catch (_) {}
+  // Duplicate minimal logic inline
+  if (typeof lat !== 'number' || typeof lon !== 'number') return false;
+  const radius = 0.70;
+  const phi   = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  const x = radius * Math.sin(phi) * Math.cos(theta);
+  const y = radius * Math.cos(phi) - 1;
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+  const pin = new THREE.Mesh(
+    new THREE.ConeGeometry(0.10, 0.36, 16),
+    new THREE.MeshBasicMaterial({ color: 0xff0040, depthTest: false, depthWrite: false, transparent: true, opacity: 1.0, side: THREE.DoubleSide })
+  );
+  pin.position.set(x, y, z); pin.lookAt(0, -1, 0); pin.renderOrder = 1000; scene.add(pin);
+  const dot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 16, 16),
+    new THREE.MeshBasicMaterial({ color: 0xff6666, depthTest: false, depthWrite: false, transparent: true, opacity: 0.95 })
+  );
+  dot.position.set(x, y, z); dot.renderOrder = 1000; scene.add(dot);
+  activePins.push({ pin, dot, created: performance.now() });
+  return true;
+};
+
 
 // === Animate ===
 const clock = new THREE.Clock();
@@ -206,6 +315,16 @@ function animate() {
     posAttr.array[i3 + 2] = r * Math.cos(phi);
   }
   posAttr.needsUpdate = true;
+
+  // Pulse pin dots to draw attention
+  if (activePins.length) {
+    const pulse = 0.85 + 0.25 * (0.5 + 0.5 * Math.sin(t * 3.2));
+    for (let i = 0; i < activePins.length; i++) {
+      const ap = activePins[i];
+      if (!ap || !ap.dot) continue;
+      ap.dot.scale.set(pulse, pulse, pulse);
+    }
+  }
 
   renderer.render(scene, camera);
 }

@@ -37,6 +37,7 @@ class VisualOrb:
         event_bus.subscribe("EMIT_VIDEO_FEED", self.on_video_frame)
         event_bus.subscribe("EMIT_SPEAK", self.on_speak)
         event_bus.subscribe("EMIT_TOKEN_REGISTERED", self.on_token_registered)
+        event_bus.subscribe("EMIT_MAP_PIN", self.on_map_pin)  # <-- ADDED
 
     def on_visual_token(self, data):
         self.active_token = data.get("token")
@@ -134,18 +135,37 @@ class VisualOrb:
             state = "activating orb" if value else "deactivating orb"
             logger.debug(f"Finalized state update - {state}.")
 
+    def on_map_pin(self, data):  # <-- NEW METHOD
+        if not data:
+            return
+        lat = data.get("lat")
+        lon = data.get("lon")
+        label = data.get("label", "")
+        description = data.get("description", "")
+        if lat is None or lon is None:
+            if DEBUG:
+                logger.debug("EMIT_MAP_PIN missing lat/lon")
+            return
+        socketio.emit("EMIT_MAP_PIN", {
+            "lat": lat,
+            "lon": lon,
+            "label": label,
+            "description": description
+        })
+        if DEBUG:
+            logger.debug(f"Forwarded pin: {label} @ {lat},{lon}")
+
 visual_orb = VisualOrb()
 
+# === Log streaming thread ===
 import time
 from threading import Thread
-from flask_socketio import emit
 
 LOG_PATH = "/home/triad/mitch/logs/innermono.log"
 
 def stream_innermono_log():
     try:
         with open(LOG_PATH, "r") as f:
-            # Seek to end of file initially
             f.seek(0, os.SEEK_END)
             while True:
                 line = f.readline()
@@ -156,9 +176,8 @@ def stream_innermono_log():
     except Exception as e:
         print(f"[log_streamer] Failed: {e}")
 
-
 def run_visual_server():
-    Thread(target=stream_innermono_log, daemon=True).start()  # <== 🔥 START LOG STREAM
+    Thread(target=stream_innermono_log, daemon=True).start()
     if DEBUG:
         logger.debug("Starting visual server...")
 
@@ -171,6 +190,8 @@ def run_visual_server():
 
 def start_visual():
     run_visual_server()
+
+# === Flask routes ===
 
 @app.route("/")
 def index():
@@ -236,7 +257,8 @@ def receive_audio():
 
 @app.route("/emit_response", methods=["POST"])
 def emit_response():
-    text = request.json.get("text", "")
+    data = request.get_json(silent=True) or {}
+    text = data.get("text", "")
     if text:
         live_log.append(text)
     return jsonify({"status": "ok"})
@@ -249,11 +271,41 @@ def get_response():
 
 @app.route("/listen", methods=["POST"])
 def handle_listen():
-    text = request.json.get("text", "")
-    if text:
+    """Robustly accept user text and bridge to EMIT_INPUT_RECEIVED.
+
+    Accepts JSON {text}, form field text, query param text, or raw body.
+    Avoids AttributeError when request.json is None.
+    """
+    data = request.get_json(silent=True) or {}
+    text = data.get("text") if isinstance(data, dict) else None
+    if not text:
+        # Fallbacks
+        text = request.form.get("text") or request.args.get("text")
+    if not text and request.data:
+        try:
+            # Try parse raw JSON
+            import json as _json
+            maybe = _json.loads(request.data.decode("utf-8", errors="ignore") or "{}")
+            if isinstance(maybe, dict):
+                text = maybe.get("text")
+            if not text and isinstance(maybe, str):
+                text = maybe
+        except Exception:
+            # Treat raw bytes as utf-8 text
+            try:
+                text = request.data.decode("utf-8", errors="ignore")
+            except Exception:
+                text = None
+
+    text = (text or "").strip()
+    if not text:
         if DEBUG:
-            logger.debug(f"Received chat text: {text}")
-        event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
+            logger.debug("/listen received empty text payload")
+        return jsonify({"error": "No text provided"}), 400
+
+    if DEBUG:
+        logger.debug(f"Received chat text: {text}")
+    event_bus.emit("EMIT_INPUT_RECEIVED", {"text": text, "source": "user"})
     return jsonify({"status": "ok"})
 
 # === File Upload handling ===
@@ -278,12 +330,12 @@ def handle_upload():
     file_info = {
         "filename": filename,
         "type": filename.split(".")[-1].lower(),
-        "filetype": filename.split(".")[-1].lower(),  # normalize for file_ingestor
+        "filetype": filename.split(".")[-1].lower(),
         "url": f"/uploads/{filename}"
     }
 
     logger.info(f"[visual_web] Upload handled: {file_info}")
-    event_bus.emit("EMIT_FILE_READY", file_info)  # send to ingestor
+    event_bus.emit("EMIT_FILE_READY", file_info)
 
     return jsonify(file_info)
 

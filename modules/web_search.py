@@ -4,6 +4,7 @@ import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
@@ -36,6 +37,15 @@ def fetch_results(query: str) -> str:
             return ' | '.join(top_results) if top_results else "No relevant results found."
     except Exception as e:
         return f"Search failed: {e}"
+
+def ddgs_news_search(query: str, max_results: int = 10) -> list[dict]:
+    try:
+        with DDGS() as ddgs:
+            results = ddgs.news(query)
+            return [r for r in results][:max_results]
+    except Exception as e:
+        log(f"News search failed: {e}")
+        return []
 
 def inject_summary(query: str, summary: str) -> None:
     try:
@@ -77,11 +87,6 @@ def handle_web_search(event):
         "text": message,
         "token": token
     })
-
-def start_module(event_bus):
-    log('Web search module started')
-    event_bus.subscribe('EMIT_WEB_SEARCH', handle_web_search)
-    from core.event_registry import IntentRegistry
 
 def start_module(event_bus):
     log('Web search module started')

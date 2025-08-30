@@ -79,6 +79,14 @@ class EventBus:
             self.registry["emits"][event_type].add(emitter)
             EventRegistry.get_instance().record_emit(event_type, emitter)
 
+        # Normalize well-known payloads to reduce handler KeyErrors
+        if event_type == "EMIT_INPUT_RECEIVED":
+            if not isinstance(data, dict):
+                data = {"text": str(data or "")}
+            # Provide safe defaults commonly expected downstream
+            data.setdefault("emotion", None)  # some handlers read this key
+            data.setdefault("source", "user")
+
         preview = self._summarize(event_type, data, self._preview_len)
 
         if DEBUG and event_type not in self._muted_console:

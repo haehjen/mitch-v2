@@ -44,6 +44,9 @@
     /* Make sure the canvas sits above the map image */
     .map-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.05) saturate(.95);z-index:0}
     .map-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+    /* allow clicks for calibration */
+    #uk-canvas{pointer-events:auto}
+    #ne-canvas{pointer-events:auto}
   </style>
 </head>
 <body>
@@ -73,7 +76,7 @@
   <div id="log-console" class="chrome"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
-  <script src="OBJLoader.js"></script>
+  <script src="/OBJLoader.js"></script>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
   <script>
@@ -145,10 +148,13 @@
       }
     });
 
-    /* ===== Flight overlay drawing (decluttered + robust JSON) ===== */
+    /* ===== Flight overlay drawing (decluttered + robust JSON + pins) ===== */
     (function(){
       var UK_BOUNDS={latMin:49.8,latMax:60.9,lonMin:-8.7,lonMax:2.1};
       var NE_BOUNDS={latMin:53.8,latMax:56.9,lonMin:-3.6,lonMax:-0.3};
+      var PINS=[];               // {lat,lon,label,description,ts}
+      var lastUK=[], lastNE=[];  // cache latest contacts for redraws
+      var lastBase=null;
 
       function safeParse(raw){
         try { return JSON.parse(raw); }
@@ -172,16 +178,58 @@
         return { ctx, width: W, height: H };
       }
 
-      function llToPx(lat,lon,w,h,B){
-        return {
-          x: ((lon-B.lonMin)/(B.lonMax-B.lonMin))*w,
-          y: (1- (lat-B.latMin)/(B.latMax-B.latMin))*h
-        };
+      // Web Mercator helpers (better matches satellite tiles)
+      function mercY(lat){
+        var rad = lat * Math.PI / 180;
+        return Math.log(Math.tan((Math.PI/4) + (rad/2)));
       }
 
-      function drawBase(ctx, bounds, base, w, h){
+      // Given image element and container size, compute effective bounds after CSS object-fit:cover crop
+      function effectiveBounds(baseBounds, imgEl, w, h){
+        var B = Object.assign({}, baseBounds);
+        if(!imgEl || !imgEl.naturalWidth || !imgEl.naturalHeight || !w || !h){
+          // fall back: use base, with mercator Y for lat range
+          B._yMin = mercY(B.latMin);
+          B._yMax = mercY(B.latMax);
+          return B;
+        }
+
+        var iw = imgEl.naturalWidth, ih = imgEl.naturalHeight;
+        var scale = Math.max(w/iw, h/ih);
+        var dispW = iw*scale, dispH = ih*scale;
+        var fracCropX = Math.max(0, (dispW - w)/dispW); // total cropped fraction (both sides)
+        var fracCropY = Math.max(0, (dispH - h)/dispH);
+        var leftFrac = fracCropX/2, rightFrac = fracCropX/2;
+        var topFrac  = fracCropY/2, bottomFrac = fracCropY/2;
+
+        // Lon linear, Lat via Mercator space
+        var lonRange = B.lonMax - B.lonMin;
+        var yMin = mercY(B.latMin), yMax = mercY(B.latMax);
+        var yRange = yMax - yMin;
+
+        var eff = {
+          lonMin: B.lonMin + lonRange*leftFrac,
+          lonMax: B.lonMax - lonRange*rightFrac,
+          _yMin:  yMin + yRange*topFrac,
+          _yMax:  yMax - yRange*bottomFrac
+        };
+        return eff;
+      }
+
+      function drawBase(ctx, effBounds, base, w, h, calKey){
         if(!base) return;
-        var p = llToPx(base.lat, base.lon, w, h, bounds);
+        // Use calibration if available and requested, otherwise fall back to effective bounds mapping
+        var CAL=null; if (calKey) { try { CAL = JSON.parse(localStorage.getItem(calKey)||'null'); } catch(_) { CAL=null; } }
+        var px, py;
+        if (CAL && typeof CAL.axn==='number'){
+          var xN = CAL.axn*base.lon + CAL.bxn;
+          var yN = CAL.ayn*mercY(base.lat) + CAL.byn;
+          px = xN*w; py = yN*h;
+        } else {
+          px = ((base.lon - effBounds.lonMin)/(effBounds.lonMax - effBounds.lonMin))*w;
+          py = (1 - (mercY(base.lat) - effBounds._yMin)/(effBounds._yMax - effBounds._yMin))*h;
+        }
+        var p = {x:px, y:py};
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.strokeStyle = '#00E5FF';
@@ -204,22 +252,46 @@
         ctx.fillText(label,bx+pad,by+13);
       }
 
-      function drawContacts(canvas, bounds, contacts, base, opts){
+      function drawContacts(canvas, imgEl, bounds, contacts, base, opts, pins){
         if(!canvas || !bounds) return;
         contacts = Array.isArray(contacts) ? contacts : [];
         opts = opts || {};
+        pins = Array.isArray(pins) ? pins : [];
         var showCivDots = ('showCivDots' in opts)?opts.showCivDots:true;
         var labelCiv    = ('labelCiv'    in opts)?opts.labelCiv:false;
         var labelMil    = ('labelMil'    in opts)?opts.labelMil:true;
         var maxLabels   = ('maxLabels'   in opts)?opts.maxLabels:60;
         var grid        = ('grid'        in opts)?opts.grid:56;
+        var showRefs    = !!opts.refs; // draw reference city dots for debugging
 
         var sz = ensureCanvasSize(canvas);
         var ctx=sz.ctx, W=sz.width, H=sz.height;
         if(!ctx) return;
         ctx.clearRect(0,0,W,H);
 
-        function toPx(lat,lon){ return llToPx(lat,lon,W,H,bounds); }
+        var EB = effectiveBounds(bounds, imgEl, W, H);
+        var isUK = (bounds === UK_BOUNDS);
+        var isNE = (bounds === NE_BOUNDS);
+
+        // Optional simple calibration for panel: x = axn*lon + bxn; y = ayn*mercY(lat) + byn (normalized coords)
+        var CAL = null; var calKey = null;
+        if (isUK){ calKey = 'UK_CALN'; }
+        else if (isNE){ calKey = 'NE_CALN'; }
+        if (calKey){ try { CAL = JSON.parse(localStorage.getItem(calKey)||'null'); } catch(_) { CAL=null; } }
+
+        function toPx(lat,lon){
+          if (CAL && typeof CAL.axn==='number'){
+            var my = mercY(lat);
+            var xN = CAL.axn*lon + CAL.bxn;
+            var yN = CAL.ayn*my  + CAL.byn;
+            return { x: xN*W, y: yN*H };
+          } else {
+            return {
+              x: ((lon-EB.lonMin)/(EB.lonMax-EB.lonMin))*W,
+              y: (1 - (mercY(lat)-EB._yMin)/(EB._yMax-EB._yMin))*H
+            };
+          }
+        }
 
         // Aircraft glyphs
         for(var i=0;i<contacts.length;i++){
@@ -273,7 +345,84 @@
         }
 
         // Base marker
-        drawBase(ctx, bounds, base, W, H);
+        var calKey = (bounds === UK_BOUNDS) ? 'UK_CALN' : ((bounds === NE_BOUNDS) ? 'NE_CALN' : null);
+        drawBase(ctx, EB, base, W, H, calKey);
+
+        // Pins (on top)
+        if(pins.length){
+          ctx.save();
+          for(var p=0;p<pins.length;p++){
+            var pin = pins[p]; if(!pin) continue;
+            if(typeof pin.lat!== 'number' || typeof pin.lon !== 'number') continue;
+            // skip pins outside of this bounds
+            if(!CAL){
+              if(pin.lon < EB.lonMin || pin.lon > EB.lonMax) continue;
+              var my = mercY(pin.lat);
+              if(my < EB._yMin || my > EB._yMax) continue;
+            }
+            var px = toPx(pin.lat, pin.lon);
+
+            // glow ring + dot
+            ctx.beginPath();
+            ctx.strokeStyle='rgba(255,80,100,0.95)';
+            ctx.lineWidth=2;
+            ctx.arc(px.x, px.y, 7, 0, Math.PI*2); ctx.stroke();
+            ctx.fillStyle='rgba(255,120,140,0.95)';
+            ctx.beginPath(); ctx.arc(px.x, px.y, 3, 0, Math.PI*2); ctx.fill();
+
+            // label if available
+            var lbl = pin.label || '';
+            if(lbl){
+              ctx.font='600 11px ui-sans-serif,system-ui,Segoe UI';
+              var pad=6, hBox=18, m=ctx.measureText(lbl);
+              var bx=Math.min(Math.max(px.x+8,0), W-(m.width+pad*2));
+              var by=Math.min(Math.max(px.y-18,0), H-hBox);
+              ctx.fillStyle='rgba(24,8,10,0.9)';
+              ctx.fillRect(bx,by,m.width+pad*2,hBox);
+              ctx.fillStyle='#FFC1C9';
+              ctx.fillText(lbl, bx+pad, by+13);
+            }
+          }
+          ctx.restore();
+        }
+
+        // Reference markers (debugging alignment)
+        if(showRefs){
+          var refs = [];
+          if (isUK){
+            refs = [
+              {name:'London',  lat:51.5074, lon:-0.1278},
+              {name:'Glasgow', lat:55.8642, lon:-4.2518}
+            ];
+          } else if (isNE){
+            // Choose two well-separated points within NE panel
+            refs = [
+              {name:'Newcastle', lat:54.9733, lon:-1.6139},
+              {name:'Whitby',    lat:54.4863, lon:-0.6132}
+            ];
+          }
+          ctx.save();
+          for(var r=0;r<refs.length;r++){
+            var R=refs[r];
+            // skip if outside eff bounds
+            if(!CAL){
+              if(R.lon < EB.lonMin || R.lon > EB.lonMax) continue;
+              var myR = mercY(R.lat);
+              if(myR < EB._yMin || myR > EB._yMax) continue;
+            }
+            var q = toPx(R.lat, R.lon);
+            // solid green dot with thin outline
+            ctx.fillStyle='#00FF66';
+            ctx.strokeStyle='rgba(0,0,0,0.6)';
+            ctx.lineWidth=1.5;
+            ctx.beginPath(); ctx.arc(q.x, q.y, 4, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            // small label
+            ctx.font='600 11px ui-sans-serif,system-ui,Segoe UI';
+            ctx.fillStyle='#A6FFC9';
+            ctx.fillText(R.name, Math.min(q.x+6, W-40), Math.max(q.y-6, 12));
+          }
+          ctx.restore();
+        }
       }
 
       function fetchContacts(){
@@ -285,10 +434,13 @@
             var ne = Array.isArray(payload.ne)?payload.ne:[];
             var base = payload.base || null;
 
-            drawContacts(document.getElementById('uk-canvas'), UK_BOUNDS, uk, base,
-              {showCivDots:true,labelCiv:false,labelMil:true,maxLabels:70,grid:56});
-            drawContacts(document.getElementById('ne-canvas'), NE_BOUNDS, ne, base,
-              {showCivDots:true,labelCiv:true,labelMil:true,maxLabels:40,grid:44});
+            // cache for redraws (e.g., when new pins arrive)
+            lastUK = uk; lastNE = ne; lastBase = base;
+
+            drawContacts(document.getElementById('uk-canvas'), document.getElementById('uk-map'), UK_BOUNDS, uk, base,
+              {showCivDots:true,labelCiv:false,labelMil:true,maxLabels:70,grid:56,refs:true}, PINS);
+            drawContacts(document.getElementById('ne-canvas'), document.getElementById('ne-map'), NE_BOUNDS, ne, base,
+              {showCivDots:true,labelCiv:true,labelMil:true,maxLabels:40,grid:44,refs:true}, PINS);
 
             console.debug('[flights]', {uk: uk.length, ne: ne.length, updated: payload.updated});
           })
@@ -300,10 +452,165 @@
         setInterval(fetchContacts,15000);
         window.addEventListener('resize', fetchContacts);
       });
+
+      // Bind to socket for incoming pins and trigger redraws
+      function bindPinSocket(){
+        var sock = window.socket || (window.io && window.io());
+        if(!sock){ setTimeout(bindPinSocket, 400); return; }
+        try { console.info('[orb] pin overlay binding to socket'); } catch(_) {}
+        sock.on('EMIT_MAP_PIN', function(data){
+          if(!data || typeof data.lat !== 'number' || typeof data.lon !== 'number') return;
+          data.ts = Date.now();
+          // dedupe by label+coords to avoid infinite growth
+          for(var i=0;i<PINS.length;i++){
+            var p=PINS[i];
+            if(p && p.label===data.label && p.lat===data.lat && p.lon===data.lon){ PINS[i]=data; redraw(); return; }
+          }
+          PINS.push(data); redraw();
+        });
+      }
+
+      function redraw(){
+        try { console.debug('[orb] redraw overlays. pins:', PINS.length); } catch(_) {}
+        drawContacts(document.getElementById('uk-canvas'), document.getElementById('uk-map'), UK_BOUNDS, lastUK, lastBase,
+          {showCivDots:true,labelCiv:false,labelMil:true,maxLabels:70,grid:56}, PINS);
+        drawContacts(document.getElementById('ne-canvas'), document.getElementById('ne-map'), NE_BOUNDS, lastNE, lastBase,
+          {showCivDots:true,labelCiv:true,labelMil:true,maxLabels:40,grid:44}, PINS);
+      }
+
+      // start after load so main.js likely initialized socket
+      window.addEventListener('load', bindPinSocket);
+
+      // Minimal debug helper to verify rendering without backend
+      window.debugAddPin = function(lat, lon, label, description){
+        if (typeof lat !== 'number' || typeof lon !== 'number') return false;
+        PINS.push({lat:lat, lon:lon, label:label||'', description:description||'', ts:Date.now()});
+        redraw();
+        return true;
+      };
+      })();
+  </script>
+
+  <script>
+    // Interactive UK calibration using two clicks: London then Glasgow
+    (function(){
+      var ukCanvas = document.getElementById('uk-canvas');
+      var UK_LON1 = -0.1278, UK_LAT1 = 51.5074; // London
+      var UK_LON2 = -4.2518, UK_LAT2 = 55.8642; // Glasgow
+      var step = 0; // 0 idle, 1 expect London, 2 expect Glasgow
+      var p1=null, p2=null;
+
+      // Local Mercator helper (scoped here to avoid cross-file issues)
+      function mercYCal(lat){
+        var rad = lat * Math.PI / 180;
+        return Math.log(Math.tan((Math.PI/4) + (rad/2)));
+      }
+
+      function begin(){
+        step = 1; p1 = p2 = null;
+        console.info('[UK CAL] Click London on the UK map (green label)');
+        ukCanvas.style.cursor = 'crosshair';
+        window.addEventListener('click', onClick, true);
+      }
+
+      function onClick(ev){
+        if(ev.target !== ukCanvas) return;
+        var r = ukCanvas.getBoundingClientRect();
+        var x = ev.clientX - r.left;
+        var y = ev.clientY - r.top;
+        var W = Math.max(1, Math.floor(r.width));
+        var H = Math.max(1, Math.floor(r.height));
+        if(step === 1){
+          p1 = { xN: x/W, yN: y/H };
+          step = 2;
+          console.info('[UK CAL] Got London. Now click Glasgow.');
+        } else if(step === 2){
+          p2 = { xN: x/W, yN: y/H };
+          finalize(W,H);
+        }
+        ev.preventDefault(); ev.stopPropagation();
+      }
+
+      function finalize(W,H){
+        window.removeEventListener('click', onClick, true);
+        ukCanvas.style.cursor = '';
+        if(!p1 || !p2){ step=0; return; }
+        var my1 = mercYCal(UK_LAT1), my2 = mercYCal(UK_LAT2);
+        // Solve normalized linear maps
+        var axn = (p2.xN - p1.xN) / (UK_LON2 - UK_LON1);
+        var bxn = p1.xN - axn*UK_LON1;
+        var ayn = (p2.yN - p1.yN) / (my2 - my1);
+        var byn = p1.yN - ayn*my1;
+        var cal = { axn: axn, bxn: bxn, ayn: ayn, byn: byn };
+        localStorage.setItem('UK_CALN', JSON.stringify(cal));
+        console.info('[UK CAL] Saved calibration:', cal);
+        // Force redraw using new calibration
+        if(window.dispatchEvent){ window.dispatchEvent(new Event('resize')); }
+      }
+
+      // Export helper
+      window.calibrateUKInteractive = begin;
+      window.clearUKCalibration = function(){ localStorage.removeItem('UK_CALN'); console.info('[UK CAL] Cleared.'); if(window.dispatchEvent){window.dispatchEvent(new Event('resize'));} };
+    })();
+  </script>
+
+  <script>
+    // Interactive NE calibration using two clicks: Newcastle then Whitby
+    (function(){
+      var neCanvas = document.getElementById('ne-canvas');
+      var NE_LON1 = -1.6139, NE_LAT1 = 54.9733; // Newcastle upon Tyne
+      var NE_LON2 = -0.6132, NE_LAT2 = 54.4863; // Whitby
+      var step = 0;
+      var p1=null, p2=null;
+
+      function mercYCal(lat){ var rad = lat * Math.PI / 180; return Math.log(Math.tan((Math.PI/4) + (rad/2))); }
+
+      function begin(){
+        step = 1; p1 = p2 = null;
+        console.info('[NE CAL] Click Newcastle on the NE map (green label)');
+        neCanvas.style.cursor = 'crosshair';
+        window.addEventListener('click', onClick, true);
+      }
+
+      function onClick(ev){
+        if(ev.target !== neCanvas) return;
+        var r = neCanvas.getBoundingClientRect();
+        var x = ev.clientX - r.left;
+        var y = ev.clientY - r.top;
+        var W = Math.max(1, Math.floor(r.width));
+        var H = Math.max(1, Math.floor(r.height));
+        if(step === 1){
+          p1 = { xN: x/W, yN: y/H };
+          step = 2;
+          console.info('[NE CAL] Got Newcastle. Now click Whitby.');
+        } else if(step === 2){
+          p2 = { xN: x/W, yN: y/H };
+          finalize(W,H);
+        }
+        ev.preventDefault(); ev.stopPropagation();
+      }
+
+      function finalize(W,H){
+        window.removeEventListener('click', onClick, true);
+        neCanvas.style.cursor = '';
+        if(!p1 || !p2){ step=0; return; }
+        var my1 = mercYCal(NE_LAT1), my2 = mercYCal(NE_LAT2);
+        var axn = (p2.xN - p1.xN) / (NE_LON2 - NE_LON1);
+        var bxn = p1.xN - axn*NE_LON1;
+        var ayn = (p2.yN - p1.yN) / (my2 - my1);
+        var byn = p1.yN - ayn*my1;
+        var cal = { axn: axn, bxn: bxn, ayn: ayn, byn: byn };
+        localStorage.setItem('NE_CALN', JSON.stringify(cal));
+        console.info('[NE CAL] Saved calibration:', cal);
+        if(window.dispatchEvent){ window.dispatchEvent(new Event('resize')); }
+      }
+
+      window.calibrateNEInteractive = begin;
+      window.clearNECalibration = function(){ localStorage.removeItem('NE_CALN'); console.info('[NE CAL] Cleared.'); if(window.dispatchEvent){window.dispatchEvent(new Event('resize'));} };
     })();
   </script>
 
   <!-- your orb scene -->
-  <script src="main.js"></script>
+  <script src="/main.js"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@ def pause_microphone_briefly(_):
 def continuous_microphone_listener():
     global is_speaking
     samplerate = 44100
-    duration = 5
+    duration = 10
 
     while not stop_event.is_set():
         if is_speaking:

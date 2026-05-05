@@ -1,0 +1,20 @@
+AcmeHealth
+RDS Deployment
+
+Acme health would like to have remote desktop services supplied at both the primary and secondary sites, we would like new hosts for each and the applicable protections and service.
+
+We should provision for 20 maximum concurrent users but 40 users overall - we would like the office suite and general administration tools to be available as well as a seamless sign on experience.
+
+The board are driving this as we are due to acquire a cohort of university leavers and this will allow them the most flexibility whilst also remaining secure.
+
+We do not want to use MDM or MAM on the graduates machines.....
+
+A secure portal accessible either via a vpn (less ideal) or simply on the web but secure (perfect)
+
+We would prefer physical hosts but if cloud works out to be the best solution we are listening.
+
+Please let me know if you need anything further.
+
+======
+
+AcmeHealth have 18 months remaining on their MSP agreement and renewal talks are underway

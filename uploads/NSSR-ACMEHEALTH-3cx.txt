@@ -1,0 +1,13 @@
+NSSR ACMEHEALTH
+
+We are getting a new phone service. The service is 3cx the paper work says we need a virtual machine on Linux
+as a pbx whatever that is, because we have both sites we probably need 1 at each site, are you able to support and 
+configure 3cx aswell or will we need to get someone to support it? We definitely want it so if you could tell us
+what you can and what we would need someone else to do to assist us, please tell us the costs and times aswell
+
+ACME has 18 months remaining on their current support contract and we will have the service this whole time, we are
+going to use the "free softphone" option so people just install it on their phones.
+
+This will let us create groups for hr and admin and that wont it? So we all have extentions and stuff.
+
+Please let us know if you need anything further.

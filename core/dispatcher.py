@@ -4,6 +4,7 @@ import time
 import os
 import json
 from core.event_bus import event_bus
+from core.config import MITCH_ROOT
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
 
@@ -12,11 +13,36 @@ vision_ai = None
 def get_vision_ai():
     global vision_ai
     if vision_ai is None:
-        from modules.vision_ai import VisionAI
+        from core.vision_ai import VisionAI
         vision_ai = VisionAI()
     return vision_ai
 
 _dispatcher_started = False
+
+def emit_intent_response(intent, tool_call_id, output, status="success", token=None):
+    if not token:
+        token = str(time.time())
+
+    payloads = [
+        ("EMIT_SPEAK", {
+            "text": output,
+            "source": "intent",
+            "token": token
+        }),
+        ("EMIT_TOOL_RESULT", {
+            "tool_call_id": tool_call_id,
+            "function_name": intent,
+            "output": output
+        }),
+        ("EMIT_ACK", {
+            "status": status,
+            "intent": intent,
+            "executed": output
+        })
+    ]
+
+    for event, payload in payloads:
+        event_bus.emit(event, payload)
 
 def handle_user_intent(data):
     if DEBUG:
@@ -27,84 +53,35 @@ def handle_user_intent(data):
 
     intent = data.get("intent")
     params = data.get("params", {})
+    tool_call_id = data.get("tool_call_id")
     token = str(time.time())
 
     if intent == "launch_drone":
         drone_ids = params.get("drone_ids", [])
-        if DEBUG:
-            print(f"[DISPATCHER] Launching drones: {', '.join(map(str, drone_ids))}")
         output = f"Launching drones {', '.join(map(str, drone_ids))}"
-        event_bus.emit("EMIT_SPEAK", {
-            "text": output,
-            "source": "intent",
-            "token": token
-        })
-        event_bus.emit("EMIT_ACK", {
-            "status": "success",
-            "intent": intent,
-            "executed": f"{len(drone_ids)} drones"
-        })
-        event_bus.emit("EMIT_TOOL_RESULT", {
-            "tool_call_id": data.get("tool_call_id"),
-            "function_name": intent,
-            "output": output
-        })
+        if DEBUG:
+            print(f"[DISPATCHER] {output}")
+        emit_intent_response(intent, tool_call_id, output, token=token)
 
     elif intent == "describe_scene":
         try:
             description = asyncio.run(get_vision_ai().capture_and_describe())
-            event_bus.emit("EMIT_SPEAK", {
-                "text": description,
-                "source": "intent",
-                "token": token
-            })
-            event_bus.emit("EMIT_TOOL_RESULT", {
-                "tool_call_id": data.get("tool_call_id"),
-                "function_name": intent,
-                "output": description
-            })
+            emit_intent_response(intent, tool_call_id, description, token=token)
         except Exception as e:
             error_msg = f"Failed to describe the scene: {e}"
-            event_bus.emit("EMIT_SPEAK", {
-                "text": error_msg,
-                "source": "intent",
-                "token": token
-            })
-            event_bus.emit("EMIT_TOOL_RESULT", {
-                "tool_call_id": data.get("tool_call_id"),
-                "function_name": intent,
-                "output": error_msg
-            })
+            emit_intent_response(intent, tool_call_id, error_msg, status="error", token=token)
 
     elif intent == "detect_objects":
         try:
             objects = asyncio.run(get_vision_ai().detect_objects())
-            event_bus.emit("EMIT_SPEAK", {
-                "text": objects,
-                "source": "intent",
-                "token": token
-            })
-            event_bus.emit("EMIT_TOOL_RESULT", {
-                "tool_call_id": data.get("tool_call_id"),
-                "function_name": intent,
-                "output": objects
-            })
+            emit_intent_response(intent, tool_call_id, objects, token=token)
         except Exception as e:
             error_msg = f"Failed to detect objects: {e}"
-            event_bus.emit("EMIT_SPEAK", {
-                "text": error_msg,
-                "source": "intent",
-                "token": token
-            })
-            event_bus.emit("EMIT_TOOL_RESULT", {
-                "tool_call_id": data.get("tool_call_id"),
-                "function_name": intent,
-                "output": error_msg
-            })
+            emit_intent_response(intent, tool_call_id, error_msg, status="error", token=token)
 
     else:
         # Try to resolve via dynamic intents
-        dynamic_path = "/home/triad/mitch/data/injections/dynamic_intents.json"
+        dynamic_path = os.path.join(MITCH_ROOT, "data", "injections", "dynamic_intents.json")
         intent_routed = False
 
         if os.path.exists(dynamic_path):
@@ -130,20 +107,7 @@ def handle_user_intent(data):
 
         if not intent_routed:
             msg = f"Sorry, I didn't understand the command: {intent}"
-            event_bus.emit("EMIT_SPEAK", {
-                "text": msg,
-                "source": "intent",
-                "token": token
-            })
-            event_bus.emit("EMIT_FAILURE", {
-                "intent": intent,
-                "reason": "Unknown intent"
-            })
-            event_bus.emit("EMIT_TOOL_RESULT", {
-                "tool_call_id": data.get("tool_call_id"),
-                "function_name": intent,
-                "output": msg
-            })
+            emit_intent_response(intent, tool_call_id, msg, status="failure", token=token)
 
 def start_dispatcher():
     global _dispatcher_started

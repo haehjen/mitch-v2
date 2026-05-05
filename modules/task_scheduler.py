@@ -6,6 +6,7 @@ from threading import Thread, Event
 from time import sleep, time
 from datetime import datetime
 from core.peterjones import get_logger
+from core.config import MITCH_ROOT
 
 logger = get_logger("TaskScheduler")
 
@@ -13,7 +14,7 @@ class TaskScheduler:
     def __init__(self):
         self.tasks = []
         self.stop_event = Event()
-        self.injections_dir = "/home/triad/mitch/data/injections"
+        self.injections_dir = f"{MITCH_ROOT}/data/injections"
         self.thread = Thread(target=self.run)
         self.thread.daemon = True
 

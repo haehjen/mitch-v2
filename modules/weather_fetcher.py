@@ -1,7 +1,6 @@
 # modules/weather_fetcher.py
 import requests
 import os
-import time
 import json
 from datetime import datetime
 from threading import Thread
@@ -88,29 +87,36 @@ def fetch_weather(location="newcastle"):
         event_bus.emit("INJECTION_UPDATED", {"source": "weather"})
         logger.info(f"Weather data injected for {location}")
 
-        token = f"tool_weather_{int(time.time() * 1000)}"
-        event_bus.emit("EMIT_TOKEN_REGISTERED", {"token": token})
-        event_bus.emit("EMIT_VISUAL_TOKEN", {"token": token})
-
-        spoken = f"Here’s the weather in {location.title()}: {desc}, {temp} degrees with wind at {wind} km/h."
-
-        event_bus.emit("EMIT_SPEAK_CHUNK", {"chunk": spoken, "token": token})
-        event_bus.emit("EMIT_SPEAK_END", {"token": token, "full_text": summary})
-
-        event_bus.emit("EMIT_CHAT_RESPONSE", {
-            "tool": "weather_fetcher",
-            "location": location,
-            "summary": summary,
-            "text": spoken,
-            "token": token
-        })
+        event_bus.emit(
+            "EMIT_TOOL_RESULT",
+            {
+                "function_name": "weather_fetcher",
+                "output": {
+                    "location": location,
+                    "temperature_c": temp,
+                    "wind_kmh": wind,
+                    "conditions": desc,
+                    "timestamp": timestamp,
+                },
+                "summary": summary,
+            },
+        )
 
     except Exception as e:
         logger.error(f"[weather_fetcher] Failed to fetch weather for {location}: {e}")
 
 def start_module(event_bus):
     logger.info("Weather module started")
-    event_bus.subscribe("GET_WEATHER", lambda data: Thread(target=fetch_weather, args=(data.get("location", "newcastle"),)).start())
+    def _start_weather_job(data):
+        t = Thread(
+            target=fetch_weather,
+            args=((data or {}).get("location", "newcastle"),),
+            daemon=True,
+            name="weather_fetcher_job",
+        )
+        t.start()
+
+    event_bus.subscribe("GET_WEATHER", _start_weather_job)
 
     from core.event_registry import IntentRegistry
 

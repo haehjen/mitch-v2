@@ -1,6 +1,7 @@
 import time
 import json
 import os
+import re
 import requests
 import urllib3
 from threading import Thread
@@ -8,6 +9,7 @@ from core.keys_loader import load_keys  # noqa: F401
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 from core.peterjones import get_logger
+from core.event_registry import IntentRegistry
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 logger = get_logger("proxmon")
@@ -159,14 +161,81 @@ def handle_restart_vm(event):
     vmid = event.get("vmid")
     if vmid is not None:
         result = proxmon.restart_vm(vmid)
-        event_bus.emit("speak", result)
+        event_bus.emit(
+            "EMIT_TOOL_RESULT",
+            {"function_name": "proxmon_restart_vm", "output": {"vmid": vmid, "result": result}},
+        )
 
 def handle_get_vm_status(event):
     vmid = event.get("vmid")
     if vmid is not None:
         result = proxmon.get_vm_status(vmid)
-        event_bus.emit("speak", str(result))
+        event_bus.emit(
+            "EMIT_TOOL_RESULT",
+            {"function_name": "proxmon_get_vm_status", "output": {"vmid": vmid, "status": result}},
+        )
 
 proxmon = ProxMonModule(event_bus)
-event_bus.subscribe("restart_vm", handle_restart_vm)
-event_bus.subscribe("get_vm_status", handle_get_vm_status)
+
+
+def _extract_vmid(text):
+    if not text:
+        return None
+    m = re.search(r"\b(\d{2,6})\b", str(text))
+    if not m:
+        return None
+    try:
+        return int(m.group(1))
+    except Exception:
+        return None
+
+
+def _vm_status_intent_handler(text):
+    vmid = _extract_vmid(text)
+    if vmid is None:
+        event_bus.emit(
+            "EMIT_CHAT_REQUEST",
+            {
+                "prompt": "Ask the user for the VMID they want to check.",
+                "force_openai_minimal": True,
+                "request_type": "proxmox_status_missing_vmid",
+            },
+        )
+        return
+
+    result = proxmon.get_vm_status(vmid)
+    event_bus.emit(
+        "EMIT_CHAT_REQUEST",
+        {
+            "prompt": f"Summarize this Proxmox VM status for VMID {vmid} in one concise reply: {result}",
+            "force_openai_minimal": True,
+            "request_type": "proxmox_status",
+        },
+    )
+
+
+def start_module(event_bus):
+    event_bus.subscribe("restart_vm", handle_restart_vm)
+    event_bus.subscribe("get_vm_status", handle_get_vm_status)
+
+    # Explicit, narrow keywords to avoid intent hijacking.
+    IntentRegistry.register_intent(
+        "check_vm_status",
+        _vm_status_intent_handler,
+        keywords=[
+            "check_vm_status",
+            "check vm status",
+            "vm status",
+            "check_cm_status",
+            "check cm status",
+            "proxmox check status",
+            "proxmon check status",
+            "check status vmid",
+            "vmid status",
+            "qm status",
+        ],
+        objects=[],
+        priority=3,
+    )
+
+    logger.info("ProxMon module started.")

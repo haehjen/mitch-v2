@@ -1,7 +1,6 @@
 from ddgs import DDGS
 import os
 import re
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -29,14 +28,29 @@ def clean_query(raw: str) -> str:
     )
     return re.sub(r'\s+', ' ', cleaned).strip()
 
-def fetch_results(query: str) -> str:
+def fetch_results(query: str) -> tuple[str, str]:
     try:
         with DDGS() as ddgs:
-            results = ddgs.text(query)
-            top_results = [r["body"] for r in results if "body" in r][:3]
-            return ' | '.join(top_results) if top_results else "No relevant results found."
+            results = list(ddgs.text(query, max_results=8))
+            top_lines = []
+            first_url = ""
+            for r in results:
+                if not isinstance(r, dict):
+                    continue
+                href = str(r.get("href") or r.get("url") or "").strip()
+                title = str(r.get("title") or "").strip()
+                body = str(r.get("body") or "").strip()
+                if not first_url and href:
+                    first_url = href
+                line = body or title
+                if line:
+                    top_lines.append(line)
+                if len(top_lines) >= 3:
+                    break
+            summary = " | ".join(top_lines) if top_lines else "No relevant results found."
+            return summary, first_url
     except Exception as e:
-        return f"Search failed: {e}"
+        return f"Search failed: {e}", ""
 
 def ddgs_news_search(query: str, max_results: int = 10) -> list[dict]:
     try:
@@ -62,31 +76,27 @@ def handle_web_search(event):
 
     query = clean_query(re.sub(r'^web_search\s+', '', raw_query, flags=re.I))
     log(f"Query: {query}")
-    summary = fetch_results(query)
+    summary, top_url = fetch_results(query)
     log(f"Summary: {summary}")
+    if top_url:
+        log(f"Top URL: {top_url}")
 
     inject_summary(query, summary)
 
-    # Generate a consistent token for this interaction
-    token = f"tool_websearch_{int(time.time() * 1000)}"
+    event_bus.emit(
+        "EMIT_TOOL_RESULT",
+        {
+            "function_name": "web_search",
+            "output": {
+                "query": query,
+                "summary": summary,
+                "top_url": top_url,
+            },
+        },
+    )
 
-    # Register the token visually/logically
-    event_bus.emit("EMIT_TOKEN_REGISTERED", {"token": token})
-    event_bus.emit("EMIT_VISUAL_TOKEN", {"token": token})
-
-    # Stream the message as a single chunk
-    message = f"Here’s what I found about '{query}': {summary}"
-    event_bus.emit("EMIT_SPEAK_CHUNK", {"chunk": message, "token": token})
-    event_bus.emit("EMIT_SPEAK_END", {"token": token, "full_text": summary})
-
-    # Optionally emit for other UI listeners (not for voice)
-    event_bus.emit("EMIT_CHAT_RESPONSE", {
-        "tool": "web_search",
-        "query": query,
-        "summary": summary,
-        "text": message,
-        "token": token
-    })
+    if top_url:
+        event_bus.emit("EMIT_OPEN_URL", {"url": top_url, "source": "web_search"})
 
 def start_module(event_bus):
     log('Web search module started')

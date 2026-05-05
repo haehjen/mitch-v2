@@ -1,0 +1,4 @@
+We here at AcmeHealth are planning to acquire a new host and run it on proxmox, this will replace the current host
+at our primary site and we will also need to do the same at the secondary at the same time.
+
+please could you provide a solution for this

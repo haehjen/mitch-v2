@@ -7,9 +7,21 @@ def load_keys():
     if not key_path.exists():
         return
     for line in key_path.read_text(encoding="utf-8").splitlines():
-        if "=" in line and not line.strip().startswith("#"):
-            k, v = line.split("=", 1)
-            k = k.strip()
-            v = v.strip().strip('"').strip("'")
-            if k and not os.getenv(k):
-                os.environ[k] = v
+        raw = line.strip()
+        if not raw or raw.startswith("#") or "=" not in raw:
+            continue
+
+        # Support both:
+        #   KEY=value
+        #   export KEY=value
+        if raw.lower().startswith("export "):
+            raw = raw[7:].strip()
+
+        if "=" not in raw:
+            continue
+
+        k, v = raw.split("=", 1)
+        k = k.strip()
+        v = v.strip().strip('"').strip("'")
+        if k and not os.getenv(k):
+            os.environ[k] = v

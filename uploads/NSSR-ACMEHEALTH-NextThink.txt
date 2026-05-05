@@ -1,0 +1,159 @@
+ACMEHEALTH NextThink - Predictive Analytics Monitoring Rollout
+
+We have bought licenses for next think, we are giving all staff a laptop and scrapping all deskbased computers
+
+the software requirements are below, think we will need a staff vpn too - not sure what we need, someone said
+machine based vpn, some said split tunnel - whatever you suggest, nextthink requirements below
+
+Software requirements
+Nexthink web interface
+Supported operating systems
+
+Windows
+
+macOS
+
+Other combinations of browsers and operating systems may be suitable, but they have not been thoroughly tested. Some graphical user interface elements may appear unusable or disproportionate in size.
+
+Supported browsers
+
+Nexthink supports all versions, up to one year old, of the following browsers:
+
+Google Chrome
+
+Microsoft Edge
+
+Mozilla Firefox
+
+Apple Safari
+
+Known limitation
+
+For Safari, the browser behavior with keyboard navigation may prevent access to content or change the way to access part of the user interface.
+
+Nexthink Collector
+This section offers lists of versions of operating systems (OS) supported by Collector. Nexthink might remove support for some of these operating systems around the same time the OS vendors drop support for specific versions, so no longer provide fixes or updates. The latest version of Collector always supports by default future OS versions as soon as they reach general availability.
+
+Windows
+Supported versions
+
+Desktop
+
+Windows 11
+
+Windows 10, 64bit
+
+Server
+
+Windows Server 2022, Standard, Datacenter, and Azure Datacenter editions
+
+Windows Server 2019, Standard and DataCenter editions
+
+Windows Server 2016, Standard, Essential, and DataCenter editions.
+
+Installation options: desktop experience and core.
+
+Collector requires a 64-bit OS; it does not support 32-bit architectures.
+
+Prerequisites
+
+The targeted device must directly or indirectly reach the Nexthink cloud platform through the network.
+
+To install Collector using their MSI, the Windows installer (msiexec) version 3.0 or higher is required.
+
+Known limitation
+
+Microsoft is ending support for some of the elements used by the Collector Panel extension. That feature will progressively stop working and will soon be fully removed from the set of components available.
+
+Compatibility with the cloud platform
+
+The latest version of the platform accepts data from the latest version of Collector and all its previous versions.
+
+Support for Windows ARM-based PCs
+
+Windows Collector from version 21.8 runs natively on PCs powered by ARM64 processors.
+
+macOS
+Supported versions
+
+macOS 26.x Tahoe
+
+macOS 15.x Sequoia
+
+macOS 14.x Sonoma
+
+macOS 13.x Ventura
+
+Prerequisites
+
+The targeted device must directly or indirectly reach the Nexthink instance through the network.
+
+Nexthink Collector installs a software agent relying on the Apple Endpoint Security framework, so the nxtsvc binary requires full disk access (more information).
+
+Compatibility with the cloud platform
+
+The latest version of the platform accepts traffic from the latest version of Collector and all its previous versions.
+
+Support for Apple Silicon
+
+The Mac Collector from version 6.30.4.9 runs natively on devices powered by Apple Silicon, the new architecture for Mac devices available since November 2020. Collector version 6.30.1.7 is the first one to support Apple Silicon.
+
+Linux
+Supported on all thin clients running IGEL OS version 11.x.
+
+Known limitation
+
+Only the CPU, memory and Wi-Fi signal strength are reported.
+
+Deployment tools for Collector
+Windows
+Microsoft Intune
+
+Microsoft System Center Configuration Manager (SCCM)
+
+Active Directory Group Policy
+
+macOS
+Jamf
+
+Microsoft Intune
+
+Omnissa Workspace ONE
+
+Support policy
+Nexthink Collector versions are supported up to 6 months after their initial release. Depending on the type of issue identified, the customers might still be asked to upgrade to the latest version.
+
+Nexthink Mobile
+Android
+Supported versions
+
+Android 13
+
+Android 14
+
+Android 15
+
+Android 16
+
+Deployment tools for Nexthink Mobile
+To deploy the Nexthink Mobile on multiple devices, use one of the following tools:
+
+Microsoft Intune
+
+Microsoft System Center Configuration Manager (SCCM)
+
+Active Directory Group Policy
+
+Nexthink browser extension
+The browser extension contains Collector components. It is important that the native messaging in the browser is not blocked and the extension is allowed to be launched. Refer to the Google Chrome Native Messaging documentation for more details.
+
+The Nexthink browser extension supports Google Chrome, Microsoft Edge and Mozilla Firefox. Refer to the Installing the web browser extension documentation for more information. Note that the browser extension supports browser versions up to one year old.
+
+Nexthink Finder (classic)
+Nexthink Finder is a Windows-only desktop application whose functionality is now available within the Nexthink web interface. Nexthink can now be used directly from a browser and most functions no longer require an additional desktop application.
+
+Supported operating systems
+
+Windows 11
+
+Windows 10 - 64 and 32 bits

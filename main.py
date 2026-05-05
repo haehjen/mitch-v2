@@ -6,8 +6,8 @@ import threading
 import sys
 import importlib
 from core import peterjones, dispatcher
-from core.event_bus import event_bus
-from modules import (
+from core.event_bus import event_bus, INNERMONO_PATH
+from core import (
     ears,
     interpreter,
     module_editor,
@@ -17,20 +17,21 @@ from modules import (
     gpt_handler
 )
 from modules.visual import visual_web
-from thought import EchoThoughtThread
 
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
+PRUNE_CONTEXTUAL_MODULES = os.getenv("MITCH_PRUNE_CONTEXTUAL", "0").lower() in {"1", "true", "yes"}
+ENABLE_THOUGHT_THREAD = os.getenv("MITCH_ENABLE_THOUGHT", "0").lower() in {"1", "true", "yes"}
+CLEAR_INNERMONO_ON_BOOT = os.getenv("MITCH_CLEAR_INNERMONO_ON_BOOT", "1").lower() in {"1", "true", "yes"}
 
 EXCLUDED_MODULES = {
-    "__init__", "ears", "interpreter", "module_editor", "dummy",
-    "transcriber", "memory", "stream_mouth", "gpt_handler", "visual",
-    "folder_access", "vision", "vision_ai"
+    "__init__", "dummy", "visual", "folder_access"
 }
 
 shutdown_hooks = []
 loaded_modules = []
 thread_refs = []
 _stop_event = threading.Event()
+_shutdown_started = threading.Event()
 
 def _log_event(level: str, message: str, **kv):
     """Send a structured line into innermono.log via peterjones logger."""
@@ -45,8 +46,46 @@ def _start_thread(target, name: str, *args, **kwargs):
     t.start()
     return t
 
+
+def _run_shutdown():
+    if _shutdown_started.is_set():
+        return
+    _shutdown_started.set()
+
+    print("\n🛑 MITCH shutdown signal received.")
+    event_bus.emit("SHUTDOWN")
+
+    for hook in shutdown_hooks:
+        try:
+            hook()
+        except KeyboardInterrupt:
+            print("[Shutdown] Interrupted while running shutdown hooks. Forcing exit.")
+            return
+        except Exception as e:
+            print(f"[Shutdown] Error in shutdown hook: {e}")
+
+    for t in thread_refs:
+        try:
+            if t.is_alive():
+                t.join(timeout=5)
+        except KeyboardInterrupt:
+            print("[Shutdown] Interrupted while waiting for background threads. Forcing exit.")
+            return
+
+    print(f"[Shutdown] Shutdown complete for modules: {', '.join(loaded_modules)}")
+
+
 def main():
     print("⚡ ECHO starting...")
+
+    if CLEAR_INNERMONO_ON_BOOT and INNERMONO_PATH:
+        try:
+            os.makedirs(os.path.dirname(INNERMONO_PATH), exist_ok=True)
+            with open(INNERMONO_PATH, "w", encoding="utf-8"):
+                pass
+            print("🧹 Cleared innermono.log on boot.")
+        except Exception as e:
+            print(f"[boot] Failed to clear innermono.log: {e}")
 
     # Core subsystems
     stream_mouth.start_stream_mouth()
@@ -79,6 +118,9 @@ def main():
         name, ext = os.path.splitext(filename)
         if ext != ".py" or name in EXCLUDED_MODULES or name == "file_ingestor":
             continue
+        if PRUNE_CONTEXTUAL_MODULES and name.startswith("contextual_"):
+            _log_event("INFO", "[autoload] pruned contextual module", module=name)
+            continue
 
         try:
             mod = importlib.import_module(f"modules.{name}")
@@ -105,13 +147,19 @@ def main():
             if DEBUG:
                 print(f"[AutoLoader] Failed to load {name}.py: {e}")
 
-    # Echo’s thought loop
-    echo_thought = EchoThoughtThread()
-    echo_thought.start()
-    shutdown_hooks.append(echo_thought.shutdown)
-    thread_refs.append(echo_thought)
-    if DEBUG:
-        print("🧠 Echo's self-evolution thread online.")
+    # Optional thought loop (off by default to reduce runtime noise).
+    if ENABLE_THOUGHT_THREAD:
+        try:
+            from thought import EchoThoughtThread
+
+            echo_thought = EchoThoughtThread()
+            echo_thought.start()
+            shutdown_hooks.append(echo_thought.shutdown)
+            thread_refs.append(echo_thought)
+            if DEBUG:
+                print("🧠 Echo's self-evolution thread online.")
+        except Exception as e:
+            _log_event("WARNING", "[boot] thought thread disabled after startup error", error=str(e))
 
     print("✅ Echo V3 online. Awaiting input...")
 
@@ -120,20 +168,7 @@ def main():
         while not _stop_event.wait(1.0):
             pass
     except KeyboardInterrupt:
-        print("\n🛑 MITCH shutdown signal received.")
-        event_bus.emit("SHUTDOWN")
-
-        for hook in shutdown_hooks:
-            try:
-                hook()
-            except Exception as e:
-                print(f"[Shutdown] Error in shutdown hook: {e}")
-
-        for t in thread_refs:
-            if t.is_alive():
-                t.join(timeout=5)
-
-        print(f"[Shutdown] Shutdown complete for modules: {', '.join(loaded_modules)}")
+        _run_shutdown()
 
 if __name__ == "__main__":
     main()

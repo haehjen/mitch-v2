@@ -11,5 +11,6 @@ speechrecognition
 numpy
 opencv-python
 piper
+ddgs
 # Optional packages
 # ollama

@@ -1,9 +1,9 @@
 import json
-import os
 from core.event_bus import event_bus
 from core.peterjones import get_logger
+from core.config import MITCH_ROOT
 
-INJECTION_PATH = "/home/triad/mitch/data/injections/dynamic_intent_update.json"
+INJECTION_PATH = f"{MITCH_ROOT}/data/injections/dynamic_intent_update.json"
 
 
 logger = get_logger("dynamic_intent_updater")
@@ -20,9 +20,8 @@ def handle_intent_match_failed(event_data):
     Args:
         event_data (dict): Data related to the failed intent match, including user input.
     """
-    user_input = event_data.get('user_input', '')
+    user_input = (event_data.get("user_input") or event_data.get("text") or "").strip()
     if not user_input:
-        log_action("[dynamic_intent_updater] No user input found in event data.")
         return
 
     # Analyze the failed input and suggest an update

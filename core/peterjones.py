@@ -15,6 +15,8 @@ os.makedirs(os.path.dirname(MAIN_LOG_PATH), exist_ok=True)
 LOG_FORMAT = '%(asctime)s [%(name)s] [%(levelname)s] %(message)s'
 LOG_LEVEL = logging.INFO  # default level for most events
 CHATTY_LEVEL = logging.DEBUG
+INNERMONO_MAX_BYTES = int(os.getenv("MITCH_INNERMONO_MAX_BYTES", str(5 * 1024 * 1024)))
+INNERMONO_BACKUP_COUNT = int(os.getenv("MITCH_INNERMONO_BACKUP_COUNT", "0"))
 
 # === Environment controls ===
 DEBUG = os.getenv("MITCH_DEBUG", "false").lower() == "true"
@@ -67,9 +69,15 @@ def get_logger(name="MITCH"):
         # Ensure MAIN_LOG_PATH is valid
         if not MAIN_LOG_PATH:
             raise ValueError("MAIN_LOG_PATH is not set or invalid.")
-        handler = RotatingFileHandler(
-            MAIN_LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8"
-        )
+        if INNERMONO_BACKUP_COUNT > 0:
+            handler = RotatingFileHandler(
+                MAIN_LOG_PATH,
+                maxBytes=INNERMONO_MAX_BYTES,
+                backupCount=INNERMONO_BACKUP_COUNT,
+                encoding="utf-8",
+            )
+        else:
+            handler = logging.FileHandler(MAIN_LOG_PATH, encoding="utf-8")
         formatter = logging.Formatter(LOG_FORMAT)
         handler.setFormatter(formatter)
         logger.addHandler(handler)

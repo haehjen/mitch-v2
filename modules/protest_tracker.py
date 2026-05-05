@@ -35,6 +35,36 @@ class ProtestTracker:
         self.terms = [
             "protest", "demonstration", "march", "rally", "vigil"
         ]
+        self.protest_patterns = [
+            r"\bprotest(?:s|er|ers|ing)?\b",
+            r"\bdemonstration(?:s)?\b",
+            r"\bmarch(?:es|ed|ing)?\b",
+            r"\brally(?:ing)?\b",
+            r"\bvigil(?:s)?\b",
+            r"\bstrike(?:s|r|rs|ing)?\b",
+            r"\bpicket(?:s|ed|ing)?\b",
+            r"\briot(?:s|er|ers)?\b",
+            r"\bdisorder\b",
+        ]
+        self.noise_patterns = [
+            r"\btransfer\b",
+            r"\bloanee?\b",
+            r"\bgoalkeeper\b",
+            r"\bstriker\b",
+            r"\bmidfielder\b",
+            r"\bmanager\b",
+            r"\bchampionship\b",
+            r"\bpremier league\b",
+            r"\bfa cup\b",
+            r"\blive coverage\b",
+            r"\bhighlights\b",
+            r"\bvs\b",
+            r"\bfootball\b",
+            r"\bunited\b",
+            r"\bafc\b",
+            r"\bfc\b",
+            r"\b\d+\s*-\s*\d+\b",
+        ]
 
     def check_for_protests(self, event_data):
         now = time.time()
@@ -53,6 +83,9 @@ class ProtestTracker:
                 all_results.extend(results)
 
             protests = self.parse_results(all_results)
+            self.logger.info(
+                f"Protest query candidates={len(all_results)} accepted={len(protests)}"
+            )
             if protests:
                 self.protests_log.extend(protests)
                 self._log_to_file(protests)
@@ -63,6 +96,7 @@ class ProtestTracker:
 
     def parse_results(self, results):
         protests = []
+        filtered_out = 0
         for r in results:
             title = r.get("title", "")
             snippet = r.get("body", "")
@@ -70,6 +104,9 @@ class ProtestTracker:
             # Basic de-dupe id
             rid = (title or url).strip().lower()
             if not rid or rid in self.seen_ids:
+                continue
+            if not self.is_relevant_protest(title, snippet, url):
+                filtered_out += 1
                 continue
             location = self.extract_location(title + " " + snippet)
             if location:
@@ -82,7 +119,36 @@ class ProtestTracker:
                 }
                 protests.append(item)
                 self.seen_ids.add(rid)
+        if filtered_out:
+            self.logger.info(f"Protest filter removed {filtered_out} low-relevance items.")
         return protests
+
+    def is_relevant_protest(self, title: str, snippet: str, url: str) -> bool:
+        text = f"{title} {snippet}".lower()
+        t = (title or "").lower()
+        u = (url or "").lower()
+
+        has_protest_signal = any(
+            re.search(p, text, re.IGNORECASE) for p in self.protest_patterns
+        )
+        if not has_protest_signal:
+            return False
+
+        # Very noisy sports links unless title itself is explicitly a protest headline.
+        if "/sport/" in u and not re.search(r"\bprotest|demonstration|march|rally|riot\b", t):
+            return False
+
+        has_noise = any(
+            re.search(p, text, re.IGNORECASE) for p in self.noise_patterns
+        )
+        has_strong_title_signal = bool(
+            re.search(r"\bprotest|demonstration|march|rally|riot|disorder\b", t)
+        )
+
+        # If content is dominated by sports/news noise and the title isn't protest-led, drop it.
+        if has_noise and not has_strong_title_signal:
+            return False
+        return True
 
     def extract_location(self, text):
         """Pick out a city/place with emphasis on North East/Teesside.

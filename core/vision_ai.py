@@ -1,12 +1,18 @@
 import os
+import time
+from pathlib import Path
 from openai import OpenAI
-from modules.vision import VisionModule
+from core.vision import VisionModule
+from core.config import MITCH_ROOT
 from core.peterjones import get_logger
 
 logger = get_logger("vision_ai")
 
 # Public image URL served by Flask + NGINX
 CAMERA_URL = "https://mitch.andymitchell.online/latest.jpg"
+BROWSER_CAMERA_PATH = Path(MITCH_ROOT) / "uploads" / "browser_camera_latest.jpg"
+BROWSER_CAMERA_MAX_AGE_SECONDS = int(os.getenv("MITCH_BROWSER_CAMERA_MAX_AGE", "180"))
+ALLOW_HOST_CAMERA_FALLBACK = os.getenv("MITCH_ALLOW_HOST_CAMERA_FALLBACK", "0").lower() in {"1", "true", "yes"}
 
 class VisionAI:
     def __init__(self):
@@ -17,9 +23,30 @@ class VisionAI:
             logger.warning("[VisionAI] OPENAI_API_KEY not set; vision features may fail.")
         self.client = OpenAI(api_key=api_key)
 
+    def _has_fresh_browser_camera(self) -> bool:
+        try:
+            if not BROWSER_CAMERA_PATH.exists():
+                return False
+            age = time.time() - BROWSER_CAMERA_PATH.stat().st_mtime
+            return age <= BROWSER_CAMERA_MAX_AGE_SECONDS
+        except Exception:
+            return False
+
+    def _prepare_frame_for_analysis(self):
+        """
+        Prefer browser-provided camera frame (if fresh), otherwise capture from host camera.
+        """
+        if self._has_fresh_browser_camera():
+            logger.info("[VisionAI] Using fresh browser camera frame for analysis.")
+            return
+        if ALLOW_HOST_CAMERA_FALLBACK:
+            self.vision_module.capture_image()
+            return
+        logger.info("[VisionAI] No fresh browser frame; host camera fallback disabled.")
+
     async def capture_and_describe(self):
         try:
-            self.vision_module.capture_image()
+            self._prepare_frame_for_analysis()
         except Exception as e:
             logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"
@@ -43,7 +70,7 @@ class VisionAI:
 
     async def detect_objects(self):
         try:
-            self.vision_module.capture_image()
+            self._prepare_frame_for_analysis()
         except Exception as e:
             logger.error(f"Failed to capture image: {e}")
             return f"[VisionAI] Failed to capture image: {e}"

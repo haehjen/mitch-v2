@@ -1,59 +1,64 @@
-import requests
+import json
 import os
-import time
-from datetime import datetime, timezone
-from core.event_bus import event_bus
+from typing import Any
+
 from core.config import MITCH_ROOT
+from core.event_bus import event_bus
 from core.peterjones import get_logger
-from core.keys_loader import load_keys  # <-- add this
+from modules import automated_flight_tracker
 
 logger = get_logger("flight_tracker")
 
-# … your existing constants …
+_started = False
+_subscribed = False
+_OUT_PATH = os.path.join(MITCH_ROOT, "modules", "visual", "static", "flight_contacts.json")
 
-_token_cache = {"value": None, "expires": 0.0}
 
-def _token() -> str:
-    return f"flight_{int(time.time() * 1000)}"
-
-def _get_token() -> str | None:
-    # 1) ensure env has keys (loads from mitchskeys if not already set)
-    load_keys()
-
-    now = time.time()
-    if _token_cache["value"] and now < _token_cache["expires"]:
-        return _token_cache["value"]
-
-    # 2) read env (no hardcoded defaults!)
-    client_id = os.getenv("OPENSKY_CLIENT_ID")
-    client_secret = os.getenv("OPENSKY_CLIENT_SECRET")
-
-    if not client_id or not client_secret:
-        logger.warning("[opensky-oauth] Missing OPENSKY_CLIENT_ID or OPENSKY_CLIENT_SECRET")
-        return None
-
+def _load_contacts() -> dict[str, Any]:
     try:
-        # OpenID Connect client_credentials: send in form body
-        r = requests.post(
-            "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token",
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            data={
-                "grant_type": "client_credentials",
-                "client_id": client_id,
-                "client_secret": client_secret,
-            },
-            timeout=10,
-        )
-        r.raise_for_status()
-        data = r.json()
-        token = data.get("access_token")
-        expires_in = int(data.get("expires_in", 1800))
-        if token:
-            _token_cache["value"] = token
-            _token_cache["expires"] = now + expires_in - 60  # renew 1m early
-            return token
-        logger.warning(f"[opensky-oauth] no access_token in response: {data}")
-    except Exception as e:
-        logger.warning(f"[opensky-oauth] token fetch failed: {e}")
+        with open(_OUT_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        pass
+    return {}
 
-    return None
+
+def _on_flight_query(data: dict[str, Any]) -> None:
+    if isinstance(data, str):
+        text = data
+    elif isinstance(data, dict):
+        text = data.get("text", "")
+    else:
+        text = ""
+    if not isinstance(text, str):
+        return
+    text_l = text.lower()
+
+    # Backward-compatible trigger phrases for manual flight status requests.
+    if not any(k in text_l for k in ("flight", "flights", "aircraft", "planes")):
+        return
+
+    payload = _load_contacts()
+    uk = payload.get("uk") or []
+    ne = payload.get("ne") or []
+
+    msg = f"Flight tracker online. UK contacts: {len(uk)}. North East contacts: {len(ne)}."
+    event_bus.emit("EMIT_SPEAK", {"text": msg, "source": "status"})
+
+
+def start_module(_event_bus):
+    global _started, _subscribed
+    if _started:
+        return
+    _started = True
+
+    # Ensure the active polling implementation is running.
+    automated_flight_tracker.start_module(event_bus)
+
+    if not _subscribed:
+        event_bus.subscribe("EMIT_INPUT_RECEIVED", _on_flight_query)
+        _subscribed = True
+
+    logger.info("FlightTracker compatibility module started (delegating to automated_flight_tracker).")

@@ -7,7 +7,7 @@ from pathlib import Path
 from openai import OpenAI
 import os
 import sys
-from modules import memory
+from core import memory
 from core.event_bus import event_bus
 from core.config import MITCH_ROOT
 
@@ -156,6 +156,13 @@ Write a new MITCH-compatible Python module that extends MITCH's autonomy, or use
 - Here are the components you should know about:
 - Logs all go in "/home/triad/mitch/logs/innermono.log"
 - To get the output of your modules to change Echo's behaviour you need to place a file in /home/triad/mitch/data/injections as json so they are added to the next api call
+- Chat runtime injection behavior:
+  - core/gpt_handler.py reads every /home/triad/mitch/data/injections/*.json on each chat request.
+  - Preferred injection schema:
+    {{"type":"short_tag","content":"concise instruction or context"}}
+    or a list of those objects.
+  - If schema is different, the whole object is still included as raw JSON text.
+  - Keep injection content concise and directly useful for the next chat response.
 - /mitch/modules/interpreter.py is where intent matching happenes when you can match user input to tool calls to perform actions
 - you can create new modules in /mitch/modules/ that are automatically picked up on start up, so you can create instructions in there to edit existing python scripts
 - This is an ubuntu 24.04 system with python 3.11 if this helps you and you have root

@@ -2,17 +2,18 @@ import os
 import json
 from pathlib import Path
 import mimetypes
+from core.config import MITCH_ROOT
 
 from core.event_bus import event_bus
-from modules.vision_ai import describe_image_from_url  # ✅ NEW
+from core.vision_ai import describe_image_from_url
 from core.peterjones import get_logger
 
 # Optional parsers (present in your stack)
 from bs4 import BeautifulSoup
 from pdfminer.high_level import extract_text
 from PIL import Image
-INJECTION_PATH = "/home/triad/mitch/data/injections/"
-UPLOAD_DIR = "/home/triad/mitch/uploads"
+INJECTION_PATH = f"{MITCH_ROOT}/data/injections/"
+UPLOAD_DIR = f"{MITCH_ROOT}/uploads"
 PUBLIC_URL_BASE = "https://mitch.andymitchell.online/uploads"  # ✅ for GPT-4o vision
 
 logger = get_logger("file_ingestor")
@@ -174,6 +175,20 @@ def handle_file_event(event: dict):
         logger.error(f"[file_ingestor] Failed to write injection file {inject_path}: {e}")
 
     event_bus.emit("EMIT_PREVIEW_URL", {"url": f"/uploads/{filename}"})
+
+    # Bridge upload analysis into normal assistant response flow (UI + TTS).
+    event_bus.emit(
+        "EMIT_TOOL_RESULT",
+        {
+            "function_name": "file_ingestor",
+            "output": {
+                "filename": filename,
+                "type": kind,
+                "summary": content,
+                "url": f"{PUBLIC_URL_BASE}/{filename}",
+            },
+        },
+    )
 
 
 def start_module(event_bus):

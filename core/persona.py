@@ -1,7 +1,7 @@
 import json
 import hashlib
 from pathlib import Path
-from modules import memory
+from core import memory
 from core.peterjones import get_logger
 from core.config import MITCH_ROOT
 

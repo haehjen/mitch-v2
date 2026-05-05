@@ -1,4 +1,3 @@
-# modules/vision.py
 import cv2
 import os
 import subprocess
@@ -58,7 +57,9 @@ class VisionModule:
 
     def capture_image(self, save_path=None):
         if save_path is None:
-            save_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../visual/static/latest.jpg"))
+            save_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../modules/visual/static/latest.jpg")
+            )
 
         self.force_exposure_v4l2()
 

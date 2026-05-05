@@ -12,23 +12,59 @@ LAST_INPUT_PATH = os.path.join(MITCH_ROOT, "data", "last_input_seen.json")
 # Time to wait after last input before triggering introspection
 INACTIVITY_THRESHOLD = timedelta(minutes=25)
 
-def get_last_input_time():
+def _read_state():
     if not os.path.exists(LAST_INPUT_PATH):
-        return None
+        return {}
     try:
         with open(LAST_INPUT_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-            return datetime.fromisoformat(data.get("timestamp"))
+            return data if isinstance(data, dict) else {}
     except Exception as e:
-        logger.warning(f"[on_heartbeat_inactive] Failed to read last input time: {e}")
-        return None
+        logger.warning(f"[on_heartbeat_inactive] Failed to read last input state: {e}")
+        return {}
 
-def update_last_input_time():
+
+def _write_state(state):
     try:
         with open(LAST_INPUT_PATH, "w", encoding="utf-8") as f:
-            json.dump({"timestamp": datetime.utcnow().isoformat()}, f)
+            json.dump(state, f)
     except Exception as e:
-        logger.warning(f"[on_heartbeat_inactive] Failed to update last input time: {e}")
+        logger.warning(f"[on_heartbeat_inactive] Failed to persist input state: {e}")
+
+
+def get_last_input_time():
+    data = _read_state()
+    value = data.get("timestamp")
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value)
+    except Exception as e:
+        logger.warning(f"[on_heartbeat_inactive] Invalid input timestamp format: {e}")
+        return None
+
+
+def get_last_prompt_for_input():
+    data = _read_state()
+    return str(data.get("last_prompt_for_input_ts", "") or "")
+
+
+def mark_prompted_for_current_input():
+    data = _read_state()
+    current_input_ts = str(data.get("timestamp", "") or "")
+    if not current_input_ts:
+        return
+    data["last_prompt_for_input_ts"] = current_input_ts
+    _write_state(data)
+
+
+def update_last_input_time():
+    now_ts = datetime.utcnow().isoformat()
+    state = _read_state()
+    state["timestamp"] = now_ts
+    # New input resets inactivity prompt latch for the next quiet period.
+    state["last_prompt_for_input_ts"] = ""
+    _write_state(state)
 
 def on_heartbeat(system_state):
     now = datetime.utcnow()
@@ -39,8 +75,15 @@ def on_heartbeat(system_state):
         return
 
     if now - last_input_time >= INACTIVITY_THRESHOLD:
+        state = _read_state()
+        current_input_ts = str(state.get("timestamp", "") or "")
+        last_prompt_for_input_ts = get_last_prompt_for_input()
+        if current_input_ts and current_input_ts == last_prompt_for_input_ts:
+            logger.debug("[on_heartbeat_inactive] Inactivity already prompted for current input window.")
+            return
         logger.info("[on_heartbeat_inactive] Inactivity threshold reached. Triggering echo prompt.")
         event_bus.emit("EMIT_ECHO_PROMPT", {"source": "on_heartbeat_inactive"})
+        mark_prompted_for_current_input()
     else:
         logger.debug("[on_heartbeat_inactive] User recently active. No prompt sent.")
 
